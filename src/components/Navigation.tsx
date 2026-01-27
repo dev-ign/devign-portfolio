@@ -20,8 +20,8 @@ const Navigation: React.FC = () => {
               backgroundColor: 'action.hover',
             },
             '& svg': {
-              width: { xs: '18px', md: '24px' },
-              height: { xs: '18px', md: '24px' },
+              width: '24px',
+              height: '24px',
             },
           }}
         >
