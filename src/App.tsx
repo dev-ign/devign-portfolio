@@ -652,6 +652,48 @@ const AppContent: React.FC = () => {
           Message sent successfully!
         </Alert>
       </Snackbar>
+      <Box
+        component="footer"
+        sx={{
+          textAlign: 'center',
+          py: 3,
+          px: 2,
+        }}
+      >
+        <Typography
+          variant="body2"
+          sx={{
+            color: 'text.primary',
+            opacity: 0.6,
+            fontSize: { xs: '0.75rem', md: '0.875rem' },
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: 0.5,
+          }}
+        >
+          Made in{' '}
+          <Icon
+            icon="mdi:react"
+            style={{
+              width: '16px',
+              height: '16px',
+              margin: '0 4px',
+              color: '#61DAFB',
+            }}
+          />
+          REACT with{' '}
+          <Icon
+            icon="mdi:heart"
+            style={{
+              width: '16px',
+              height: '16px',
+              margin: '0 4px',
+              color: '#ff0000',
+            }}
+          />
+        </Typography>
+      </Box>
     </>
   );
 };
