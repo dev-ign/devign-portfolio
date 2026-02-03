@@ -1,6 +1,8 @@
 import urgeProjectImage from '../assets/urge-project.png';
 import chancletazoProjectImage from '../assets/chancletazo-project.png';
 import swProjectImage from '../assets/sw-project.png';
+import givzeyProjectImage from '../assets/givzey-project.png';
+import givzeyDemoImage from '../assets/givzey-demo.png';
 
 export interface Project {
   id: string;
@@ -9,6 +11,7 @@ export interface Project {
   image: string;
   category?: string;
   link?: string;
+  demo?: string;
 }
 
 export const projects: Project[] = [
@@ -21,19 +24,28 @@ export const projects: Project[] = [
     link: 'https://www.allbooked.co/',
   },
   {
-    id: 'el-chancletazo',
-    title: 'El Chancletazo',
-    description: 'Dominican food restaurant website featuring menu items and preorder functionality.',
-    image: chancletazoProjectImage,
-    category: 'Restaurant Website',
-    link: '',
-  },
-  {
     id: 'small-wrld-music',
     title: 'Small Wrld Music',
     description: 'Music discovery platform with featured tracks, beats, and interactive player.',
     image: swProjectImage,
     category: 'Music Platform',
     link: 'https://swsmusicgroup.com/',
+  },
+  {
+    id: 'givzey-landing',
+    title: 'Givzey Landing',
+    description: 'A Marketing landing page for Givzey. An AI-powered platform for fundraising.',
+    image: givzeyProjectImage,
+    category: 'Markting Site',
+    link: '',
+    demo: givzeyDemoImage,
+  },
+  {
+    id: 'el-chancletazo',
+    title: 'El Chancletazo',
+    description: 'Dominican food restaurant website featuring menu items and preorder functionality.',
+    image: chancletazoProjectImage,
+    category: 'Restaurant Website',
+    link: '',
   },
 ];

@@ -8,6 +8,7 @@ import {
   CardContent,
   IconButton,
   alpha,
+  Modal,
   Popover,
   TextField,
   Button,
@@ -27,6 +28,10 @@ const EMAILJS_TEMPLATE_ID = 'template_mzi5nzb';
 // You can also set it as an environment variable: REACT_APP_EMAILJS_PUBLIC_KEY
 const EMAILJS_PUBLIC_KEY = process.env.REACT_APP_EMAILJS_PUBLIC_KEY || 'YOUR_PUBLIC_KEY_HERE';
 
+/** Shared dimensions for project image modal (all projects). */
+const PROJECT_MODAL_MAX_WIDTH = '990px';
+const PROJECT_MODAL_MAX_HEIGHT = '704px';
+
 const AppContent: React.FC = () => {
   const [formOpen, setFormOpen] = useState(false);
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
@@ -45,6 +50,7 @@ const AppContent: React.FC = () => {
   const [isSending, setIsSending] = useState(false);
   const [sendError, setSendError] = useState('');
   const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [imageModalProject, setImageModalProject] = useState<typeof projects[0] | null>(null);
 
   const handleOpenForm = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
@@ -139,6 +145,14 @@ const AppContent: React.FC = () => {
       return;
     }
     setSnackbarOpen(false);
+  };
+
+  const handleCardImageClick = (project: typeof projects[0]) => () => {
+    setImageModalProject(project);
+  };
+
+  const handleCloseImageModal = () => {
+    setImageModalProject(null);
   };
 
   return (
@@ -246,11 +260,13 @@ const AppContent: React.FC = () => {
                 }}
               >
                 <Box
+                  onClick={handleCardImageClick(project)}
                   sx={{
                     position: 'relative',
                     width: '100%',
                     overflow: 'hidden',
                     borderRadius: '20px',
+                    cursor: 'pointer',
                   }}
                 >
                   <CardMedia
@@ -284,7 +300,10 @@ const AppContent: React.FC = () => {
                   />
                   {project.link && (
                     <IconButton
-                      onClick={() => window.open(project.link, '_blank', 'noopener,noreferrer')}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        window.open(project.link, '_blank', 'noopener,noreferrer');
+                      }}
                       sx={{
                         position: 'absolute',
                         bottom: { xs: 12, md: 20 },
@@ -652,6 +671,119 @@ const AppContent: React.FC = () => {
           Message sent successfully!
         </Alert>
       </Snackbar>
+      <Modal
+        open={!!imageModalProject}
+        onClose={handleCloseImageModal}
+        hideBackdrop
+        sx={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          p: 2,
+        }}
+      >
+        <>
+          {imageModalProject && (
+            <>
+              <Box
+                onClick={handleCloseImageModal}
+                sx={{
+                  position: 'fixed',
+                  inset: 0,
+                  backgroundColor: 'rgba(0, 0, 0, 0.5)',
+                  borderRadius: '20px',
+                  zIndex: 0,
+                }}
+              />  
+            <Box
+              sx={{
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'flex-end',
+                gap: 2,
+              }}>
+              <Box
+                onClick={(e) => e.stopPropagation()}
+                sx={{
+                  position: 'relative',
+                  zIndex: 1,
+                  maxWidth: PROJECT_MODAL_MAX_WIDTH,
+                  maxHeight: PROJECT_MODAL_MAX_HEIGHT,
+                  width: '99%',
+                  height: '99%',
+                  outline: 'none',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'flex-end',
+                  gap: 1.5,
+                  borderRadius: '20px',
+                  overflow: 'auto',
+                }}
+              >
+                <Box
+                  sx={{
+                    flex: 1,
+                    minHeight: 0,
+                    width: '100%',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'flex-end',
+                  }}
+                >
+                  <Box
+                    component="img"
+                    src={imageModalProject.demo ?? imageModalProject.image}
+                    alt={imageModalProject.title}
+                    sx={{
+                      width: 'auto',
+                      maxWidth: '100%',
+                      height: 'auto',
+                      objectFit: 'contain',
+                      boxShadow: '0 24px 80px rgba(0, 0, 0, 0.4)',
+                      borderRadius: '20px',
+                    }}
+                  />
+                </Box>
+              </Box>
+              {imageModalProject.link && (
+                <Button
+                  component="a"
+                  href={imageModalProject.link}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={(e) => e.stopPropagation()}
+                  endIcon={<Icon icon="mdi:arrow-right" />}
+                  sx={{
+                    color: '#FFFFFF',
+                    textTransform: 'none',
+                    padding: 0,
+                    minWidth: 0,
+                    fontSize: '0.9375rem',
+                    textDecoration: 'none',
+                    opacity: .7,
+                    transition: 'opacity 0.3s ease-in-out',
+                    '&:hover': {
+                      backgroundColor: 'transparent',
+                      textDecoration: 'none',
+                      opacity: 1,
+                    },
+                    '& .MuiButton-endIcon': {
+                      marginLeft: 0.5,
+                    },
+                    '& svg': {
+                      width: 18,
+                      height: 18,
+                    },
+                  }}
+                >
+                  Go to website
+                </Button>
+              )}
+            </Box>
+            </>
+          )}
+        </>
+      </Modal>
       <Box
         component="footer"
         sx={{
