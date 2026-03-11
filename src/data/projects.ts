@@ -3,6 +3,7 @@ import chancletazoProjectImage from '../assets/chancletazo-project.png';
 import swProjectImage from '../assets/sw-project.png';
 import givzeyProjectImage from '../assets/givzey-project.png';
 import givzeyDemoImage from '../assets/givzey-demo.png';
+import gradumProjectImage from '../assets/gradum-project.png';
 
 export interface Project {
   id: string;
@@ -46,6 +47,15 @@ export const projects: Project[] = [
     description: 'Dominican food restaurant website featuring menu items and preorder functionality.',
     image: chancletazoProjectImage,
     category: 'Restaurant Website',
+    link: '',
+  },
+  {
+    id: 'gradum-group',
+    title: 'Gradum Group',
+    description:
+      'Engineering-led advisory and execution platform for technical, operational, and infrastructure complexity.',
+    image: gradumProjectImage,
+    category: 'Marketing Site - Lead Gen',
     link: '',
   },
 ];
