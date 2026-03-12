@@ -3,12 +3,8 @@ import {
   Container,
   Typography,
   Box,
-  Card,
-  CardMedia,
-  CardContent,
   IconButton,
   alpha,
-  Modal,
   Popover,
   TextField,
   Button,
@@ -17,9 +13,20 @@ import {
 } from '@mui/material';
 import { Icon } from '@iconify/react';
 import emailjs from '@emailjs/browser';
-import Navigation from './components/Navigation';
-import { ThemeProvider } from './context/ThemeContext';
-import { projects } from './data/projects';
+import Navigation from '@/components/Navigation';
+import HeroSection from '@/components/hero/HeroSection';
+import ContextBanner from '@/components/sections/ContextBanner';
+import ProcessSection from '@/components/sections/ProcessSection';
+import StackSection from '@/components/sections/StackSection';
+import MetricsRow from '@/components/sections/MetricsRow';
+import TestimonialBlock from '@/components/sections/TestimonialBlock';
+import ResumeStrip from '@/components/sections/ResumeStrip';
+import useScrollReveal from '@/hooks/useScrollReveal';
+import ProjectCard from '@/components/projects/ProjectCard';
+import CaseStudyPanel from '@/components/panel/CaseStudyPanel';
+import { ThemeProvider } from '@/context/ThemeContext';
+import { AudienceProvider } from '@/context/AudienceContext';
+import { projects, Project } from '@/data/projects';
 
 // EmailJS configuration
 const EMAILJS_SERVICE_ID = 'portfolio-gmail';
@@ -28,9 +35,6 @@ const EMAILJS_TEMPLATE_ID = 'template_mzi5nzb';
 // You can also set it as an environment variable: REACT_APP_EMAILJS_PUBLIC_KEY
 const EMAILJS_PUBLIC_KEY = process.env.REACT_APP_EMAILJS_PUBLIC_KEY || 'YOUR_PUBLIC_KEY_HERE';
 
-/** Shared dimensions for project image modal (all projects). */
-const PROJECT_MODAL_MAX_WIDTH = '990px';
-const PROJECT_MODAL_MAX_HEIGHT = '704px';
 
 const AppContent: React.FC = () => {
   const [formOpen, setFormOpen] = useState(false);
@@ -50,7 +54,9 @@ const AppContent: React.FC = () => {
   const [isSending, setIsSending] = useState(false);
   const [sendError, setSendError] = useState('');
   const [snackbarOpen, setSnackbarOpen] = useState(false);
-  const [imageModalProject, setImageModalProject] = useState<typeof projects[0] | null>(null);
+  const [panelProject, setPanelProject] = useState<Project | null>(null);
+  const [isPanelOpen, setIsPanelOpen] = useState(false);
+  const projectsRevealRef = useScrollReveal();
 
   const handleOpenForm = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
@@ -147,12 +153,15 @@ const AppContent: React.FC = () => {
     setSnackbarOpen(false);
   };
 
-  const handleCardImageClick = (project: typeof projects[0]) => () => {
-    setImageModalProject(project);
+  const handleOpenCaseStudy = (project: Project) => {
+    setPanelProject(project);
+    setIsPanelOpen(true);
   };
 
-  const handleCloseImageModal = () => {
-    setImageModalProject(null);
+  const handleCloseCaseStudy = () => {
+    setIsPanelOpen(false);
+    // Keep project data mounted during close animation, then clear
+    setTimeout(() => setPanelProject(null), 600);
   };
 
   return (
@@ -162,62 +171,19 @@ const AppContent: React.FC = () => {
           minHeight: '100vh',
           backgroundColor: 'background.default',
           px: { xs: 2, md: 4 },
+          filter: isPanelOpen ? 'blur(3px) brightness(0.4)' : 'none',
+          transform: isPanelOpen ? 'scale(0.97)' : 'scale(1)',
+          transformOrigin: 'center top',
+          transition: 'filter 0.5s ease, transform 0.5s ease',
         }}
       >
         <Navigation />
         <Container maxWidth="xl">
+          <HeroSection />
+          <ContextBanner />
           <Box
-            sx={{
-              display: 'flex',
-              justifyContent: 'flex-start',
-              alignItems: 'center',
-              gap: "0px",
-              width: '100%',
-            }}
-          >
-            <Typography
-              variant="h6"
-              component="div"
-              sx={{
-                color: 'text.primary',
-                fontWeight: 500,
-                fontSize: { xs: '28px', md: '40px' },
-                letterSpacing: '2px',
-              }}
-            >
-              devign
-            </Typography>
-            <Typography
-              variant="h6"
-              component="div"
-              sx={{
-                color: 'text.primary',
-                opacity: 0.5,
-                fontWeight: 300,
-                fontSize: { xs: '32px', md: '48px' },
-                letterSpacing: '2px',
-              }}
-            >
-              UX
-            </Typography>
-          </Box>
-          <Typography
-            variant="h2"
-            component="h1"
-            gutterBottom
-            sx={{
-              color: 'text.primary',
-              fontSize: { xs: '18px', md: '28px' },
-              opacity: 0.8,
-              fontWeight: 500,
-              letterSpacing: '1px',
-              mt: 1,
-              mb: 4,
-            }}
-          >
-            Hi, I'm Jona. I design and engineer seamless, modern interfaces—bringing ideas from concept to production. My site is currently under construction, but you can explore some past work below. Let's connect if you'd like to talk ideas.
-          </Typography>
-          <Box
+            ref={projectsRevealRef}
+            id="work"
             sx={{
               display: 'grid',
               gridTemplateColumns: {
@@ -226,163 +192,23 @@ const AppContent: React.FC = () => {
                 lg: 'repeat(3, 1fr)',
               },
               gap: { xs: 2, md: 4 },
-              mt: 6,
+              mt: 2,
             }}
           >
             {projects.map((project) => (
-              <Card
+              <ProjectCard
                 key={project.id}
-                elevation={0}
-                className="project-card"
-                sx={{
-                  height: '100%',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  borderRadius: 2,
-                  backgroundColor: 'transparent',
-                  overflow: 'hidden',
-                  transition: 'transform 0.2s ease-in-out',
-                  boxShadow: 'none',
-                  '--Paper-shadow': 'none',
-                  '--Paper-overlay': 'none',
-                  '&::before': {
-                    display: 'none',
-                  },
-                  '&:hover': {
-                    transform: 'translateY(-4px)',
-                    '& .image-overlay': {
-                      opacity: 1,
-                    },
-                    '& .project-image': {
-                      transform: 'scale(1.05)',
-                    },
-                  },
-                }}
-              >
-                <Box
-                  onClick={handleCardImageClick(project)}
-                  sx={{
-                    position: 'relative',
-                    width: '100%',
-                    overflow: 'hidden',
-                    borderRadius: '20px',
-                    cursor: 'pointer',
-                  }}
-                >
-                  <CardMedia
-                    component="img"
-                    image={project.image}
-                    alt={project.title}
-                    className="project-image"
-                    sx={{
-                      width: '100%',
-                      height: 'auto',
-                      maxHeight: { xs: '200px', md: 'none' },
-                      objectFit: 'cover',
-                      borderRadius: { xs: '12px', md: '20px' },
-                      transition: 'transform 0.3s ease-in-out',
-                    }}
-                  />
-                  <Box
-                    className="image-overlay"
-                    sx={{
-                      position: 'absolute',
-                      top: 0,
-                      left: 0,
-                      right: 0,
-                      bottom: 0,
-                      backgroundColor: 'rgba(0, 0, 0, 0.4)',
-                      borderRadius: '20px',
-                      opacity: 0,
-                      transition: 'opacity 0.3s ease-in-out',
-                      pointerEvents: 'none',
-                    }}
-                  />
-                  {project.link && (
-                    <IconButton
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        window.open(project.link, '_blank', 'noopener,noreferrer');
-                      }}
-                      sx={{
-                        position: 'absolute',
-                        bottom: { xs: 12, md: 20 },
-                        right: { xs: 12, md: 20 },
-                        width: { xs: 36, md: 40 },
-                        height: { xs: 36, md: 40 },
-                        backgroundColor: 'rgba(255, 255, 255, 0.2)',
-                        backdropFilter: 'blur(5px)',
-                        WebkitBackdropFilter: 'blur(5px)',
-                        color: '#FFFFFF',
-                        boxShadow: '0 8px 20px 0 rgba(0, 0, 0, 0.16)',
-                        transition: 'all 0.2s ease-in-out',
-                        zIndex: 1,
-                        '&:hover': {
-                          transform: 'scale(1.1)',
-                          backgroundColor: 'rgba(255, 255, 255, 0.3)',
-                        },
-                      }}
-                      aria-label="view project"
-                    >
-                      <Box
-                        component="span"
-                        sx={{
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          '& svg': {
-                            width: { xs: '18px', md: '24px' },
-                            height: { xs: '18px', md: '24px' },
-                          },
-                        }}
-                      >
-                        <Icon icon="mdi:arrow-right" />
-                      </Box>
-                    </IconButton>
-                  )}
-                </Box>
-                <CardContent sx={{ flexGrow: 1, backgroundColor: 'transparent'}}>
-                  <Typography
-                    variant="h5"
-                    component="h2"
-                    sx={{
-                      color: 'text.primary',
-                      fontWeight: 600,
-                      mb: 1,
-                      fontSize: { xs: '1.1rem', md: '1.5rem' },
-                    }}
-                  >
-                    {project.title}
-                  </Typography>
-                  {project.category && (
-                    <Typography
-                      variant="body2"
-                      sx={{
-                        color: 'text.secondary',
-                        mb: 1,
-                        textTransform: 'uppercase',
-                        fontSize: { xs: '0.65rem', md: '0.75rem' },
-                        letterSpacing: '1px',
-                      }}
-                    >
-                      {project.category}
-                    </Typography>
-                  )}
-                  <Typography
-                    variant="body2"
-                    sx={{
-                      color: 'text.primary',
-                      opacity: 0.8,
-                      fontSize: { xs: '0.875rem', md: '0.875rem' },
-                    }}
-                  >
-                    {project.description}
-                  </Typography>
-                </CardContent>
-              </Card>
+                project={project}
+                onCaseStudyOpen={() => handleOpenCaseStudy(project)}
+              />
             ))}
           </Box>
+          <ProcessSection />
+          <StackSection />
+          <MetricsRow />
+          <TestimonialBlock />
         </Container>
+        <ResumeStrip />
       </Box>
       <IconButton
         onClick={handleOpenForm}
@@ -671,119 +497,11 @@ const AppContent: React.FC = () => {
           Message sent successfully!
         </Alert>
       </Snackbar>
-      <Modal
-        open={!!imageModalProject}
-        onClose={handleCloseImageModal}
-        hideBackdrop
-        sx={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          p: 2,
-        }}
-      >
-        <>
-          {imageModalProject && (
-            <>
-              <Box
-                onClick={handleCloseImageModal}
-                sx={{
-                  position: 'fixed',
-                  inset: 0,
-                  backgroundColor: 'rgba(0, 0, 0, 0.5)',
-                  borderRadius: '20px',
-                  zIndex: 0,
-                }}
-              />  
-            <Box
-              sx={{
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'flex-end',
-                gap: 2,
-              }}>
-              <Box
-                onClick={(e) => e.stopPropagation()}
-                sx={{
-                  position: 'relative',
-                  zIndex: 1,
-                  maxWidth: PROJECT_MODAL_MAX_WIDTH,
-                  maxHeight: PROJECT_MODAL_MAX_HEIGHT,
-                  width: '99%',
-                  height: '99%',
-                  outline: 'none',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  alignItems: 'flex-end',
-                  gap: 1.5,
-                  borderRadius: '20px',
-                  overflow: 'auto',
-                }}
-              >
-                <Box
-                  sx={{
-                    flex: 1,
-                    minHeight: 0,
-                    width: '100%',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'flex-end',
-                  }}
-                >
-                  <Box
-                    component="img"
-                    src={imageModalProject.demo ?? imageModalProject.image}
-                    alt={imageModalProject.title}
-                    sx={{
-                      width: 'auto',
-                      maxWidth: '100%',
-                      height: 'auto',
-                      objectFit: 'contain',
-                      boxShadow: '0 24px 80px rgba(0, 0, 0, 0.4)',
-                      borderRadius: '20px',
-                    }}
-                  />
-                </Box>
-              </Box>
-              {imageModalProject.link && (
-                <Button
-                  component="a"
-                  href={imageModalProject.link}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  onClick={(e) => e.stopPropagation()}
-                  endIcon={<Icon icon="mdi:arrow-right" />}
-                  sx={{
-                    color: '#FFFFFF',
-                    textTransform: 'none',
-                    padding: 0,
-                    minWidth: 0,
-                    fontSize: '0.9375rem',
-                    textDecoration: 'none',
-                    opacity: .7,
-                    transition: 'opacity 0.3s ease-in-out',
-                    '&:hover': {
-                      backgroundColor: 'transparent',
-                      textDecoration: 'none',
-                      opacity: 1,
-                    },
-                    '& .MuiButton-endIcon': {
-                      marginLeft: 0.5,
-                    },
-                    '& svg': {
-                      width: 18,
-                      height: 18,
-                    },
-                  }}
-                >
-                  Go to website
-                </Button>
-              )}
-            </Box>
-            </>
-          )}
-        </>
-      </Modal>
+      <CaseStudyPanel
+        project={panelProject}
+        isOpen={isPanelOpen}
+        onClose={handleCloseCaseStudy}
+      />
       <Box
         component="footer"
         sx={{
@@ -833,7 +551,9 @@ const AppContent: React.FC = () => {
 const App: React.FC = () => {
   return (
     <ThemeProvider>
-      <AppContent />
+      <AudienceProvider>
+        <AppContent />
+      </AudienceProvider>
     </ThemeProvider>
   );
 };

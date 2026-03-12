@@ -1,13 +1,128 @@
+/* ── Design Tokens ── */
+:root {
+  /* Fonts */
+  --font-disp: 'Syne', sans-serif;
+  --font-body: 'Plus Jakarta Sans', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+
+  /* Timing */
+  --speed: 0.4s;
+  --ease: ease;
+
+  /* Static accents */
+  --accent-purple: #b06ef3;
+  --accent-teal: #4df0c6;
+
+  /* Process section step number */
+  --step-number-color: rgba(255, 255, 255, 0.03);
+
+  /* Hero visual tokens */
+  --grid-line: rgba(255, 255, 255, 0.025);
+  --ghost-stroke: rgba(255, 255, 255, 0.18);
+
+  /* Dark mode surface tokens (default) */
+  --bg: #252525;
+  --surface: #252525;
+  --card: #2c2c2c;
+  --border: rgba(255, 255, 255, 0.08);
+  --text: rgba(255, 255, 255, 0.87);
+  --dim: #9090a0;
+  --off-white: #f5f5f5;
+  --muted: rgba(255, 255, 255, 0.32);
+}
+
+/* ── Audience accent ── */
+body[data-mode='ux'],
+body:not([data-mode]) {
+  --accent-active: #b06ef3;
+  --banner-border: rgba(176, 110, 243, 0.3);
+  --banner-bg: rgba(176, 110, 243, 0.05);
+  --banner-text: rgba(176, 110, 243, 0.7);
+}
+body[data-mode='dev'] {
+  --accent-active: #4df0c6;
+  --banner-border: rgba(77, 240, 198, 0.3);
+  --banner-bg: rgba(77, 240, 198, 0.05);
+  --banner-text: rgba(77, 240, 198, 0.7);
+}
+
+/* ── Light theme overrides ── */
+body[data-theme='light'] {
+  --step-number-color: rgba(0, 0, 0, 0.04);
+  --grid-line: rgba(0, 0, 0, 0.025);
+  --ghost-stroke: rgba(0, 0, 0, 0.15);
+  --bg: #fafafa;
+  --surface: #fafafa;
+  --card: #f0f0f0;
+  --border: rgba(0, 0, 0, 0.08);
+  --text: #333333;
+  --dim: #666672;
+  --off-white: #f5f5f5;
+  --muted: rgba(0, 0, 0, 0.42);
+}
+
+/* ── Global Resets ── */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  overflow-x: hidden;
+}
+
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
+  overflow-x: hidden;
+  font-family: var(--font-body);
+  font-weight: 300;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-disp);
+  margin: 0;
+}
+
+/* ── Smooth color transitions ── */
+a,
+p,
+span,
+li,
+label {
+  transition:
+    color var(--speed) var(--ease),
+    border-color var(--speed) var(--ease),
+    background-color var(--speed) var(--ease);
+}
+
+/* ── Noise texture overlay ── */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9999;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)'/%3E%3C/svg%3E");
+  opacity: 0.2;
+  mix-blend-mode: soft-light;
+}
+
+body[data-theme='light']::after {
+  opacity: 0.07;
+}
+
+/* ── Scroll reveal ── */
+.reveal-on-scroll {
+  opacity: 0;
+  transform: translateY(20px);
+  transition:
+    opacity 0.55s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.55s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.reveal-on-scroll.revealed {
+  opacity: 1;
+  transform: none;
 }

@@ -1,0 +1,191 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 560" width="900" height="560">
+  <!-- Base background -->
+  <rect width="900" height="560" fill="#0f0f1a"/>
+
+  <!-- Top nav bar -->
+  <rect width="900" height="50" fill="#16162a"/>
+  <rect y="50" width="900" height="1" fill="#2a2a44"/>
+
+  <!-- Logo area -->
+  <rect x="16" y="15" width="18" height="18" rx="4" fill="#b06ef3"/>
+  <rect x="42" y="19" width="72" height="10" rx="2" fill="#d0d0f0"/>
+
+  <!-- Nav tabs -->
+  <rect x="180" y="17" width="64" height="16" rx="8" fill="#22223a"/>
+  <rect x="254" y="17" width="80" height="16" rx="8" fill="#b06ef3"/>
+  <rect x="254" y="17" width="80" height="16" rx="8" fill="#b06ef3" opacity="0.15"/>
+  <rect x="256" y="19" width="76" height="12" rx="6" fill="#1e1e34"/>
+  <rect x="266" y="22" width="56" height="8" rx="2" fill="#b06ef3"/>
+  <rect x="344" y="17" width="64" height="16" rx="8" fill="#22223a"/>
+  <rect x="418" y="17" width="60" height="16" rx="8" fill="#22223a"/>
+
+  <!-- Nav right - user avatar + button -->
+  <rect x="820" y="14" width="64" height="22" rx="11" fill="#b06ef3"/>
+  <rect x="834" y="19" width="36" height="10" rx="2" fill="#fff" opacity="0.9"/>
+  <circle cx="793" cy="25" r="11" fill="#2a2a44"/>
+  <rect x="786" y="22" width="14" height="6" rx="2" fill="#6060a0"/>
+
+  <!-- ─── LEFT SIDEBAR ─── -->
+  <rect x="0" y="51" width="230" height="509" fill="#131322"/>
+  <rect x="230" y="51" width="1" height="509" fill="#2a2a44"/>
+
+  <!-- Sidebar header -->
+  <rect x="16" y="68" width="80" height="8" rx="2" fill="#4040a0" opacity="0.6"/>
+  <rect x="178" y="64" width="36" height="16" rx="8" fill="#b06ef3" opacity="0.2"/>
+  <rect x="186" y="68" width="20" height="8" rx="2" fill="#b06ef3" opacity="0.8"/>
+
+  <!-- Search in sidebar -->
+  <rect x="12" y="86" width="206" height="30" rx="6" fill="#1e1e32"/>
+  <rect x="28" y="97" width="80" height="8" rx="2" fill="#3a3a5a"/>
+  <rect x="200" y="97" width="10" height="8" rx="2" fill="#4040a0"/>
+
+  <!-- Category 1 - EXPANDED, active -->
+  <rect x="0" y="128" width="230" height="36" fill="#1c1c30"/>
+  <rect x="0" y="128" width="3" height="36" fill="#b06ef3"/>
+  <rect x="14" y="140" width="12" height="12" rx="2" fill="#b06ef3" opacity="0.3"/>
+  <rect x="32" y="143" width="86" height="8" rx="2" fill="#d0d0f0"/>
+  <rect x="200" y="143" width="20" height="8" rx="2" fill="#4a4a80"/>
+  <rect x="206" y="142" width="8" height="10" rx="1" fill="#6060a0" opacity="0.6"/>
+
+  <!-- Sub-items category 1 -->
+  <rect x="0" y="166" width="230" height="28" fill="#161626"/>
+  <rect x="44" y="177" width="110" height="8" rx="2" fill="#7070c0"/>
+  <rect x="0" y="196" width="230" height="28" fill="#1e1e34"/>
+  <rect x="3" y="196" width="2" height="28" fill="#b06ef3" opacity="0.6"/>
+  <rect x="44" y="206" width="130" height="8" rx="2" fill="#c0c0f0"/>
+  <rect x="186" y="203" width="32" height="14" rx="7" fill="#b06ef3" opacity="0.2"/>
+  <rect x="192" y="206" width="20" height="8" rx="2" fill="#b06ef3" opacity="0.8"/>
+  <rect x="0" y="226" width="230" height="28" fill="#161626"/>
+  <rect x="44" y="236" width="95" height="8" rx="2" fill="#5050a0"/>
+  <rect x="0" y="256" width="230" height="28" fill="#161626"/>
+  <rect x="44" y="266" width="120" height="8" rx="2" fill="#5050a0"/>
+
+  <!-- Category 2 collapsed -->
+  <rect x="0" y="286" width="230" height="36" fill="#13132a"/>
+  <rect x="14" y="298" width="12" height="12" rx="2" fill="#2a2a44"/>
+  <rect x="32" y="300" width="70" height="8" rx="2" fill="#4040a0" opacity="0.7"/>
+  <rect x="210" y="300" width="8" height="8" rx="1" fill="#3a3a60" opacity="0.5"/>
+
+  <!-- Category 3 collapsed -->
+  <rect x="0" y="324" width="230" height="36" fill="#13132a"/>
+  <rect x="14" y="336" width="12" height="12" rx="2" fill="#2a2a44"/>
+  <rect x="32" y="338" width="90" height="8" rx="2" fill="#4040a0" opacity="0.7"/>
+  <rect x="210" y="338" width="8" height="8" rx="1" fill="#3a3a60" opacity="0.5"/>
+
+  <!-- Category 4 collapsed -->
+  <rect x="0" y="362" width="230" height="36" fill="#13132a"/>
+  <rect x="14" y="374" width="12" height="12" rx="2" fill="#2a2a44"/>
+  <rect x="32" y="376" width="80" height="8" rx="2" fill="#4040a0" opacity="0.7"/>
+  <rect x="210" y="376" width="8" height="8" rx="1" fill="#3a3a60" opacity="0.5"/>
+
+  <!-- Sidebar bottom action -->
+  <rect x="12" y="516" width="206" height="32" rx="6" fill="#b06ef3" opacity="0.15"/>
+  <rect x="12" y="516" width="206" height="32" rx="6" fill="none" stroke="#b06ef3" stroke-width="1" opacity="0.4"/>
+  <rect x="90" y="527" width="50" height="10" rx="3" fill="#b06ef3" opacity="0.8"/>
+
+  <!-- ─── MAIN EDITOR AREA ─── -->
+
+  <!-- Sub-header with breadcrumb -->
+  <rect x="231" y="51" width="669" height="46" fill="#15152a"/>
+  <rect x="231" y="97" width="669" height="1" fill="#2a2a44"/>
+  <rect x="252" y="63" width="80" height="9" rx="2" fill="#4040a0" opacity="0.6"/>
+  <rect x="340" y="65" width="6" height="5" rx="1" fill="#3a3a60"/>
+  <rect x="354" y="63" width="120" height="9" rx="2" fill="#d0d0f0"/>
+  <!-- Right actions -->
+  <rect x="754" y="61" width="56" height="22" rx="11" fill="#22223a"/>
+  <rect x="762" y="66" width="40" height="10" rx="3" fill="#6060a0"/>
+  <rect x="818" y="61" width="68" height="22" rx="11" fill="#b06ef3"/>
+  <rect x="828" y="66" width="48" height="10" rx="3" fill="#fff" opacity="0.9"/>
+
+  <!-- TinyMCE Toolbar -->
+  <rect x="231" y="98" width="669" height="42" fill="#18182e"/>
+  <rect x="231" y="140" width="669" height="1" fill="#2a2a44"/>
+
+  <!-- Toolbar buttons group 1 -->
+  <rect x="252" y="110" width="22" height="20" rx="3" fill="#22223a"/>
+  <rect x="259" y="115" width="8" height="2" rx="1" fill="#8080c0"/>
+  <rect x="259" y="119" width="8" height="2" rx="1" fill="#8080c0"/>
+  <rect x="259" y="123" width="6" height="2" rx="1" fill="#8080c0"/>
+
+  <rect x="280" y="110" width="22" height="20" rx="3" fill="#22223a"/>
+  <rect x="285" y="115" width="6" height="10" rx="1" fill="#a0a0d0" opacity="0.8"/>
+  <rect x="293" y="118" width="6" height="7" rx="1" fill="#a0a0d0" opacity="0.5"/>
+
+  <rect x="308" y="110" width="22" height="20" rx="3" fill="#22223a"/>
+  <rect x="313" y="116" width="12" height="8" rx="1" fill="#a0a0d0" opacity="0.6"/>
+
+  <rect x="338" y="116" width="1" height="12" fill="#2a2a44"/>
+
+  <rect x="348" y="110" width="22" height="20" rx="3" fill="#b06ef3" opacity="0.25"/>
+  <rect x="353" y="114" width="12" height="5" rx="1" fill="#b06ef3"/>
+  <rect x="353" y="121" width="8" height="3" rx="1" fill="#b06ef3" opacity="0.6"/>
+
+  <rect x="376" y="110" width="22" height="20" rx="3" fill="#22223a"/>
+  <rect x="381" y="115" width="12" height="10" rx="1" fill="#8080c0" opacity="0.7"/>
+
+  <rect x="404" y="110" width="22" height="20" rx="3" fill="#22223a"/>
+  <rect x="409" y="116" width="12" height="8" rx="1" fill="#8080c0" opacity="0.7"/>
+
+  <rect x="434" y="116" width="1" height="12" fill="#2a2a44"/>
+
+  <rect x="444" y="110" width="22" height="20" rx="3" fill="#22223a"/>
+  <rect x="450" y="113" width="10" height="14" rx="1" fill="#8080c0" opacity="0.5"/>
+
+  <rect x="472" y="110" width="22" height="20" rx="3" fill="#22223a"/>
+  <rect x="477" y="114" width="12" height="12" rx="2" fill="none" stroke="#8080c0" stroke-width="1.5"/>
+
+  <!-- Merge field button -->
+  <rect x="502" y="116" width="1" height="12" fill="#2a2a44"/>
+  <rect x="512" y="108" width="80" height="24" rx="12" fill="#22223a"/>
+  <rect x="520" y="115" width="64" height="10" rx="3" fill="#6060a0"/>
+
+  <!-- Subject line row -->
+  <rect x="231" y="141" width="669" height="46" fill="#13132a"/>
+  <rect x="231" y="187" width="669" height="1" fill="#2a2a44"/>
+  <rect x="252" y="156" width="48" height="8" rx="2" fill="#4040a0" opacity="0.7"/>
+  <rect x="316" y="153" width="540" height="20" rx="4" fill="#1c1c32"/>
+  <rect x="324" y="158" width="200" height="10" rx="2" fill="#9090c0"/>
+
+  <!-- Email preview area -->
+  <rect x="231" y="188" width="669" height="372" fill="#0f0f1e"/>
+
+  <!-- Email preview card centered -->
+  <rect x="290" y="208" width="550" height="332" rx="8" fill="#16162c"/>
+  <rect x="290" y="208" width="550" height="332" rx="8" fill="none" stroke="#2a2a44" stroke-width="1"/>
+
+  <!-- Email header section -->
+  <rect x="290" y="208" width="550" height="68" rx="8" fill="#1c1c34"/>
+  <rect x="290" y="252" width="550" height="24" fill="#1c1c34"/>
+  <!-- Logo in email header -->
+  <rect x="330" y="222" width="40" height="14" rx="3" fill="#b06ef3" opacity="0.4"/>
+  <rect x="378" y="224" width="60" height="10" rx="2" fill="#d0d0f0" opacity="0.8"/>
+  <!-- Nav in email header -->
+  <rect x="520" y="224" width="40" height="10" rx="2" fill="#8080c0" opacity="0.5"/>
+  <rect x="570" y="224" width="40" height="10" rx="2" fill="#8080c0" opacity="0.5"/>
+  <rect x="620" y="224" width="40" height="10" rx="2" fill="#8080c0" opacity="0.5"/>
+  <rect x="290" y="275" width="550" height="1" fill="#2a2a44"/>
+
+  <!-- Email body content -->
+  <rect x="330" y="294" width="240" height="16" rx="3" fill="#d0d0f0"/>
+  <rect x="330" y="318" width="460" height="8" rx="2" fill="#5050a0" opacity="0.7"/>
+  <rect x="330" y="332" width="420" height="8" rx="2" fill="#5050a0" opacity="0.7"/>
+  <rect x="330" y="346" width="440" height="8" rx="2" fill="#5050a0" opacity="0.7"/>
+  <rect x="330" y="360" width="380" height="8" rx="2" fill="#5050a0" opacity="0.7"/>
+
+  <!-- CTA button in email -->
+  <rect x="395" y="384" width="140" height="36" rx="18" fill="#b06ef3"/>
+  <rect x="415" y="393" width="100" height="10" rx="3" fill="#fff" opacity="0.95"/>
+
+  <!-- Footer content in email -->
+  <rect x="290" y="438" width="550" height="1" fill="#2a2a44"/>
+  <rect x="380" y="452" width="170" height="8" rx="2" fill="#3a3a5a"/>
+  <rect x="410" y="466" width="110" height="6" rx="2" fill="#2a2a44"/>
+
+  <!-- Bottom action bar -->
+  <rect x="231" y="509" width="669" height="51" fill="#16162a"/>
+  <rect x="231" y="509" width="669" height="1" fill="#2a2a44"/>
+  <rect x="252" y="523" width="100" height="22" rx="11" fill="#22223a"/>
+  <rect x="264" y="529" width="76" height="10" rx="3" fill="#6060a0"/>
+  <rect x="786" y="523" width="100" height="22" rx="11" fill="#b06ef3"/>
+  <rect x="800" y="529" width="72" height="10" rx="3" fill="#fff" opacity="0.9"/>
+</svg>

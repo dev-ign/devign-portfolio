@@ -1,7 +1,7 @@
-import React, { createContext, useContext, useState, useMemo, ReactNode } from 'react';
+import React, { createContext, useContext, useState, useMemo, useEffect, ReactNode } from 'react';
 import { ThemeProvider as MuiThemeProvider } from '@mui/material/styles';
 import { CssBaseline } from '@mui/material';
-import { ThemeMode, lightTheme, darkTheme } from '../theme/theme';
+import { ThemeMode, lightTheme, darkTheme } from '@/theme/theme';
 
 interface ThemeContextType {
   mode: ThemeMode;
@@ -27,6 +27,10 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
     const savedMode = localStorage.getItem('themeMode') as ThemeMode;
     return savedMode || 'dark';
   });
+
+  useEffect(() => {
+    document.body.setAttribute('data-theme', mode);
+  }, [mode]);
 
   const toggleTheme = () => {
     setMode((prevMode) => {
