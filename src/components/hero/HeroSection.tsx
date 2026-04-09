@@ -1,32 +1,75 @@
-import React, { useState, useEffect } from 'react';
+import React, { useRef, useEffect } from 'react';
 import { Box, Typography, Button } from '@mui/material';
+import { motion, useMotionValue, useSpring } from 'motion/react';
 import { useAudience } from '@/context/AudienceContext';
-import HeroStats from '@/components/hero/HeroStats';
+// import HeroStats from '@/components/hero/HeroStats';
 
 const ghost = {
   WebkitTextStroke: '1px var(--ghost-stroke)',
   color: 'transparent',
 } as const;
 
+const ORB_SIZE = 720;
+
+const technologies = [
+  'React',
+  'TypeScript',
+  'Next.js',
+  'Figma',
+  'Material UI',
+  'Emotion',
+  'TinyMCE',
+  'Web Audio API',
+  'Django REST',
+  'Wix',
+  'Design Systems',
+  'Component Libraries',
+  'UX Research',
+];
+
+const containerVariants = {
+  hidden: {},
+  visible: {
+    transition: { staggerChildren: 0.08 },
+  },
+};
+
+const rowVariants = {
+  hidden: { opacity: 0, x: -20 },
+  visible: {
+    opacity: 1,
+    x: 0,
+    transition: { duration: 0.6, ease: [0.16, 1, 0.3, 1] as any },
+  },
+};
+
 const HeroSection: React.FC = () => {
   const { audienceMode } = useAudience();
-  const [visible, setVisible] = useState(true);
   const isUX = audienceMode === 'ux';
 
-  // Fade content out/in on mode change
+  const heroRef = useRef<HTMLDivElement>(null);
+
+  // Motion values for orb position — start at top-right equivalent
+  const orbX = useMotionValue(typeof window !== 'undefined' ? window.innerWidth - 300 : 600);
+  const orbY = useMotionValue(-180);
+  const smoothX = useSpring(orbX, { stiffness: 60, damping: 20 });
+  const smoothY = useSpring(orbY, { stiffness: 60, damping: 20 });
+
   useEffect(() => {
-    setVisible(false);
-    const t = setTimeout(() => setVisible(true), 60);
-    return () => clearTimeout(t);
-  }, [audienceMode]);
+    const el = heroRef.current;
+    if (!el) return;
+    const handleMouseMove = (e: MouseEvent) => {
+      const rect = el.getBoundingClientRect();
+      orbX.set(e.clientX - rect.left - ORB_SIZE / 2);
+      orbY.set(e.clientY - rect.top - ORB_SIZE / 2);
+    };
+    el.addEventListener('mousemove', handleMouseMove);
+    return () => el.removeEventListener('mousemove', handleMouseMove);
+  }, [orbX, orbY]);
 
   const eyebrow = isUX
     ? 'UX/UI Engineer · Tampa, FL · Available for work'
     : 'Senior Frontend Engineer · React · TypeScript · Next.js';
-
-  const subRest = isUX
-    ? " — 8+ years turning Figma files into production React. I'm the designer who codes, and the engineer who designs. No handoff. No translation loss."
-    : ' — 8+ years in React + TypeScript. I design at a professional level too, which means I ship cleaner, more intentional UI faster than any pure dev.';
 
   const ctaPrimary = isUX ? 'View Case Studies' : 'View Shipped Projects';
 
@@ -36,6 +79,7 @@ const HeroSection: React.FC = () => {
 
   return (
     <Box
+      ref={heroRef}
       sx={{
         position: 'relative',
         pt: { xs: 5, md: 8 },
@@ -43,106 +87,109 @@ const HeroSection: React.FC = () => {
         overflow: 'hidden',
       }}
     >
-      {/* Accent glow orb — top-right */}
-      <Box
+      {/* Accent glow orb — follows mouse */}
+      <motion.div
         aria-hidden="true"
-        sx={{
+        style={{
+          x: smoothX,
+          y: smoothY,
           position: 'absolute',
-          top: '-180px',
-          right: '-140px',
-          width: { xs: '420px', md: '720px' },
-          height: { xs: '420px', md: '720px' },
+          width: `${ORB_SIZE}px`,
+          height: `${ORB_SIZE}px`,
           background: 'var(--accent-active)',
           opacity: 0.07,
           borderRadius: '50%',
           filter: 'blur(110px)',
           pointerEvents: 'none',
-          transition: 'background 0.4s ease',
+          zIndex: 0,
         }}
       />
 
-      {/* Content */}
-      <Box
-        sx={{
-          position: 'relative',
-          zIndex: 1,
-          opacity: visible ? 1 : 0,
-          transition: 'opacity 0.3s ease',
-        }}
+      {/* Content — stagger-animated rows */}
+      <motion.div
+        key={audienceMode}
+        variants={containerVariants}
+        initial="hidden"
+        animate="visible"
+        style={{ position: 'relative', zIndex: 1 }}
       >
         {/* Logo */}
-        <Box sx={{ display: 'flex', alignItems: 'baseline', mb: 6 }}>
-          <Typography
-            component="span"
-            sx={{
-              fontFamily: 'var(--font-disp)',
-              fontWeight: 800,
-              fontSize: { xs: '28px', md: '36px' },
-              letterSpacing: '2px',
-              color: 'text.primary',
-              lineHeight: 1,
-            }}
-          >
-            devign
-          </Typography>
-          <Typography
-            component="span"
-            sx={{
-              fontFamily: 'var(--font-disp)',
-              fontWeight: 800,
-              fontSize: { xs: '28px', md: '36px' },
-              letterSpacing: '2px',
-              color: 'var(--accent-active)',
-              lineHeight: 1,
-              transition: 'color 0.4s ease',
-            }}
-          >
-            UX
-          </Typography>
-        </Box>
+        <motion.div variants={rowVariants}>
+          <Box sx={{ display: 'flex', alignItems: 'baseline', mb: 6 }}>
+            <Typography
+              component="span"
+              sx={{
+                fontFamily: 'var(--font-disp)',
+                fontWeight: 800,
+                fontSize: { xs: '28px', md: '36px' },
+                letterSpacing: '2px',
+                color: 'text.primary',
+                lineHeight: 1,
+              }}
+            >
+              devign
+            </Typography>
+            <Typography
+              component="span"
+              sx={{
+                fontFamily: 'var(--font-disp)',
+                fontWeight: 800,
+                fontSize: { xs: '28px', md: '36px' },
+                letterSpacing: '2px',
+                color: 'var(--accent-active)',
+                lineHeight: 1,
+                transition: 'color 0.4s ease',
+              }}
+            >
+              UX
+            </Typography>
+          </Box>
+        </motion.div>
 
         {/* Eyebrow */}
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: '12px', mb: 3 }}>
-          <Box
-            sx={{
-              width: '28px',
-              height: '1px',
-              backgroundColor: 'var(--accent-active)',
-              flexShrink: 0,
-              transition: 'background-color 0.4s ease',
-            }}
-          />
-          <Typography
-            sx={{
-              fontFamily: 'var(--font-mono)',
-              fontSize: '11px',
-              letterSpacing: '0.14em',
-              textTransform: 'uppercase',
-              color: 'var(--accent-active)',
-              transition: 'color 0.4s ease',
-            }}
-          >
-            {eyebrow}
-          </Typography>
-        </Box>
+        <motion.div variants={rowVariants}>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: '12px', mb: 3 }}>
+            <Box
+              sx={{
+                width: '28px',
+                height: '1px',
+                backgroundColor: 'var(--accent-active)',
+                flexShrink: 0,
+                transition: 'background-color 0.4s ease',
+              }}
+            />
+            <Typography
+              sx={{
+                fontFamily: 'var(--font-mono)',
+                fontSize: '11px',
+                letterSpacing: '0.14em',
+                textTransform: 'uppercase',
+                color: 'var(--accent-active)',
+                transition: 'color 0.4s ease',
+              }}
+            >
+              {eyebrow}
+            </Typography>
+          </Box>
+        </motion.div>
 
-        {/* Headline */}
-        <Box
-          component="h1"
-          sx={{
-            margin: 0,
-            mb: 4,
-            fontFamily: 'var(--font-disp)',
-            fontWeight: 800,
-            fontSize: 'clamp(40px, 10vw, 112px)',
-            lineHeight: 0.95,
-            letterSpacing: '-0.02em',
-          }}
-        >
-          {isUX ? (
-            <>
-              {/* UX: "design" accent, "& build" ghost */}
-              <Box component="span" sx={{ display: 'block', color: 'text.primary' }}>
+        {/* Headline — each line is its own row */}
+        {isUX ? (
+          <>
+            <motion.div variants={rowVariants}>
+              <Box
+                component="span"
+                sx={{
+                  display: 'block',
+                  fontFamily: 'var(--font-disp)',
+                  fontWeight: 800,
+                  fontSize: 'clamp(30px, 5.5vw, 72px)',
+                  lineHeight: 0.95,
+                  letterSpacing: '-0.02em',
+                  color: 'text.primary',
+                  mb: 0,
+                }}
+              >
                 I{' '}
                 <Box
                   component="span"
@@ -151,23 +198,74 @@ const HeroSection: React.FC = () => {
                   design
                 </Box>
               </Box>
-              <Box component="span" sx={{ display: 'block', ...ghost }}>
+            </motion.div>
+            <motion.div variants={rowVariants}>
+              <Box
+                component="span"
+                sx={{
+                  display: 'block',
+                  fontFamily: 'var(--font-disp)',
+                  fontWeight: 800,
+                  fontSize: 'clamp(30px, 5.5vw, 72px)',
+                  lineHeight: 0.95,
+                  letterSpacing: '-0.02em',
+                  ...ghost,
+                }}
+              >
                 &amp; build
               </Box>
-              <Box component="span" sx={{ display: 'block', color: 'text.primary' }}>
+            </motion.div>
+            <motion.div variants={rowVariants}>
+              <Box
+                component="span"
+                sx={{
+                  display: 'block',
+                  fontFamily: 'var(--font-disp)',
+                  fontWeight: 800,
+                  fontSize: 'clamp(30px, 5.5vw, 72px)',
+                  lineHeight: 0.95,
+                  letterSpacing: '-0.02em',
+                  color: 'text.primary',
+                  mb: 4,
+                }}
+              >
                 interfaces.
               </Box>
-            </>
-          ) : (
-            <>
-              {/* Dev: "build" accent, "design" + "&" ghost */}
-              <Box component="span" sx={{ display: 'block', color: 'text.primary' }}>
+            </motion.div>
+          </>
+        ) : (
+          <>
+            <motion.div variants={rowVariants}>
+              <Box
+                component="span"
+                sx={{
+                  display: 'block',
+                  fontFamily: 'var(--font-disp)',
+                  fontWeight: 800,
+                  fontSize: 'clamp(30px, 5.5vw, 72px)',
+                  lineHeight: 0.95,
+                  letterSpacing: '-0.02em',
+                  color: 'text.primary',
+                }}
+              >
                 I{' '}
                 <Box component="span" sx={ghost}>
                   design
                 </Box>
               </Box>
-              <Box component="span" sx={{ display: 'block' }}>
+            </motion.div>
+            <motion.div variants={rowVariants}>
+              <Box
+                component="span"
+                sx={{
+                  display: 'block',
+                  fontFamily: 'var(--font-disp)',
+                  fontWeight: 800,
+                  fontSize: 'clamp(30px, 5.5vw, 72px)',
+                  lineHeight: 0.95,
+                  letterSpacing: '-0.02em',
+                }}
+              >
                 <Box component="span" sx={ghost}>
                   &amp;
                 </Box>{' '}
@@ -178,88 +276,131 @@ const HeroSection: React.FC = () => {
                   build
                 </Box>
               </Box>
-              <Box component="span" sx={{ display: 'block', color: 'text.primary' }}>
+            </motion.div>
+            <motion.div variants={rowVariants}>
+              <Box
+                component="span"
+                sx={{
+                  display: 'block',
+                  fontFamily: 'var(--font-disp)',
+                  fontWeight: 800,
+                  fontSize: 'clamp(30px, 5.5vw, 72px)',
+                  lineHeight: 0.95,
+                  letterSpacing: '-0.02em',
+                  color: 'text.primary',
+                  mb: 4,
+                }}
+              >
                 interfaces.
               </Box>
-            </>
-          )}
-        </Box>
+            </motion.div>
+          </>
+        )}
 
-        {/* Subheadline */}
-        <Typography
-          sx={{
-            fontFamily: 'var(--font-body)',
-            fontSize: { xs: '14px', md: '16px' },
-            fontWeight: 300,
-            lineHeight: 1.75,
-            color: 'var(--dim)',
-            mb: 5,
-            maxWidth: '640px',
-          }}
-        >
-          <Box component="span" sx={{ fontWeight: 500, color: 'text.primary' }}>
-            Jona Ferreira
+        {/* Subheadline — "Jona Ferreira" + floating tech pills */}
+        <motion.div variants={rowVariants}>
+          <Box sx={{ mb: 5 }}>
+            <Typography
+              sx={{
+                fontFamily: 'var(--font-body)',
+                fontSize: '14px',
+                fontWeight: 500,
+                color: 'text.primary',
+                mb: 1.5,
+              }}
+            >
+              Jona Ferreira
+            </Typography>
+            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+              {technologies.map((tech, i) => (
+                <Box
+                  key={tech}
+                  component="span"
+                  style={{
+                    animation: `pillFloat 2.5s ${i * 0.15}s infinite alternate ease-in-out`,
+                  }}
+                  sx={{
+                    fontFamily: 'var(--font-mono)',
+                    fontSize: '10px',
+                    letterSpacing: '0.06em',
+                    border: '1px solid var(--border)',
+                    borderRadius: '100px',
+                    px: '10px',
+                    py: '4px',
+                    color: 'var(--dim)',
+                    background: 'transparent',
+                    display: 'inline-block',
+                    userSelect: 'none',
+                  }}
+                >
+                  {tech}
+                </Box>
+              ))}
+            </Box>
           </Box>
-          {subRest}
-        </Typography>
+        </motion.div>
 
         {/* CTAs */}
-        <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2 }}>
-          <Button
-            onClick={scrollToWork}
-            sx={{
-              fontFamily: 'var(--font-mono)',
-              fontSize: '11px',
-              letterSpacing: '0.06em',
-              textTransform: 'uppercase',
-              px: '24px',
-              py: '12px',
-              borderRadius: '100px',
-              backgroundColor: 'var(--accent-active)',
-              color: '#0f0f0f',
-              fontWeight: 500,
-              boxShadow: 'none',
-              transition: 'all 0.22s ease',
-              '&:hover': {
+        <motion.div variants={rowVariants}>
+          <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2, marginBottom: '60px' }}>
+            <Button
+              onClick={scrollToWork}
+              sx={{
+                fontFamily: 'var(--font-mono)',
+                fontSize: '11px',
+                letterSpacing: '0.06em',
+                textTransform: 'uppercase',
+                px: '24px',
+                py: '12px',
+                borderRadius: '100px',
                 backgroundColor: 'var(--accent-active)',
-                opacity: 0.85,
+                color: '#0f0f0f',
+                fontWeight: 500,
                 boxShadow: 'none',
-                transform: 'translateY(-1px)',
-              },
-            }}
-          >
-            {ctaPrimary}
-          </Button>
-          <Button
-            component="a"
-            href="/Jonaferreiraresume.pdf"
-            download="Jonaferreiraresume.pdf"
-            sx={{
-              fontFamily: 'var(--font-mono)',
-              fontSize: '11px',
-              letterSpacing: '0.06em',
-              textTransform: 'uppercase',
-              px: '24px',
-              py: '12px',
-              borderRadius: '100px',
-              border: '1px solid var(--border)',
-              color: 'var(--dim)',
-              fontWeight: 400,
-              transition: 'all 0.22s ease',
-              '&:hover': {
-                border: '1px solid var(--accent-active)',
-                color: 'var(--accent-active)',
-                backgroundColor: 'transparent',
-              },
-            }}
-          >
-            Download Resume
-          </Button>
-        </Box>
+                transition: 'all 0.22s ease',
+                '&:hover': {
+                  backgroundColor: 'var(--accent-active)',
+                  opacity: 0.85,
+                  boxShadow: 'none',
+                  transform: 'translateY(-1px)',
+                },
+              }}
+            >
+              {ctaPrimary}
+            </Button>
+            <Button
+              component="a"
+              href="/Jonaferreiraresume.pdf"
+              download="Jonaferreiraresume.pdf"
+              sx={{
+                fontFamily: 'var(--font-mono)',
+                fontSize: '11px',
+                letterSpacing: '0.06em',
+                textTransform: 'uppercase',
+                px: '24px',
+                py: '12px',
+                borderRadius: '100px',
+                border: '1px solid var(--border)',
+                color: 'var(--dim)',
+                fontWeight: 400,
+                transition: 'all 0.22s ease',
+                '&:hover': {
+                  border: '1px solid var(--accent-active)',
+                  color: 'var(--accent-active)',
+                  backgroundColor: 'transparent',
+                },
+              }}
+            >
+              Download Resume
+            </Button>
+          </Box>
+        </motion.div>
 
         {/* Stats */}
-        <HeroStats />
-      </Box>
+        <motion.div variants={rowVariants}>
+          {/* <HeroStats /> */}
+        </motion.div>
+      </motion.div>
     </Box>
   );
 };

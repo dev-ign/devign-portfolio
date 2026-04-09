@@ -1,9 +1,9 @@
 import React from 'react';
-import { Box, Typography } from '@mui/material';
+import { Box } from '@mui/material';
 import { useAudience } from '@/context/AudienceContext';
 import SectionHeader from '@/components/ui/SectionHeader';
-import useScrollReveal from '@/hooks/useScrollReveal';
 
+/*
 const steps = [
   {
     number: '01',
@@ -34,101 +34,164 @@ const steps = [
       'I implement what I design in React + TypeScript. Zero handoff friction — I am the handoff.',
   },
 ];
+*/
+
 
 const ProcessSection: React.FC = () => {
   const { audienceMode } = useAudience();
-  const revealRef = useScrollReveal();
 
   if (audienceMode !== 'ux') return null;
 
   return (
-    <Box ref={revealRef} sx={{ mt: 10, mb: 8 }}>
+    <Box sx={{ mt: 10, mb: 8 }}>
       <SectionHeader
-        kicker="Design Process"
-        title="How I Work"
-        subtitle="Research-grounded. Systems-minded. Every design ends in working code."
+        kicker="Track Record"
+        title="Numbers & Results"
+        subtitle="Shipped at scale. Measured by impact."
       />
 
-      {/* Cards grid with border-gap trick */}
-      <Box
+      {/* Numbers grid */}
+      {/* <Box
+        component={motion.div}
+        variants={containerVariants}
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, amount: 0.15 }}
         sx={{
-          border: '1px solid var(--border)',
-          borderRadius: '22px',
-          overflow: 'hidden',
+          display: 'grid',
+          gridTemplateColumns: { xs: 'repeat(2, 1fr)', md: 'repeat(4, 1fr)' },
+          gap: '12px',
         }}
       >
-        <Box
-          sx={{
-            display: 'grid',
-            gridTemplateColumns: { xs: 'repeat(2, 1fr)', md: 'repeat(4, 1fr)' },
-            gap: '1px',
-            background: 'var(--border)',
-          }}
-        >
-          {steps.map((step) => (
+        {metrics.map((m) => (
+          <motion.div key={m.label} variants={cardVariants}>
             <Box
-              key={step.number}
               sx={{
                 background: 'var(--card)',
-                padding: '28px 24px',
-                position: 'relative',
-                overflow: 'hidden',
+                border: '1px solid var(--border)',
+                borderRadius: '14px',
+                padding: '28px',
+                height: '100%',
+                transition: 'border-color 0.22s ease',
+                '&:hover': {
+                  borderColor: 'var(--accent-active)',
+                },
               }}
             >
-              {/* Faint step number — background decoration */}
               <Typography
-                aria-hidden="true"
                 sx={{
-                  position: 'absolute',
-                  top: '8px',
-                  right: '12px',
                   fontFamily: 'var(--font-disp)',
-                  fontSize: '56px',
                   fontWeight: 800,
-                  color: 'var(--step-number-color)',
+                  fontSize: '42px',
                   lineHeight: 1,
-                  userSelect: 'none',
-                  pointerEvents: 'none',
+                  color: 'var(--accent-active)',
+                  mb: '8px',
+                  transition: 'color 0.4s ease',
                 }}
               >
-                {step.number}
+                {m.value}
               </Typography>
-
-              {/* Emoji icon */}
-              <Box sx={{ fontSize: '24px', mb: '14px', lineHeight: 1 }}>
-                {step.icon}
-              </Box>
-
-              {/* Step title */}
-              <Typography
-                sx={{
-                  fontFamily: 'var(--font-disp)',
-                  fontWeight: 700,
-                  fontSize: '16px',
-                  color: 'text.primary',
-                  mb: 1,
-                  lineHeight: 1.2,
-                }}
-              >
-                {step.title}
-              </Typography>
-
-              {/* Description */}
               <Typography
                 sx={{
                   fontFamily: 'var(--font-body)',
-                  fontSize: '12px',
-                  color: 'var(--dim)',
-                  lineHeight: 1.65,
-                  fontWeight: 300,
+                  fontWeight: 600,
+                  fontSize: '13px',
+                  color: 'text.primary',
+                  mb: '4px',
+                  lineHeight: 1.3,
                 }}
               >
-                {step.description}
+                {m.label}
+              </Typography>
+              <Typography
+                sx={{
+                  fontFamily: 'var(--font-mono)',
+                  fontSize: '10px',
+                  color: 'var(--muted)',
+                  lineHeight: 1.5,
+                }}
+              >
+                {m.note}
               </Typography>
             </Box>
-          ))}
+          </motion.div>
+        ))}
+      </Box> */}
+
+      {/*
+        <Box
+          sx={{
+            border: '1px solid var(--border)',
+            borderRadius: '22px',
+            overflow: 'hidden',
+          }}
+        >
+          <Box
+            sx={{
+              display: 'grid',
+              gridTemplateColumns: { xs: 'repeat(2, 1fr)', md: 'repeat(4, 1fr)' },
+              gap: '1px',
+              background: 'var(--border)',
+            }}
+          >
+            {steps.map((step) => (
+              <Box
+                key={step.number}
+                sx={{
+                  background: 'var(--card)',
+                  padding: '28px 24px',
+                  position: 'relative',
+                  overflow: 'hidden',
+                }}
+              >
+                <Typography
+                  aria-hidden="true"
+                  sx={{
+                    position: 'absolute',
+                    top: '8px',
+                    right: '12px',
+                    fontFamily: 'var(--font-disp)',
+                    fontSize: '56px',
+                    fontWeight: 800,
+                    color: 'var(--step-number-color)',
+                    lineHeight: 1,
+                    userSelect: 'none',
+                    pointerEvents: 'none',
+                  }}
+                >
+                  {step.number}
+                </Typography>
+                <Box sx={{ fontSize: '24px', mb: '14px', lineHeight: 1 }}>
+                  {step.icon}
+                </Box>
+                <Typography
+                  sx={{
+                    fontFamily: 'var(--font-disp)',
+                    fontWeight: 700,
+                    fontSize: '16px',
+                    color: 'text.primary',
+                    mb: 1,
+                    lineHeight: 1.2,
+                  }}
+                >
+                  {step.title}
+                </Typography>
+                <Typography
+                  sx={{
+                    fontFamily: 'var(--font-body)',
+                    fontSize: '12px',
+                    color: 'var(--dim)',
+                    lineHeight: 1.65,
+                    fontWeight: 300,
+                  }}
+                >
+                  {step.description}
+                </Typography>
+              </Box>
+            ))}
+          </Box>
         </Box>
-      </Box>
+      */}
     </Box>
   );
 };

@@ -12,6 +12,7 @@ import {
   Alert,
 } from '@mui/material';
 import { Icon } from '@iconify/react';
+import { motion } from 'motion/react';
 import emailjs from '@emailjs/browser';
 import Navigation from '@/components/Navigation';
 import HeroSection from '@/components/hero/HeroSection';
@@ -21,7 +22,6 @@ import StackSection from '@/components/sections/StackSection';
 import MetricsRow from '@/components/sections/MetricsRow';
 import TestimonialBlock from '@/components/sections/TestimonialBlock';
 import ResumeStrip from '@/components/sections/ResumeStrip';
-import useScrollReveal from '@/hooks/useScrollReveal';
 import ProjectCard from '@/components/projects/ProjectCard';
 import CaseStudyPanel from '@/components/panel/CaseStudyPanel';
 import { ThemeProvider } from '@/context/ThemeContext';
@@ -56,7 +56,6 @@ const AppContent: React.FC = () => {
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [panelProject, setPanelProject] = useState<Project | null>(null);
   const [isPanelOpen, setIsPanelOpen] = useState(false);
-  const projectsRevealRef = useScrollReveal();
 
   const handleOpenForm = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
@@ -182,8 +181,15 @@ const AppContent: React.FC = () => {
           <HeroSection />
           <ContextBanner />
           <Box
-            ref={projectsRevealRef}
+            component={motion.div}
             id="work"
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, amount: 0.05 }}
+            variants={{
+              hidden: {},
+              visible: { transition: { staggerChildren: 0.1 } },
+            }}
             sx={{
               display: 'grid',
               gridTemplateColumns: {
@@ -196,11 +202,22 @@ const AppContent: React.FC = () => {
             }}
           >
             {projects.map((project) => (
-              <ProjectCard
+              <motion.div
                 key={project.id}
-                project={project}
-                onCaseStudyOpen={() => handleOpenCaseStudy(project)}
-              />
+                variants={{
+                  hidden: { opacity: 0, y: 24 },
+                  visible: {
+                    opacity: 1,
+                    y: 0,
+                    transition: { duration: 0.55, ease: [0.16, 1, 0.3, 1] },
+                  },
+                }}
+              >
+                <ProjectCard
+                  project={project}
+                  onCaseStudyOpen={() => handleOpenCaseStudy(project)}
+                />
+              </motion.div>
             ))}
           </Box>
           <ProcessSection />
