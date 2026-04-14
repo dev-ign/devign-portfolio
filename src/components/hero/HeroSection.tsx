@@ -1,5 +1,5 @@
 import React, { useRef, useEffect } from 'react';
-import { Box, Typography, Button } from '@mui/material';
+import { Box, Button, Typography } from '@mui/material';
 import { motion, useMotionValue, useSpring } from 'motion/react';
 import { useAudience } from '@/context/AudienceContext';
 // import HeroStats from '@/components/hero/HeroStats';
@@ -21,10 +21,12 @@ const technologies = [
   'TinyMCE',
   'Web Audio API',
   'Django REST',
+  'REST API',
   'Wix',
   'Design Systems',
   'Component Libraries',
   'UX Research',
+  'AI Tools',
 ];
 
 const containerVariants = {
@@ -111,44 +113,29 @@ const HeroSection: React.FC = () => {
         variants={containerVariants}
         initial="hidden"
         animate="visible"
-        style={{ position: 'relative', zIndex: 1 }}
+        style={{ position: 'relative', zIndex: 1, textAlign: 'center' }}
       >
-        {/* Logo */}
+        {/* Name */}
         <motion.div variants={rowVariants}>
-          <Box sx={{ display: 'flex', alignItems: 'baseline', mb: 6 }}>
-            <Typography
-              component="span"
-              sx={{
-                fontFamily: 'var(--font-disp)',
-                fontWeight: 800,
-                fontSize: { xs: '28px', md: '36px' },
-                letterSpacing: '2px',
-                color: 'text.primary',
-                lineHeight: 1,
-              }}
-            >
-              devign
-            </Typography>
-            <Typography
-              component="span"
-              sx={{
-                fontFamily: 'var(--font-disp)',
-                fontWeight: 800,
-                fontSize: { xs: '28px', md: '36px' },
-                letterSpacing: '2px',
-                color: 'var(--accent-active)',
-                lineHeight: 1,
-                transition: 'color 0.4s ease',
-              }}
-            >
-              UX
-            </Typography>
+          <Box
+            component="span"
+            sx={{
+              display: 'block',
+              fontFamily: 'var(--font-disp)',
+              fontWeight: 800,
+              fontSize: { xs: '28px', md: '36px' },
+              letterSpacing: '1px',
+              color: 'text.primary',
+              mb: 6,
+            }}
+          >
+            Jona.
           </Box>
         </motion.div>
 
         {/* Eyebrow */}
         <motion.div variants={rowVariants}>
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: '12px', mb: 3 }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px', mb: 3 }}>
             <Box
               sx={{
                 width: '28px',
@@ -297,28 +284,17 @@ const HeroSection: React.FC = () => {
           </>
         )}
 
-        {/* Subheadline — "Jona Ferreira" + floating tech pills */}
+        {/* Tech pill marquee */}
         <motion.div variants={rowVariants}>
-          <Box sx={{ mb: 5 }}>
-            <Typography
-              sx={{
-                fontFamily: 'var(--font-body)',
-                fontSize: '14px',
-                fontWeight: 500,
-                color: 'text.primary',
-                mb: 1.5,
-              }}
-            >
-              Jona Ferreira
-            </Typography>
-            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
-              {technologies.map((tech, i) => (
+          <Box
+            className="marquee-mask"
+            sx={{ overflow: 'hidden', maxWidth: '480px', mx: 'auto', mb: 5 }}
+          >
+            <Box className="marquee-track" sx={{ display: 'flex', gap: '8px', width: 'max-content' }}>
+              {[...technologies, ...technologies].map((tech, i) => (
                 <Box
-                  key={tech}
+                  key={`${tech}-${i}`}
                   component="span"
-                  style={{
-                    animation: `pillFloat 2.5s ${i * 0.15}s infinite alternate ease-in-out`,
-                  }}
                   sx={{
                     fontFamily: 'var(--font-mono)',
                     fontSize: '10px',
@@ -331,6 +307,7 @@ const HeroSection: React.FC = () => {
                     background: 'transparent',
                     display: 'inline-block',
                     userSelect: 'none',
+                    whiteSpace: 'nowrap',
                   }}
                 >
                   {tech}
@@ -342,7 +319,7 @@ const HeroSection: React.FC = () => {
 
         {/* CTAs */}
         <motion.div variants={rowVariants}>
-          <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2, marginBottom: '60px' }}>
+          <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2, marginBottom: '60px', justifyContent: 'center' }}>
             <Button
               onClick={scrollToWork}
               sx={{

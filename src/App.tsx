@@ -170,6 +170,7 @@ const AppContent: React.FC = () => {
           minHeight: '100vh',
           backgroundColor: 'background.default',
           px: { xs: 2, md: 4 },
+          overflowX: 'hidden',
           filter: isPanelOpen ? 'blur(3px) brightness(0.4)' : 'none',
           transform: isPanelOpen ? 'scale(0.97)' : 'scale(1)',
           transformOrigin: 'center top',
@@ -199,11 +200,13 @@ const AppContent: React.FC = () => {
               },
               gap: { xs: 2, md: 4 },
               mt: 2,
+              minWidth: 0,
             }}
           >
             {projects.map((project) => (
               <motion.div
                 key={project.id}
+                style={{ minWidth: 0, overflow: 'hidden' }}
                 variants={{
                   hidden: { opacity: 0, y: 24 },
                   visible: {
@@ -241,7 +244,7 @@ const AppContent: React.FC = () => {
           color: 'text.primary',
           boxShadow: '0 20px 60px 0 rgba(0, 0, 0, 0.4), 0 8px 24px 0 rgba(0, 0, 0, 0.3)',
           transition: 'all 0.3s ease-in-out',
-          zIndex: 1000,
+          zIndex: isPanelOpen ? 50 : 1000,
           '&:hover': {
             backgroundColor: alpha(theme.palette.background.paper, 0.25),
             border: `1px solid ${alpha(theme.palette.background.paper, 0.4)}`,

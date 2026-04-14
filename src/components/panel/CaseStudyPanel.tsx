@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Box, Typography, Button, IconButton, useMediaQuery } from '@mui/material';
+import { Box, Typography, IconButton, Tooltip, useMediaQuery } from '@mui/material';
+import { Icon } from '@iconify/react';
 import { Project } from '@/data/projects';
 import CaseStudyContent from '@/components/panel/CaseStudyContent';
 
@@ -284,60 +285,42 @@ const CaseStudyPanel: React.FC<CaseStudyPanelProps> = ({ project, isOpen, onClos
             >
               {project.caseStudy.footerImpact}
             </Typography>
-            <Box sx={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+            <Box sx={{ display: 'flex', gap: '4px', alignItems: 'center' }}>
               {project.liveUrl && (
-                <Button
-                  component="a"
-                  href={project.liveUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  sx={{
-                    fontFamily: 'var(--font-mono)',
-                    fontSize: '10px',
-                    letterSpacing: '0.04em',
-                    textTransform: 'none',
-                    px: '16px',
-                    py: '7px',
-                    borderRadius: '100px',
-                    border: '1px solid var(--border)',
-                    color: 'var(--dim)',
-                    transition: 'all 0.22s ease',
-                    '&:hover': {
-                      borderColor: 'var(--accent-active)',
-                      color: 'var(--accent-active)',
-                      backgroundColor: 'transparent',
-                    },
-                  }}
-                >
-                  Live Site →
-                </Button>
+                <Tooltip title="Live Site" placement="top">
+                  <IconButton
+                    component="a"
+                    href={project.liveUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    size="small"
+                    sx={{
+                      color: 'var(--dim)',
+                      transition: 'color 0.22s ease',
+                      '&:hover': { color: 'var(--accent-active)', backgroundColor: 'transparent' },
+                    }}
+                  >
+                    <Icon icon="ph:globe-bold" width={18} height={18} />
+                  </IconButton>
+                </Tooltip>
               )}
               {project.githubUrl && (
-                <Button
-                  component="a"
-                  href={project.githubUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  sx={{
-                    fontFamily: 'var(--font-mono)',
-                    fontSize: '10px',
-                    letterSpacing: '0.04em',
-                    textTransform: 'none',
-                    px: '16px',
-                    py: '7px',
-                    borderRadius: '100px',
-                    backgroundColor: 'var(--accent-active)',
-                    color: '#0f0f0f',
-                    fontWeight: 500,
-                    transition: 'all 0.22s ease',
-                    '&:hover': {
-                      backgroundColor: 'var(--accent-active)',
-                      opacity: 0.85,
-                    },
-                  }}
-                >
-                  View on GitHub
-                </Button>
+                <Tooltip title="GitHub" placement="top">
+                  <IconButton
+                    component="a"
+                    href={project.githubUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    size="small"
+                    sx={{
+                      color: 'var(--dim)',
+                      transition: 'color 0.22s ease',
+                      '&:hover': { color: 'var(--accent-active)', backgroundColor: 'transparent' },
+                    }}
+                  >
+                    <Icon icon="mdi:github" width={18} height={18} />
+                  </IconButton>
+                </Tooltip>
               )}
             </Box>
           </Box>

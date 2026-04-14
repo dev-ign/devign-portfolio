@@ -25,7 +25,7 @@ export interface Project {
   rolePillLabel: string;
   impactLine: string;
   liveUrl: string;
-  githubUrl?: string;
+  githubUrl: string;
   caseStudy: {
     heroBackground: string;
     footerImpact: string;
@@ -48,6 +48,7 @@ export const projects: Project[] = [
     rolePillLabel: 'Design + Code',
     impactLine: 'Self-serve templates · TinyMCE editor · React + Django',
     liveUrl: '',
+    githubUrl: '',
     caseStudy: {
       heroBackground: templateManagerImage,
       footerImpact: 'Self-serve email templates · TinyMCE editor · React + Django',
@@ -125,6 +126,7 @@ export const projects: Project[] = [
     rolePillLabel: 'Design + Code',
     impactLine: 'High-performance search · Data grid UX · Fundraiser workflow',
     liveUrl: '',
+    githubUrl: '',
     caseStudy: {
       heroBackground: donorDirectoryImage,
       footerImpact: 'High-performance search · Data grid UX · Fundraiser workflow',
@@ -201,6 +203,7 @@ export const projects: Project[] = [
     rolePillLabel: 'Design + Code',
     impactLine: '↑ ~40% faster talent selection workflow',
     liveUrl: 'https://www.allbooked.co/',
+    githubUrl: '',
     caseStudy: {
       heroBackground: urgeProjectImage,
       footerImpact: '↑ ~40% faster talent selection workflow',
@@ -276,6 +279,7 @@ export const projects: Project[] = [
     rolePillLabel: 'Design + Code',
     impactLine: 'Mobile-first · Inline audio player',
     liveUrl: 'https://swsmusicgroup.com/',
+    githubUrl: '',
     caseStudy: {
       heroBackground: swProjectImage,
       footerImpact: 'Mobile-first · Inline audio · Editorial UI',
@@ -328,6 +332,7 @@ export const projects: Project[] = [
     rolePillLabel: 'Wix · Figma',
     impactLine: 'Figma → Wix · Responsive marketing platform',
     liveUrl: '',
+    githubUrl: '',
     caseStudy: {
       heroBackground: givzeyProjectImage,
       footerImpact: 'Figma → Wix · Responsive marketing platform',
@@ -384,6 +389,7 @@ export const projects: Project[] = [
     rolePillLabel: 'Design + Code',
     impactLine: 'Cultural branding · React preorder system',
     liveUrl: '',
+    githubUrl: '',
     caseStudy: {
       heroBackground: chancletazoProjectImage,
       footerImpact: 'Cultural branding · React preorder system',
@@ -442,6 +448,7 @@ export const projects: Project[] = [
     rolePillLabel: 'Design + Code',
     impactLine: 'Engineering advisory · Lead gen platform',
     liveUrl: 'https://www.gradumgroup.com/',
+    githubUrl: '',
     caseStudy: {
       heroBackground: gradumProjectImage,
       footerImpact: 'Engineering advisory · Lead gen platform',
