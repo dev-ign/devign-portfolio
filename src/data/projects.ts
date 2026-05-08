@@ -26,6 +26,7 @@ export interface Project {
   impactLine: string;
   liveUrl: string;
   githubUrl: string;
+  accentColor: string;
   caseStudy: {
     heroBackground: string;
     footerImpact: string;
@@ -49,6 +50,7 @@ export const projects: Project[] = [
     impactLine: 'Self-serve templates · TinyMCE editor · React + Django',
     liveUrl: '',
     githubUrl: '',
+    accentColor: '#7B8CDE',
     caseStudy: {
       heroBackground: templateManagerImage,
       footerImpact: 'Self-serve email templates · TinyMCE editor · React + Django',
@@ -127,6 +129,7 @@ export const projects: Project[] = [
     impactLine: 'High-performance search · Data grid UX · Fundraiser workflow',
     liveUrl: '',
     githubUrl: '',
+    accentColor: '#6EC6CA',
     caseStudy: {
       heroBackground: donorDirectoryImage,
       footerImpact: 'High-performance search · Data grid UX · Fundraiser workflow',
@@ -204,6 +207,7 @@ export const projects: Project[] = [
     impactLine: '↑ ~40% faster talent selection workflow',
     liveUrl: 'https://www.allbooked.co/',
     githubUrl: '',
+    accentColor: '#E87B6A',
     caseStudy: {
       heroBackground: urgeProjectImage,
       footerImpact: '↑ ~40% faster talent selection workflow',
@@ -280,6 +284,7 @@ export const projects: Project[] = [
     impactLine: 'Mobile-first · Inline audio player',
     liveUrl: 'https://swsmusicgroup.com/',
     githubUrl: '',
+    accentColor: '#9B7FE8',
     caseStudy: {
       heroBackground: swProjectImage,
       footerImpact: 'Mobile-first · Inline audio · Editorial UI',
@@ -333,6 +338,7 @@ export const projects: Project[] = [
     impactLine: 'Figma → Wix · Responsive marketing platform',
     liveUrl: '',
     githubUrl: '',
+    accentColor: '#72C97A',
     caseStudy: {
       heroBackground: givzeyProjectImage,
       footerImpact: 'Figma → Wix · Responsive marketing platform',
@@ -390,6 +396,7 @@ export const projects: Project[] = [
     impactLine: 'Cultural branding · React preorder system',
     liveUrl: '',
     githubUrl: '',
+    accentColor: '#D4A84B',
     caseStudy: {
       heroBackground: chancletazoProjectImage,
       footerImpact: 'Cultural branding · React preorder system',
@@ -449,6 +456,7 @@ export const projects: Project[] = [
     impactLine: 'Engineering advisory · Lead gen platform',
     liveUrl: 'https://www.gradumgroup.com/',
     githubUrl: '',
+    accentColor: '#8A9BB0',
     caseStudy: {
       heroBackground: gradumProjectImage,
       footerImpact: 'Engineering advisory · Lead gen platform',

@@ -1,7 +1,7 @@
 /* ── Design Tokens ── */
 :root {
   /* Fonts */
-  --font-disp: 'Syne', sans-serif;
+  --font-disp: 'Instrument Sans', sans-serif;
   --font-body: 'Plus Jakarta Sans', sans-serif;
   --font-mono: 'JetBrains Mono', monospace;
 
@@ -139,6 +139,29 @@ body[data-theme='light']::after {
 
 .marquee-mask:hover .marquee-track {
   animation-play-state: paused;
+}
+
+/* ── Story & Projects pages — warm editorial canvas ── */
+body[data-page='story'],
+body[data-page='projects'],
+body[data-page='project-detail'] {
+  --bg: #E8E7E1;
+  --surface: #E8E7E1;
+  --card: #DDDCD6;
+  --border: rgba(0, 0, 0, 0.07);
+  --text: #1A1A1A;
+  --dim: #6B6B65;
+  --muted: rgba(0, 0, 0, 0.35);
+  --grid-line: rgba(0, 0, 0, 0.025);
+  --ghost-stroke: rgba(0, 0, 0, 0.12);
+  --step-number-color: rgba(0, 0, 0, 0.03);
+}
+
+/* Suppress noise overlay on editorial pages */
+body[data-page='story']::after,
+body[data-page='projects']::after,
+body[data-page='project-detail']::after {
+  opacity: 0.04;
 }
 
 /* ── Scroll reveal ── */
