@@ -6,6 +6,8 @@ import WhyWorkWithMe from '@/components/work-with-me/WhyWorkWithMe';
 import Process from '@/components/work-with-me/Process';
 import ProjectStartingPoints from '@/components/work-with-me/ProjectStartingPoints';
 import BusinessOutcomes from '@/components/work-with-me/BusinessOutcomes';
+import InquiryForm from '@/components/work-with-me/InquiryForm';
+import FAQ from '@/components/work-with-me/FAQ';
 
 const WorkWithMePage: React.FC = () => {
   useLenis();
@@ -23,7 +25,8 @@ const WorkWithMePage: React.FC = () => {
       <Process />
       <ProjectStartingPoints />
       <BusinessOutcomes />
-      {/* InquiryForm, FAQ — Phase 5 */}
+      <InquiryForm />
+      <FAQ />
     </div>
   );
 };
