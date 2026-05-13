@@ -2,6 +2,10 @@ import React, { useEffect } from 'react';
 import { useLenis } from '@/hooks/useLenis';
 import Hero from '@/components/work-with-me/Hero';
 import Services from '@/components/work-with-me/Services';
+import WhyWorkWithMe from '@/components/work-with-me/WhyWorkWithMe';
+import Process from '@/components/work-with-me/Process';
+import ProjectStartingPoints from '@/components/work-with-me/ProjectStartingPoints';
+import BusinessOutcomes from '@/components/work-with-me/BusinessOutcomes';
 
 const WorkWithMePage: React.FC = () => {
   useLenis();
@@ -15,7 +19,11 @@ const WorkWithMePage: React.FC = () => {
     <div style={{ background: '#E8E7E1', minHeight: '100dvh' }}>
       <Hero />
       <Services />
-      {/* WhyWorkWithMe, Process, ProjectStartingPoints, BusinessOutcomes, InquiryForm, FAQ — Phase 4 + 5 */}
+      <WhyWorkWithMe />
+      <Process />
+      <ProjectStartingPoints />
+      <BusinessOutcomes />
+      {/* InquiryForm, FAQ — Phase 5 */}
     </div>
   );
 };
