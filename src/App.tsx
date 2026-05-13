@@ -2,14 +2,15 @@ import React from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { ThemeProvider } from '@/context/ThemeContext';
 import { AudienceProvider } from '@/context/AudienceContext';
+import GatewayPage from '@/pages/GatewayPage';
 import StoryPage from '@/pages/StoryPage';
 import ProjectsPage from '@/pages/ProjectsPage';
 import ProjectDetailPage from '@/pages/ProjectDetailPage';
+import WorkWithMePage from '@/pages/WorkWithMePage';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // LEGACY: The old single-page AppContent has been preserved below (commented
-// out) so it can be referenced or restored if needed. Everything below the
-// Routes tree can be uncommented and swapped back in as a single <Route>.
+// out) so it can be referenced or restored if needed.
 // ─────────────────────────────────────────────────────────────────────────────
 
 const App: React.FC = () => (
@@ -17,9 +18,11 @@ const App: React.FC = () => (
     <AudienceProvider>
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<StoryPage />} />
+          <Route path="/" element={<GatewayPage />} />
+          <Route path="/portfolio" element={<StoryPage />} />
           <Route path="/projects" element={<ProjectsPage />} />
           <Route path="/projects/:slug" element={<ProjectDetailPage />} />
+          <Route path="/work-with-me" element={<WorkWithMePage />} />
         </Routes>
       </BrowserRouter>
     </AudienceProvider>
