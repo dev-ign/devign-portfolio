@@ -27,7 +27,7 @@ const ProjectStartingPoints: React.FC = () => {
       ref={sectionRef}
       style={{
         padding: 'clamp(80px, 10vw, 120px) clamp(24px, 8vw, 88px)',
-        background: '#E8E7E1',
+        background: '#0C0C0E',
       }}
     >
       <div style={{ marginBottom: '52px' }}>
@@ -37,7 +37,7 @@ const ProjectStartingPoints: React.FC = () => {
             fontSize: '10px',
             letterSpacing: '0.14em',
             textTransform: 'uppercase',
-            color: 'rgba(0,0,0,0.35)',
+            color: 'rgba(255,255,255,0.3)',
             marginBottom: '12px',
           }}
         >
@@ -48,7 +48,7 @@ const ProjectStartingPoints: React.FC = () => {
             fontFamily: 'var(--font-disp)',
             fontWeight: 800,
             fontSize: 'clamp(30px, 5vw, 52px)',
-            color: '#0C0C0E',
+            color: 'rgba(255,255,255,0.88)',
             letterSpacing: '-0.03em',
             lineHeight: 1.1,
             margin: 0,
@@ -64,8 +64,8 @@ const ProjectStartingPoints: React.FC = () => {
             key={t.name}
             className="tier-row"
             style={{
-              borderTop: i === 0 ? '1px solid rgba(0,0,0,0.1)' : undefined,
-              borderBottom: '1px solid rgba(0,0,0,0.1)',
+              borderTop: i === 0 ? '1px solid rgba(255,255,255,0.07)' : undefined,
+              borderBottom: '1px solid rgba(255,255,255,0.07)',
               padding: 'clamp(22px, 3vw, 32px) 0',
               display: 'flex',
               justifyContent: 'space-between',
@@ -78,7 +78,7 @@ const ProjectStartingPoints: React.FC = () => {
                 fontFamily: 'var(--font-disp)',
                 fontWeight: 700,
                 fontSize: 'clamp(18px, 2.5vw, 26px)',
-                color: '#0C0C0E',
+                color: 'rgba(255,255,255,0.88)',
                 letterSpacing: '-0.02em',
               }}
             >
@@ -89,7 +89,7 @@ const ProjectStartingPoints: React.FC = () => {
                 fontFamily: 'var(--font-mono)',
                 fontSize: 'clamp(12px, 1.4vw, 14px)',
                 letterSpacing: '0.06em',
-                color: 'rgba(0,0,0,0.45)',
+                color: 'rgba(255,255,255,0.45)',
                 whiteSpace: 'nowrap',
               }}
             >
@@ -103,7 +103,7 @@ const ProjectStartingPoints: React.FC = () => {
         style={{
           fontFamily: 'var(--font-body)',
           fontSize: '13px',
-          color: 'rgba(0,0,0,0.38)',
+          color: 'rgba(255,255,255,0.32)',
           fontWeight: 300,
           fontStyle: 'italic',
           margin: '20px 0 0',

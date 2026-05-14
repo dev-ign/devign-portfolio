@@ -35,7 +35,7 @@ const FAQ: React.FC = () => {
     <section
       style={{
         padding: 'clamp(80px, 10vw, 120px) clamp(24px, 8vw, 88px)',
-        background: '#E8E7E1',
+        background: '#0C0C0E',
       }}
     >
       <div style={{ marginBottom: '52px' }}>
@@ -45,7 +45,7 @@ const FAQ: React.FC = () => {
             fontSize: '10px',
             letterSpacing: '0.14em',
             textTransform: 'uppercase',
-            color: 'rgba(0,0,0,0.35)',
+            color: 'rgba(255,255,255,0.3)',
             marginBottom: '12px',
           }}
         >
@@ -56,7 +56,7 @@ const FAQ: React.FC = () => {
             fontFamily: 'var(--font-disp)',
             fontWeight: 800,
             fontSize: 'clamp(30px, 5vw, 52px)',
-            color: '#0C0C0E',
+            color: 'rgba(255,255,255,0.88)',
             letterSpacing: '-0.03em',
             lineHeight: 1.1,
             margin: 0,
@@ -71,8 +71,8 @@ const FAQ: React.FC = () => {
           <div
             key={i}
             style={{
-              borderTop: i === 0 ? '1px solid rgba(0,0,0,0.1)' : undefined,
-              borderBottom: '1px solid rgba(0,0,0,0.1)',
+              borderTop: i === 0 ? '1px solid rgba(255,255,255,0.07)' : undefined,
+              borderBottom: '1px solid rgba(255,255,255,0.07)',
             }}
           >
             <button
@@ -95,7 +95,7 @@ const FAQ: React.FC = () => {
                   fontFamily: 'var(--font-disp)',
                   fontWeight: 600,
                   fontSize: 'clamp(15px, 1.8vw, 18px)',
-                  color: '#0C0C0E',
+                  color: 'rgba(255,255,255,0.88)',
                   lineHeight: 1.3,
                 }}
               >
@@ -107,7 +107,7 @@ const FAQ: React.FC = () => {
                 style={{
                   fontFamily: 'var(--font-mono)',
                   fontSize: '20px',
-                  color: 'rgba(0,0,0,0.35)',
+                  color: 'rgba(255,255,255,0.35)',
                   flexShrink: 0,
                   display: 'inline-block',
                   lineHeight: 1,
@@ -135,7 +135,7 @@ const FAQ: React.FC = () => {
                       fontFamily: 'var(--font-body)',
                       fontWeight: 300,
                       fontSize: 'clamp(13px, 1.5vw, 15px)',
-                      color: 'rgba(0,0,0,0.55)',
+                      color: 'rgba(255,255,255,0.48)',
                       lineHeight: 1.75,
                       paddingBottom: '20px',
                       margin: 0,

@@ -30,13 +30,13 @@ const stepVariants = {
 
 const inputStyle: React.CSSProperties = {
   width: '100%',
-  background: 'rgba(0,0,0,0.04)',
-  border: '1px solid rgba(0,0,0,0.12)',
+  background: 'rgba(255,255,255,0.05)',
+  border: '1px solid rgba(255,255,255,0.1)',
   borderRadius: '10px',
   padding: '13px 16px',
   fontFamily: 'var(--font-body)',
   fontSize: '14px',
-  color: '#0C0C0E',
+  color: 'rgba(255,255,255,0.88)',
   outline: 'none',
   boxSizing: 'border-box',
 };
@@ -46,7 +46,7 @@ const labelStyle: React.CSSProperties = {
   fontSize: '10px',
   letterSpacing: '0.1em',
   textTransform: 'uppercase',
-  color: 'rgba(0,0,0,0.4)',
+  color: 'rgba(255,255,255,0.38)',
   display: 'block',
   marginBottom: '8px',
 };
@@ -120,9 +120,9 @@ const InquiryForm: React.FC = () => {
         fontWeight: selected ? 500 : 300,
         padding: '12px 20px',
         borderRadius: '100px',
-        border: selected ? '1.5px solid #0C0C0E' : '1px solid rgba(0,0,0,0.14)',
-        background: selected ? 'rgba(0,0,0,0.06)' : 'transparent',
-        color: '#0C0C0E',
+        border: selected ? '1.5px solid rgba(255,255,255,0.7)' : '1px solid rgba(255,255,255,0.12)',
+        background: selected ? 'rgba(255,255,255,0.08)' : 'transparent',
+        color: selected ? 'rgba(255,255,255,0.88)' : 'rgba(255,255,255,0.6)',
         cursor: 'pointer',
         transition: 'all 0.2s ease',
       }}
@@ -136,7 +136,7 @@ const InquiryForm: React.FC = () => {
       case 1:
         return (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-            <h3 style={{ fontFamily: 'var(--font-disp)', fontWeight: 700, fontSize: 'clamp(20px, 2.5vw, 26px)', color: '#0C0C0E', letterSpacing: '-0.02em', margin: '0 0 8px' }}>
+            <h3 style={{ fontFamily: 'var(--font-disp)', fontWeight: 700, fontSize: 'clamp(20px, 2.5vw, 26px)', color: 'rgba(255,255,255,0.88)', letterSpacing: '-0.02em', margin: '0 0 8px' }}>
               Let's start with you.
             </h3>
             <div>
@@ -160,7 +160,7 @@ const InquiryForm: React.FC = () => {
       case 2:
         return (
           <div>
-            <h3 style={{ fontFamily: 'var(--font-disp)', fontWeight: 700, fontSize: 'clamp(20px, 2.5vw, 26px)', color: '#0C0C0E', letterSpacing: '-0.02em', margin: '0 0 28px' }}>
+            <h3 style={{ fontFamily: 'var(--font-disp)', fontWeight: 700, fontSize: 'clamp(20px, 2.5vw, 26px)', color: 'rgba(255,255,255,0.88)', letterSpacing: '-0.02em', margin: '0 0 28px' }}>
               What are you looking to build?
             </h3>
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px' }}>
@@ -173,7 +173,7 @@ const InquiryForm: React.FC = () => {
       case 3:
         return (
           <div>
-            <h3 style={{ fontFamily: 'var(--font-disp)', fontWeight: 700, fontSize: 'clamp(20px, 2.5vw, 26px)', color: '#0C0C0E', letterSpacing: '-0.02em', margin: '0 0 28px' }}>
+            <h3 style={{ fontFamily: 'var(--font-disp)', fontWeight: 700, fontSize: 'clamp(20px, 2.5vw, 26px)', color: 'rgba(255,255,255,0.88)', letterSpacing: '-0.02em', margin: '0 0 28px' }}>
               Do you have a budget range in mind?
             </h3>
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px' }}>
@@ -186,7 +186,7 @@ const InquiryForm: React.FC = () => {
       case 4:
         return (
           <div>
-            <h3 style={{ fontFamily: 'var(--font-disp)', fontWeight: 700, fontSize: 'clamp(20px, 2.5vw, 26px)', color: '#0C0C0E', letterSpacing: '-0.02em', margin: '0 0 28px' }}>
+            <h3 style={{ fontFamily: 'var(--font-disp)', fontWeight: 700, fontSize: 'clamp(20px, 2.5vw, 26px)', color: 'rgba(255,255,255,0.88)', letterSpacing: '-0.02em', margin: '0 0 28px' }}>
               When are you looking to get started?
             </h3>
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px' }}>
@@ -199,7 +199,7 @@ const InquiryForm: React.FC = () => {
       case 5:
         return (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-            <h3 style={{ fontFamily: 'var(--font-disp)', fontWeight: 700, fontSize: 'clamp(20px, 2.5vw, 26px)', color: '#0C0C0E', letterSpacing: '-0.02em', margin: '0 0 8px' }}>
+            <h3 style={{ fontFamily: 'var(--font-disp)', fontWeight: 700, fontSize: 'clamp(20px, 2.5vw, 26px)', color: 'rgba(255,255,255,0.88)', letterSpacing: '-0.02em', margin: '0 0 8px' }}>
               Tell me about your project.
             </h3>
             <div>
@@ -225,7 +225,7 @@ const InquiryForm: React.FC = () => {
         id="inquiry"
         style={{
           padding: 'clamp(80px, 10vw, 120px) clamp(24px, 8vw, 88px)',
-          background: '#E8E7E1',
+          background: '#0C0C0E',
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
@@ -251,7 +251,7 @@ const InquiryForm: React.FC = () => {
               fontFamily: 'var(--font-disp)',
               fontWeight: 800,
               fontSize: 'clamp(28px, 4vw, 38px)',
-              color: '#0C0C0E',
+              color: 'rgba(255,255,255,0.9)',
               letterSpacing: '-0.03em',
               margin: '0 0 16px',
             }}
@@ -263,7 +263,7 @@ const InquiryForm: React.FC = () => {
               fontFamily: 'var(--font-body)',
               fontWeight: 300,
               fontSize: '15px',
-              color: 'rgba(0,0,0,0.5)',
+              color: 'rgba(255,255,255,0.5)',
               lineHeight: 1.75,
               margin: 0,
             }}
@@ -280,7 +280,7 @@ const InquiryForm: React.FC = () => {
       id="inquiry"
       style={{
         padding: 'clamp(80px, 10vw, 120px) clamp(24px, 8vw, 88px)',
-        background: '#E8E7E1',
+        background: '#0C0C0E',
       }}
     >
       <div style={{ marginBottom: '56px', maxWidth: '560px' }}>
@@ -290,7 +290,7 @@ const InquiryForm: React.FC = () => {
             fontSize: '10px',
             letterSpacing: '0.14em',
             textTransform: 'uppercase',
-            color: 'rgba(0,0,0,0.35)',
+            color: 'rgba(255,255,255,0.3)',
             marginBottom: '12px',
           }}
         >
@@ -301,7 +301,7 @@ const InquiryForm: React.FC = () => {
             fontFamily: 'var(--font-disp)',
             fontWeight: 800,
             fontSize: 'clamp(30px, 5vw, 52px)',
-            color: '#0C0C0E',
+            color: 'rgba(255,255,255,0.88)',
             letterSpacing: '-0.03em',
             lineHeight: 1.1,
             margin: '0 0 14px',
@@ -314,7 +314,7 @@ const InquiryForm: React.FC = () => {
             fontFamily: 'var(--font-body)',
             fontWeight: 300,
             fontSize: '15px',
-            color: 'rgba(0,0,0,0.45)',
+            color: 'rgba(255,255,255,0.45)',
             lineHeight: 1.7,
             margin: 0,
           }}
@@ -331,7 +331,7 @@ const InquiryForm: React.FC = () => {
               key={i}
               animate={{
                 width: i + 1 === step ? 28 : 8,
-                background: i + 1 <= step ? '#0C0C0E' : 'rgba(0,0,0,0.15)',
+                background: i + 1 <= step ? '#fff' : 'rgba(255,255,255,0.12)',
               }}
               transition={{ duration: 0.3, ease: 'easeInOut' }}
               style={{ height: '4px', borderRadius: '2px' }}
@@ -368,7 +368,7 @@ const InquiryForm: React.FC = () => {
                 textTransform: 'uppercase',
                 background: 'none',
                 border: 'none',
-                color: 'rgba(0,0,0,0.4)',
+                color: 'rgba(255,255,255,0.4)',
                 cursor: 'pointer',
                 padding: 0,
               }}
@@ -388,8 +388,8 @@ const InquiryForm: React.FC = () => {
                 fontSize: '11px',
                 letterSpacing: '0.1em',
                 textTransform: 'uppercase',
-                background: canAdvance() ? '#0C0C0E' : 'rgba(0,0,0,0.12)',
-                color: canAdvance() ? '#E8E7E1' : 'rgba(0,0,0,0.3)',
+                background: canAdvance() ? '#fff' : 'rgba(255,255,255,0.08)',
+                color: canAdvance() ? '#0C0C0E' : 'rgba(255,255,255,0.25)',
                 border: 'none',
                 borderRadius: '100px',
                 padding: '13px 28px',
@@ -408,8 +408,8 @@ const InquiryForm: React.FC = () => {
                 fontSize: '11px',
                 letterSpacing: '0.1em',
                 textTransform: 'uppercase',
-                background: '#0C0C0E',
-                color: '#E8E7E1',
+                background: '#fff',
+                color: '#0C0C0E',
                 border: 'none',
                 borderRadius: '100px',
                 padding: '13px 28px',

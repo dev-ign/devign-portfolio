@@ -51,7 +51,7 @@ const Process: React.FC = () => {
       id="process"
       style={{
         padding: 'clamp(80px, 10vw, 120px) clamp(24px, 8vw, 88px)',
-        background: '#E8E7E1',
+        background: '#0C0C0E',
         overflow: isMobile ? undefined : 'hidden',
       }}
     >
@@ -62,7 +62,7 @@ const Process: React.FC = () => {
             fontSize: '10px',
             letterSpacing: '0.14em',
             textTransform: 'uppercase',
-            color: 'rgba(0,0,0,0.35)',
+            color: 'rgba(255,255,255,0.3)',
             marginBottom: '12px',
           }}
         >
@@ -73,7 +73,7 @@ const Process: React.FC = () => {
             fontFamily: 'var(--font-disp)',
             fontWeight: 800,
             fontSize: 'clamp(30px, 5vw, 52px)',
-            color: '#0C0C0E',
+            color: 'rgba(255,255,255,0.88)',
             letterSpacing: '-0.03em',
             lineHeight: 1.1,
             margin: 0,
@@ -100,7 +100,7 @@ const Process: React.FC = () => {
               viewport={{ once: true, amount: 0.4 }}
               transition={{ duration: 0.6, ease, delay: i * 0.06 }}
               style={{
-                borderTop: '1px solid rgba(0,0,0,0.1)',
+                borderTop: '1px solid rgba(255,255,255,0.07)',
                 padding: 'clamp(24px, 4vw, 36px) 0',
               }}
             >
@@ -111,7 +111,7 @@ const Process: React.FC = () => {
               key={step.number}
               className="process-step"
               style={{
-                borderTop: '2px solid rgba(0,0,0,0.12)',
+                borderTop: '2px solid rgba(255,255,255,0.08)',
                 paddingTop: '28px',
               }}
             >
@@ -119,7 +119,7 @@ const Process: React.FC = () => {
             </div>
           )
         )}
-        {isMobile && <div style={{ borderTop: '1px solid rgba(0,0,0,0.1)' }} />}
+        {isMobile && <div style={{ borderTop: '1px solid rgba(255,255,255,0.07)' }} />}
       </div>
     </section>
   );
@@ -143,7 +143,7 @@ const StepContent: React.FC<{ step: (typeof STEPS)[number] }> = ({ step }) => (
         fontFamily: 'var(--font-disp)',
         fontWeight: 700,
         fontSize: 'clamp(20px, 2.4vw, 26px)',
-        color: '#0C0C0E',
+        color: 'rgba(255,255,255,0.88)',
         letterSpacing: '-0.025em',
         lineHeight: 1.2,
         margin: '0 0 12px',
@@ -156,7 +156,7 @@ const StepContent: React.FC<{ step: (typeof STEPS)[number] }> = ({ step }) => (
         fontFamily: 'var(--font-body)',
         fontWeight: 300,
         fontSize: 'clamp(14px, 1.4vw, 15px)',
-        color: 'rgba(0,0,0,0.5)',
+        color: 'rgba(255,255,255,0.48)',
         lineHeight: 1.7,
         margin: 0,
       }}
