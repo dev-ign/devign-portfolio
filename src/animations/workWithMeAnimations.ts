@@ -1,5 +1,4 @@
 import { gsap } from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 // Hero: headline lines + sub + CTA stagger up on load
 export function runHeroReveal(elements: HTMLElement[]) {
