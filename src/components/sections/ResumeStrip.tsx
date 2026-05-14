@@ -57,8 +57,8 @@ const ResumeStrip: React.FC = () => {
       <Box sx={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
         <Box
           component="a"
-          href="/Jonaferreiraresume.pdf"
-          download="Jonaferreiraresume.pdf"
+          href="/Jona_Ferreira_Resume-devign.pdf"
+          download="Jona_Ferreira_Resume-devign.pdf"
           sx={{
             display: 'inline-flex',
             alignItems: 'center',

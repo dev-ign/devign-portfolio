@@ -38,7 +38,7 @@ const ShowcaseHeader: React.FC<ShowcaseHeaderProps> = ({
     >
       {/* Brand */}
       <Link
-        to="/portfolio"
+        to="/"
         style={{
           fontFamily: 'var(--font-disp)',
           fontSize: isMobile ? 18 : 24,

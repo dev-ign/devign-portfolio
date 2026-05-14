@@ -73,7 +73,7 @@ const StoryPage: React.FC = () => {
         style={{ position: 'absolute', top: 28, right: 36, zIndex: 1 }}
       >
         <Link
-          to="/projects"
+          to="/portfolio/projects"
           style={{
             fontFamily: 'var(--font-disp)',
             fontSize: 14,
@@ -160,7 +160,7 @@ const StoryPage: React.FC = () => {
             onAnimationComplete={() => setBodyDone(true)}
           >
             <Link
-              to="/projects"
+              to="/portfolio/projects"
               style={{
                 display: 'inline-flex',
                 alignItems: 'center',

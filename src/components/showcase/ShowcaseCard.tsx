@@ -1,6 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Project } from '@/data/projects';
+import { useIsMobile } from '@/hooks/useMediaQuery';
 
 interface ShowcaseCardProps {
   project: Project;
@@ -9,10 +10,11 @@ interface ShowcaseCardProps {
 
 const ShowcaseCard: React.FC<ShowcaseCardProps> = ({ project, interactive = true }) => {
   const navigate = useNavigate();
+  const isMobile = useIsMobile();
 
   return (
     <div
-      onClick={interactive ? () => navigate(`/projects/${project.id}`) : undefined}
+      onClick={interactive ? () => navigate(`/portfolio/projects/${project.id}`) : undefined}
       style={{
         width: '100%',
         aspectRatio: '4 / 3',
@@ -47,7 +49,7 @@ const ShowcaseCard: React.FC<ShowcaseCardProps> = ({ project, interactive = true
           bottom: 0,
           left: 0,
           right: 0,
-          padding: '48px 28px 24px',
+          padding: isMobile ? '28px 18px 16px' : '48px 28px 24px',
           background: 'linear-gradient(to top, rgba(0,0,0,0.82) 0%, transparent 100%)',
           display: 'flex',
           alignItems: 'flex-end',
@@ -59,7 +61,7 @@ const ShowcaseCard: React.FC<ShowcaseCardProps> = ({ project, interactive = true
           <p
             style={{
               fontFamily: 'var(--font-mono)',
-              fontSize: 11,
+              fontSize: isMobile ? 10 : 11,
               color: 'rgba(255,255,255,0.44)',
               margin: '0 0 5px',
               letterSpacing: '0.08em',
@@ -72,7 +74,7 @@ const ShowcaseCard: React.FC<ShowcaseCardProps> = ({ project, interactive = true
           <h3
             style={{
               fontFamily: 'var(--font-disp)',
-              fontSize: 17,
+              fontSize: isMobile ? 15 : 17,
               color: 'rgba(255,255,255,0.92)',
               margin: 0,
               fontWeight: 700,

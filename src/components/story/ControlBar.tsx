@@ -88,7 +88,7 @@ const ControlBar: React.FC<ControlBarProps> = ({ show }) => {
       </div>
 
       <a
-        href="/Jonaferreiraresume.pdf"
+        href="/Jona_Ferreira_Resume-devign.pdf"
         download
         style={{
           display: 'inline-flex',

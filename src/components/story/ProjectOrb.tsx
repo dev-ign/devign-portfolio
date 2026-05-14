@@ -1,27 +1,36 @@
 import React from 'react';
 import { motion } from 'motion/react';
 import { projects } from '@/data/projects';
+import { useIsMobile } from '@/hooks/useMediaQuery';
 
-const RADIUS = 285;
 const IMAGE_W = 88;
 const IMAGE_H = 112;
-const ORBIT_W = (RADIUS + IMAGE_W / 2) * 2;
-const ORBIT_H = (RADIUS + IMAGE_H / 2) * 2;
-
 const EASE = [0.16, 1, 0.3, 1] as [number, number, number, number];
 
-// Radial gradient centered on the text column area (~36% down the viewport).
-// Only fades images that sit directly behind the text — the bottom of the orbit stays visible.
-const MASK =
-  'radial-gradient(ellipse 34vw 40vh at 50% 36%, transparent 0%, transparent 40%, rgba(0,0,0,0.88) 72%, black 100%)';
+// Desktop: radial hole hides images that pass behind the centered text column.
+// Mobile: linear gradient reveals only the bottom ~40% of the viewport, since
+// the orbit center is dropped to 80% — keeping all images below the content.
+const MASK_DESKTOP =
+  'radial-gradient(ellipse 36vw 42vh at 50% 36%, transparent 0%, transparent 40%, rgba(0,0,0,0.88) 72%, black 100%)';
+const MASK_MOBILE =
+  'linear-gradient(to bottom, transparent 0%, transparent 50%, rgba(0,0,0,0.75) 68%, black 84%)';
 
 interface Props {
   show: boolean;
 }
 
 export default function ProjectOrb({ show }: Props) {
+  const isMobile = useIsMobile();
+
+  const RADIUS = isMobile ? 220 : 360;
+  const ORBIT_W = (RADIUS + IMAGE_W / 2) * 2;
+  const ORBIT_H = (RADIUS + IMAGE_H / 2) * 2;
+  // On mobile the orbit center sits at 80% viewport height so images orbit
+  // below the text content instead of passing through it.
+  const verticalCenter = isMobile ? '80%' : '50%';
+  const MASK = isMobile ? MASK_MOBILE : MASK_DESKTOP;
+
   return (
-    // Fixed so it fills the viewport regardless of page scroll / overflow rules
     <div
       style={{
         position: 'fixed',
@@ -32,14 +41,13 @@ export default function ProjectOrb({ show }: Props) {
         WebkitMaskImage: MASK,
       }}
     >
-      {/* Entrance: fades in slowly, no lateral movement */}
       <motion.div
         initial={{ opacity: 0 }}
         animate={show ? { opacity: 1 } : { opacity: 0 }}
         transition={{ duration: 3, ease: EASE, delay: show ? 1.0 : 0 }}
         style={{
           position: 'absolute',
-          top: `calc(50% - ${ORBIT_H / 2}px)`,
+          top: `calc(${verticalCenter} - ${ORBIT_H / 2}px)`,
           left: `calc(50% - ${ORBIT_W / 2}px)`,
         }}
       >

@@ -43,7 +43,7 @@ const ProjectDetailPage: React.FC = () => {
       >
         <p style={{ color: '#1A1A1A', opacity: 0.5, fontSize: 15 }}>Project not found.</p>
         <button
-          onClick={() => navigate('/projects')}
+          onClick={() => navigate('/portfolio/projects')}
           style={backBtnStyle}
         >
           ← Back to projects
@@ -107,7 +107,7 @@ const ProjectDetailPage: React.FC = () => {
           initial={{ opacity: 0, x: -12 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1], delay: 0.1 }}
-          onClick={() => navigate('/projects')}
+          onClick={() => navigate('/portfolio/projects')}
           style={backBtnStyle}
         >
           ← Projects
@@ -206,7 +206,7 @@ const ProjectDetailPage: React.FC = () => {
           }}
         >
           <button
-            onClick={() => navigate('/projects')}
+            onClick={() => navigate('/portfolio/projects')}
             style={footerBtnStyle}
             onMouseEnter={(e) => {
               (e.currentTarget as HTMLElement).style.color = '#1A1A1A';
