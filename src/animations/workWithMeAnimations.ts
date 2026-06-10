@@ -1,6 +1,116 @@
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
+const revealDefaults = {
+  autoAlpha: 1,
+  y: 0,
+  duration: 1.18,
+  ease: 'power3.out',
+  overwrite: 'auto' as const,
+};
+
+const hiddenState = {
+  autoAlpha: 0,
+  y: 44,
+  willChange: 'transform, opacity',
+};
+
+export function initScrollEnterExit(
+  elements: HTMLElement[],
+  options: {
+    trigger?: HTMLElement;
+    stagger?: number;
+    start?: string;
+    end?: string | (() => string);
+    duration?: number;
+    delay?: number;
+    y?: number;
+    exitY?: number;
+    exitDuration?: number;
+    exitWhen?: 'top' | 'bottom';
+  } = {}
+) {
+  const targets = elements.filter(Boolean);
+  if (!targets.length) return undefined;
+  const trigger = options.trigger ?? targets[0];
+  const y = options.y ?? hiddenState.y;
+  const exitY = options.exitY ?? Math.max(20, y * 0.72);
+  const fromState = { ...hiddenState, y };
+  const duration = options.duration ?? revealDefaults.duration;
+  const stagger = options.stagger ?? 0.08;
+  const exitWhen = options.exitWhen ?? 'top';
+  let isVisible = false;
+  const revealVars = {
+    ...revealDefaults,
+    duration,
+    delay: options.delay ?? 0,
+    stagger,
+  };
+
+  gsap.set(targets, fromState);
+
+  const reveal = () => {
+    isVisible = true;
+    gsap.to(targets, revealVars);
+  };
+
+  const exit = (direction: 1 | -1) => {
+    isVisible = false;
+    gsap.to(targets, {
+      autoAlpha: 0,
+      y: direction === 1 ? -exitY : y,
+      duration: options.exitDuration ?? Math.min(duration * 0.72, 0.92),
+      ease: 'power2.inOut',
+      stagger: stagger ? Math.min(stagger, 0.05) : 0,
+      overwrite: 'auto',
+    });
+  };
+
+  const enterTrigger = ScrollTrigger.create({
+    trigger,
+    start: options.start ?? 'top 64%',
+    invalidateOnRefresh: true,
+    onEnter: reveal,
+    onEnterBack: reveal,
+    onLeaveBack: () => exit(-1),
+  });
+
+  const exitTrigger = ScrollTrigger.create({
+    start: 0,
+    end: 'max',
+    invalidateOnRefresh: true,
+    onUpdate: (self) => {
+      const rect = trigger.getBoundingClientRect();
+      const shouldExitDown =
+        exitWhen === 'bottom'
+          ? rect.bottom <= 20
+          : rect.top <= 20;
+
+      if (self.direction === 1 && shouldExitDown) {
+        exit(1);
+      }
+
+      if (self.direction === -1 && !isVisible && rect.top > 0 && rect.top < window.innerHeight * 0.7) {
+        reveal();
+      }
+    },
+    onLeave: () => {
+      const rect = trigger.getBoundingClientRect();
+      const shouldExitDown =
+        exitWhen === 'bottom'
+          ? rect.bottom <= 20
+          : rect.top <= 20;
+
+      if (shouldExitDown) exit(1);
+    },
+    onLeaveBack: () => {
+      if (isVisible) exit(-1);
+    },
+  });
+
+  return [enterTrigger, exitTrigger];
+}
+
 // Hero: headline lines + sub + CTA stagger up on load
 export function runHeroReveal(elements: HTMLElement[]) {
   gsap.from(elements, {
@@ -13,19 +123,41 @@ export function runHeroReveal(elements: HTMLElement[]) {
 }
 
 // Services: cards fade + rise as section scrolls into view
+export function runServicesIntroReveal(intro: HTMLElement) {
+  const introChildren = Array.from(intro.children);
+  initScrollEnterExit(
+    (introChildren.length ? introChildren : [intro]) as HTMLElement[],
+    {
+      trigger: intro.parentElement ?? intro,
+      stagger: 0.11,
+      start: 'top 92%',
+    }
+  );
+}
+
 export function runServicesStagger(cards: HTMLElement[]) {
   if (!cards.length) return;
-  gsap.from(cards, {
-    autoAlpha: 0,
-    y: 28,
+  initScrollEnterExit(cards, {
+    trigger: cards[0].parentElement!,
     stagger: 0.07,
-    duration: 0.65,
-    ease: 'power2.out',
-    scrollTrigger: {
-      trigger: cards[0].parentElement!,
-      start: 'top 82%',
-      once: true,
-    },
+    start: 'top 90%',
+  });
+}
+
+// Projects: premium grid cards reveal in a stagger as the section enters.
+export function runProjectsGridReveal(header: HTMLElement, cards: HTMLElement[]) {
+  const headerChildren = Array.from(header.children);
+
+  initScrollEnterExit(headerChildren as HTMLElement[], {
+    trigger: header.parentElement ?? header,
+    stagger: 0.1,
+    start: 'top 92%',
+  });
+
+  initScrollEnterExit(cards, {
+    trigger: cards[0]?.parentElement ?? header,
+    stagger: 0.08,
+    start: 'top 90%',
   });
 }
 
@@ -65,27 +197,16 @@ export function runFadeStagger(elements: HTMLElement[], triggerEl: HTMLElement) 
   });
 }
 
-// Process pin (desktop ≥640px): section stays fixed, steps reveal sequentially.
+// Process: content fades in as the section enters.
 // Returns the matchMedia instance — call mm.revert() in useGSAPContext cleanup.
-export function initProcessPin(section: HTMLElement, stepEls: HTMLElement[]) {
+export function initProcessPin(section: HTMLElement, contentEls: HTMLElement[]) {
   const mm = gsap.matchMedia();
 
   mm.add('(min-width: 640px)', () => {
-    const tl = gsap.timeline({
-      scrollTrigger: {
-        trigger: section,
-        start: 'top top',
-        end: `+=${stepEls.length * 420}`,
-        pin: true,
-        scrub: 0.6,
-      },
-    });
-
-    stepEls.forEach((step, i) => {
-      if (i === 0) return;
-      const offset = i * 0.25;
-      tl.from(step, { autoAlpha: 0, y: 32, duration: 0.25 }, offset);
-      tl.to(stepEls[i - 1], { autoAlpha: 0.25, duration: 0.2 }, offset);
+    initScrollEnterExit(contentEls, {
+      trigger: section,
+      stagger: 0.12,
+      start: 'top 90%',
     });
 
     return () => {};

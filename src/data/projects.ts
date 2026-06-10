@@ -14,10 +14,13 @@ export type CaseStudySection =
   | { label: string; type: 'metrics'; content: Array<{ value: string; description: string }> }
   | { label: string; type: 'imagestrip'; content: Array<{ label: string }> };
 
+export type ProjectType = 'code' | 'design' | 'videos';
+
 export interface Project {
   id: string;
   title: string;
   category: string;
+  projectType: ProjectType;
   description: string;
   image: string;
   tags: string[];
@@ -41,6 +44,7 @@ export const projects: Project[] = [
     id: 'gravyty-template-manager',
     title: 'Template Manager',
     category: 'Enterprise SaaS · 2024',
+    projectType: 'code',
     description:
       'Self-serve email template system for fundraising teams — replacing support-dependent HTML editing with a structured TinyMCE editor and category-based organization.',
     image: templateManagerImage,
@@ -120,6 +124,7 @@ export const projects: Project[] = [
     id: 'gravyty-donor-directory',
     title: 'Donor Directory',
     category: 'Enterprise SaaS · 2024',
+    projectType: 'code',
     description:
       'High-performance searchable donor database with real-time filtering, sortable data grid, and a slide-out profile panel for fundraiser workflow.',
     image: donorDirectoryImage,
@@ -198,6 +203,7 @@ export const projects: Project[] = [
     id: 'urge-talent',
     title: 'URGE Talent',
     category: 'Web Application · 2023',
+    projectType: 'code',
     description:
       'Talent search and curation platform with advanced filtering and profile management.',
     image: urgeProjectImage,
@@ -275,6 +281,7 @@ export const projects: Project[] = [
     id: 'small-wrld-music',
     title: 'Small Wrld Music',
     category: 'Music Platform · 2026',
+    projectType: 'code',
     description:
       'Music discovery platform with featured tracks, beats, and interactive player.',
     image: swProjectImage,
@@ -329,6 +336,7 @@ export const projects: Project[] = [
     id: 'givzey-landing',
     title: 'Givzey Landing',
     category: 'Marketing Site · 2026',
+    projectType: 'code',
     description:
       'A marketing landing page for Givzey. An AI-powered platform for fundraising.',
     image: givzeyProjectImage,
@@ -387,6 +395,7 @@ export const projects: Project[] = [
     id: 'el-chancletazo',
     title: 'El Chancletazo',
     category: 'Restaurant Website · 2026',
+    projectType: 'code',
     description:
       'Dominican food restaurant website featuring menu items and preorder functionality.',
     image: chancletazoProjectImage,
@@ -447,6 +456,7 @@ export const projects: Project[] = [
     id: 'gradum-group',
     title: 'Gradum Group',
     category: 'Marketing Site · Lead Gen',
+    projectType: 'code',
     description:
       'Engineering-led advisory and execution platform for technical, operational, and infrastructure complexity.',
     image: gradumProjectImage,

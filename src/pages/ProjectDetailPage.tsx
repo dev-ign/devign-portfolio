@@ -29,23 +29,9 @@ const ProjectDetailPage: React.FC = () => {
 
   if (!project) {
     return (
-      <div
-        style={{
-          minHeight: '100vh',
-          backgroundColor: '#E8E7E1',
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          justifyContent: 'center',
-          gap: 20,
-          fontFamily: 'var(--font-body)',
-        }}
-      >
-        <p style={{ color: '#1A1A1A', opacity: 0.5, fontSize: 15 }}>Project not found.</p>
-        <button
-          onClick={() => navigate('/projects')}
-          style={backBtnStyle}
-        >
+      <div className="min-h-screen bg-editorial flex flex-col items-center justify-center gap-5 font-body">
+        <p className="text-[#1A1A1A] opacity-50 text-[15px]">Project not found.</p>
+        <button onClick={() => navigate('/projects')} className={backBtnCn}>
           ← Back to projects
         </button>
       </div>
@@ -53,54 +39,27 @@ const ProjectDetailPage: React.FC = () => {
   }
 
   return (
-    <div style={{ minHeight: '100vh', backgroundColor: '#E8E7E1' }}>
+    <div className="min-h-screen bg-editorial">
       {/* Hero image */}
-      <div
-        style={{
-          height: '52vh',
-          minHeight: 300,
-          maxHeight: 520,
-          position: 'relative',
-          overflow: 'hidden',
-          backgroundColor: '#0C0C0E',
-        }}
-      >
-        {/* Scroll progress bar */}
+      <div className="relative overflow-hidden bg-gateway h-[52vh] min-h-[300px] max-h-[520px]">
+
+        {/* Accent progress bar */}
         <div
-          style={{
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            right: 0,
-            height: 2,
-            backgroundColor: project.accentColor,
-            zIndex: 30,
-            opacity: 0.7,
-          }}
+          className="absolute top-0 left-0 right-0 h-0.5 z-30 opacity-70"
+          style={{ backgroundColor: project.accentColor }}
         />
 
         {/* Ken Burns hero */}
         <div
+          className="absolute inset-0 bg-cover bg-center opacity-65 transition-transform duration-[8000ms] [transition-timing-function:cubic-bezier(0.16,1,0.3,1)]"
           style={{
-            position: 'absolute',
-            inset: 0,
             backgroundImage: `url(${project.caseStudy.heroBackground})`,
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
             transform: imageZoomed ? 'scale(1.06)' : 'scale(1)',
-            transition: 'transform 8s cubic-bezier(0.16, 1, 0.3, 1)',
-            opacity: 0.65,
           }}
         />
 
         {/* Gradient overlay */}
-        <div
-          style={{
-            position: 'absolute',
-            inset: 0,
-            background: 'linear-gradient(to bottom, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0.7) 100%)',
-          }}
-        />
+        <div className="absolute inset-0 [background:linear-gradient(to_bottom,rgba(0,0,0,0.2)_0%,rgba(0,0,0,0.7)_100%)]" />
 
         {/* Back button */}
         <motion.button
@@ -108,7 +67,7 @@ const ProjectDetailPage: React.FC = () => {
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1], delay: 0.1 }}
           onClick={() => navigate('/projects')}
-          style={backBtnStyle}
+          className={backBtnCn}
         >
           ← Projects
         </motion.button>
@@ -118,49 +77,20 @@ const ProjectDetailPage: React.FC = () => {
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.65, ease: [0.16, 1, 0.3, 1], delay: 0.2 }}
+          className="absolute z-10"
           style={{
-            position: 'absolute',
             bottom: 32,
             left: isMobile ? 20 : 36,
             right: isMobile ? 20 : 36,
           }}
         >
-          <p
-            style={{
-              fontFamily: 'var(--font-mono)',
-              fontSize: 11,
-              color: 'rgba(255,255,255,0.5)',
-              margin: '0 0 8px',
-              letterSpacing: '0.1em',
-              textTransform: 'uppercase',
-            }}
-          >
+          <p className="font-mono text-[11px] text-white/50 m-0 mb-2 tracking-[0.1em] uppercase">
             {project.category}
           </p>
-          <h1
-            style={{
-              fontFamily: 'var(--font-disp)',
-              fontSize: 'clamp(28px, 4vw, 44px)',
-              fontWeight: 700,
-              color: 'rgba(255,255,255,0.94)',
-              margin: 0,
-              letterSpacing: '-0.02em',
-              lineHeight: 1.1,
-            }}
-          >
+          <h1 className="text-[clamp(28px,4vw,44px)] font-bold text-white/94 tracking-[-0.02em] leading-[1.1]">
             {project.title}
           </h1>
-          <p
-            style={{
-              fontFamily: 'var(--font-body)',
-              fontSize: 14,
-              color: 'rgba(255,255,255,0.55)',
-              margin: '10px 0 0',
-              fontWeight: 300,
-              lineHeight: 1.6,
-              maxWidth: 560,
-            }}
-          >
+          <p className="font-body text-[14px] text-white/55 mt-2.5 m-0 font-light leading-[1.6] max-w-[560px]">
             {project.description}
           </p>
         </motion.div>
@@ -171,51 +101,24 @@ const ProjectDetailPage: React.FC = () => {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1], delay: 0.35 }}
-        style={{
-          maxWidth: 720,
-          margin: '0 auto',
-          padding: isMobile ? '32px 20px 80px' : '48px 28px 140px',
-        }}
+        className="max-w-[720px] mx-auto"
+        style={{ padding: isMobile ? '32px 20px 80px' : '48px 28px 140px' }}
       >
         {/* Impact line */}
         <p
-          style={{
-            fontFamily: 'var(--font-mono)',
-            fontSize: 12,
-            color: project.accentColor,
-            letterSpacing: '0.08em',
-            marginBottom: 32,
-            fontWeight: 400,
-          }}
+          className="font-mono text-[12px] tracking-[0.08em] mb-8 font-normal"
+          style={{ color: project.accentColor }}
         >
           {project.caseStudy.footerImpact}
         </p>
 
-        {/* Reuse existing CaseStudyContent renderer */}
         <CaseStudyContent sections={project.caseStudy.sections} />
 
-        {/* Footer with back + live site links */}
-        <div
-          style={{
-            display: 'flex',
-            gap: 12,
-            marginTop: 56,
-            paddingTop: 32,
-            borderTop: '1px solid var(--border)',
-            flexWrap: 'wrap',
-          }}
-        >
+        {/* Footer links */}
+        <div className="flex gap-3 mt-14 pt-8 border-t border-[var(--border)] flex-wrap">
           <button
             onClick={() => navigate('/projects')}
-            style={footerBtnStyle}
-            onMouseEnter={(e) => {
-              (e.currentTarget as HTMLElement).style.color = '#1A1A1A';
-              (e.currentTarget as HTMLElement).style.borderColor = 'rgba(26,26,26,0.35)';
-            }}
-            onMouseLeave={(e) => {
-              (e.currentTarget as HTMLElement).style.color = 'rgba(26,26,26,0.55)';
-              (e.currentTarget as HTMLElement).style.borderColor = 'rgba(26,26,26,0.15)';
-            }}
+            className="inline-flex items-center py-2.5 px-5 bg-transparent text-[rgba(26,26,26,0.55)] rounded-full font-body text-[13px] font-medium border border-[rgba(26,26,26,0.15)] cursor-pointer no-underline transition-[color,border-color] duration-200 hover:text-[#1A1A1A] hover:border-[rgba(26,26,26,0.35)]"
           >
             ← All projects
           </button>
@@ -224,21 +127,7 @@ const ProjectDetailPage: React.FC = () => {
               href={project.liveUrl}
               target="_blank"
               rel="noopener noreferrer"
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                padding: '10px 20px',
-                backgroundColor: '#1A1A1A',
-                color: '#E8E7E1',
-                borderRadius: 100,
-                fontFamily: 'var(--font-body)',
-                fontSize: 13,
-                fontWeight: 500,
-                textDecoration: 'none',
-                transition: 'opacity 0.2s ease',
-              }}
-              onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.opacity = '0.75'; }}
-              onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.opacity = '1'; }}
+              className="inline-flex items-center py-2.5 px-5 bg-[#1A1A1A] text-editorial rounded-full font-body text-[13px] font-medium no-underline transition-opacity duration-200 hover:opacity-75"
             >
               Live site →
             </a>
@@ -249,42 +138,13 @@ const ProjectDetailPage: React.FC = () => {
   );
 };
 
-const backBtnStyle: React.CSSProperties = {
-  position: 'absolute',
-  top: 24,
-  left: 24,
-  display: 'inline-flex',
-  alignItems: 'center',
-  padding: '9px 18px',
-  backgroundColor: 'rgba(255,255,255,0.12)',
-  backdropFilter: 'blur(12px)',
-  WebkitBackdropFilter: 'blur(12px)',
-  color: 'rgba(255,255,255,0.82)',
-  borderRadius: 100,
-  fontFamily: 'var(--font-body)',
-  fontSize: 13,
-  fontWeight: 500,
-  border: '1px solid rgba(255,255,255,0.16)',
-  cursor: 'pointer',
-  textDecoration: 'none',
-  transition: 'opacity 0.2s ease',
-  zIndex: 20,
-};
-
-const footerBtnStyle: React.CSSProperties = {
-  display: 'inline-flex',
-  alignItems: 'center',
-  padding: '10px 20px',
-  backgroundColor: 'transparent',
-  color: 'rgba(26,26,26,0.55)',
-  borderRadius: 100,
-  fontFamily: 'var(--font-body)',
-  fontSize: 13,
-  fontWeight: 500,
-  border: '1px solid rgba(26,26,26,0.15)',
-  cursor: 'pointer',
-  textDecoration: 'none',
-  transition: 'color 0.2s ease, border-color 0.2s ease',
-};
+const backBtnCn = [
+  'absolute top-6 left-6 inline-flex items-center',
+  'py-[9px] px-[18px]',
+  'bg-white/12 [backdrop-filter:blur(12px)] [-webkit-backdrop-filter:blur(12px)]',
+  'text-white/82 rounded-full font-body text-[13px] font-medium',
+  'border border-white/16 cursor-pointer no-underline',
+  'transition-opacity duration-200 z-20',
+].join(' ');
 
 export default ProjectDetailPage;

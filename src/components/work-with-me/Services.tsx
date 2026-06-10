@@ -1,7 +1,7 @@
 import React, { useRef } from 'react';
 import { Icon } from '@iconify/react';
 import { useGSAPContext } from '@/hooks/useGSAPContext';
-import { runServicesStagger } from '@/animations/workWithMeAnimations';
+import { initScrollEnterExit } from '@/animations/workWithMeAnimations';
 
 const SERVICES = [
   {
@@ -25,14 +25,24 @@ const SERVICES = [
     description: 'Online stores and checkout experiences optimized for mobile.',
   },
   {
-    icon: 'solar:calendar-add-bold',
-    name: 'Booking Experiences',
-    description: 'Streamlined booking and scheduling flows that reduce friction.',
+    icon: 'solar:code-bold',
+    name: 'Web Apps',
+    description: 'Custom web applications and interactive tools built for real user workflows.',
   },
   {
     icon: 'solar:settings-bold',
     name: 'Ongoing Support',
     description: 'Monthly maintenance, updates, and feature additions.',
+  },
+  {
+    icon: 'solar:videocamera-record-bold',
+    name: 'Video & Motion Design',
+    description: 'Brand reels, animated graphics, and motion assets that give your story momentum.',
+  },
+  {
+    icon: 'solar:palette-bold',
+    name: 'Graphic & Product Design',
+    description: 'Brand identity, UI/UX, and design systems from first sketch to pixel-perfect delivery.',
   },
 ];
 
@@ -42,10 +52,43 @@ const Services: React.FC = () => {
   useGSAPContext(
     () => {
       if (!sectionRef.current) return;
+      const title = sectionRef.current.querySelector<HTMLElement>('.services-title');
+      const copy = sectionRef.current.querySelector<HTMLElement>('.services-copy');
       const cards = Array.from(
-        sectionRef.current.querySelectorAll<HTMLElement>('.service-card')
+        sectionRef.current.querySelectorAll<HTMLElement>('.services-card')
       );
-      runServicesStagger(cards);
+
+      if (title) {
+        initScrollEnterExit([title], {
+          trigger: title,
+          start: 'top 15%',
+          end: 'top 85%',
+          duration: 2,
+          y: 48,
+        });
+      }
+
+      if (copy) {
+        initScrollEnterExit([copy], {
+          trigger: copy,
+          start: 'top 15%',
+          end: '90% 85%',
+          duration: 3,
+          y: 36,
+        });
+      }
+
+      cards.forEach((card, index) => {
+        initScrollEnterExit([card], {
+          trigger: card,
+          start: 'top 62%',
+          end: 'top top',
+          duration: 1.3,
+          delay: index * 0.08,
+          stagger: 0,
+          y: 42,
+        });
+      });
     },
     { scope: sectionRef, dependencies: [] }
   );
@@ -54,119 +97,51 @@ const Services: React.FC = () => {
     <section
       id="services"
       ref={sectionRef}
-      style={{
-        padding: 'clamp(80px, 10vw, 120px) clamp(24px, 8vw, 88px)',
-        background: '#0C0C0E',
-        position: 'relative',
-      }}
+      className="pt-[clamp(56px,9vw,104px)] pb-[clamp(80px,10vw,120px)] px-[clamp(16px,6vw,88px)] bg-gateway relative"
     >
       {/* Atmospheric top glow */}
-      <div
-        style={{
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          right: 0,
-          height: '500px',
-          pointerEvents: 'none',
-          zIndex: 0,
-          background: [
-            'radial-gradient(ellipse 80% 50% at 50% -20%, rgba(176,110,243,0.06) 0%, transparent 65%)',
-            'radial-gradient(ellipse 60% 30% at 50% -5%, rgba(255,140,60,0.03) 0%, transparent 55%)',
-          ].join(', '),
-        }}
-      />
+      <div className="absolute top-0 left-0 right-0 h-[500px] pointer-events-none z-0 [background:radial-gradient(ellipse_80%_50%_at_50%_-20%,rgba(176,110,243,0.06)_0%,transparent_65%),radial-gradient(ellipse_60%_30%_at_50%_-5%,rgba(255,140,60,0.03)_0%,transparent_55%)]" />
 
-      {/* Section header */}
-      <div style={{ marginBottom: '52px', position: 'relative', zIndex: 1 }}>
-        <div
-          style={{
-            fontFamily: 'var(--font-mono)',
-            fontSize: '10px',
-            letterSpacing: '0.14em',
-            textTransform: 'uppercase',
-            color: 'rgba(255,255,255,0.3)',
-            marginBottom: '12px',
-          }}
-        >
-          What I Build
-        </div>
-        <h2
-          style={{
-            fontFamily: 'var(--font-disp)',
-            fontWeight: 800,
-            fontSize: 'clamp(30px, 5vw, 52px)',
-            color: 'rgba(255,255,255,0.88)',
-            letterSpacing: '-0.03em',
-            lineHeight: 1.1,
-            margin: 0,
-          }}
-        >
-          Services
+      {/* Section intro */}
+      <div
+        className="services-intro relative z-1 mx-auto mb-[clamp(64px,8vw,104px)] max-w-[980px] text-center will-change-[transform,opacity]"
+      >
+        <h2 className="services-title text-[clamp(38px,6.2vw,76px)] text-white leading-[1.04] tracking-[-0.04em] m-0 will-change-[transform,opacity]">
+          Services with{' '}
+          <span
+            style={{
+              background: 'linear-gradient(135deg, #C9B8E8 0%, #AC5D64 55%, #E1DEE3 100%)',
+              backgroundClip: 'text',
+              WebkitBackgroundClip: 'text',
+              color: 'transparent',
+              WebkitTextFillColor: 'transparent',
+              textShadow: '0 0 24px rgba(201, 184, 232, 0.22), 0 0 48px rgba(172, 93, 100, 0.14)',
+            }}
+          >
+            Deliberate
+          </span>{' '}
+          Craft
         </h2>
+        <p className="services-copy mx-auto mt-6 max-w-[760px] font-body text-[clamp(15px,1.55vw,19px)] leading-[1.75] text-white/58 font-light will-change-[transform,opacity]">
+          Every engagement is treated like a small mission — scoped tightly, designed end-to-end, and shipped with the same care a film director gives a single frame. No bloat, no handoff loss.
+        </p>
       </div>
 
       {/* Grid — gap:1px + bg creates hairline dividers between cells */}
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 280px), 1fr))',
-          gap: '1px',
-          background: 'rgba(255,255,255,0.05)',
-          borderRadius: '20px',
-          overflow: 'hidden',
-          border: '1px solid rgba(255,255,255,0.05)',
-          position: 'relative',
-          zIndex: 1,
-        }}
-      >
+      <div className="services-grid grid [grid-template-columns:repeat(auto-fill,minmax(min(100%,280px),1fr))] gap-px bg-white/5 rounded-[20px] overflow-hidden border border-white/5 relative z-1">
         {SERVICES.map((s) => (
           <div
             key={s.name}
-            className="service-card"
-            style={{
-              background: 'rgba(255,255,255,0.03)',
-              padding: '32px 26px',
-              display: 'flex',
-              flexDirection: 'column',
-              gap: '14px',
-            }}
+            className="service-card services-card bg-white/3 p-[32px_26px] flex flex-col gap-3.5"
           >
-            <div
-              style={{
-                width: '38px',
-                height: '38px',
-                borderRadius: '10px',
-                background: 'rgba(255,255,255,0.06)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                flexShrink: 0,
-              }}
-            >
+            <div className="w-[38px] h-[38px] rounded-[10px] bg-white/6 flex items-center justify-center shrink-0">
               <Icon icon={s.icon} style={{ width: 19, height: 19, color: 'rgba(255,255,255,0.75)' }} />
             </div>
             <div>
-              <div
-                style={{
-                  fontFamily: 'var(--font-disp)',
-                  fontWeight: 700,
-                  fontSize: '16px',
-                  color: 'rgba(255,255,255,0.88)',
-                  marginBottom: '6px',
-                }}
-              >
+              <div className="font-disp font-bold text-base text-white/88 mb-1.5">
                 {s.name}
               </div>
-              <div
-                style={{
-                  fontFamily: 'var(--font-body)',
-                  fontSize: '13px',
-                  color: 'rgba(255,255,255,0.42)',
-                  lineHeight: 1.65,
-                  fontWeight: 300,
-                }}
-              >
+              <div className="font-body text-[13px] text-white/42 leading-[1.65] font-light">
                 {s.description}
               </div>
             </div>

@@ -38,99 +38,35 @@ const WhyWorkWithMe: React.FC = () => {
   return (
     <section
       ref={sectionRef}
-      style={{
-        padding: 'clamp(80px, 10vw, 120px) clamp(24px, 8vw, 88px)',
-        background: '#0C0C0E',
-        position: 'relative',
-        overflow: 'hidden',
-      }}
+      className="py-[clamp(80px,10vw,120px)] px-[clamp(24px,8vw,88px)] bg-gateway relative overflow-hidden"
     >
       {/* Subtle purple orb bleed — right edge */}
-      <div
-        style={{
-          position: 'absolute',
-          top: '50%',
-          right: '-120px',
-          transform: 'translateY(-50%)',
-          width: '500px',
-          height: '500px',
-          borderRadius: '50%',
-          background: 'radial-gradient(circle, rgba(139,92,246,0.04) 0%, transparent 65%)',
-          pointerEvents: 'none',
-          zIndex: 0,
-        }}
-      />
+      <div className="absolute top-1/2 -translate-y-1/2 pointer-events-none z-0 w-[500px] h-[500px] rounded-full [background:radial-gradient(circle,rgba(139,92,246,0.04)_0%,transparent_65%)]" style={{ right: '-120px' }} />
 
-      <div style={{ marginBottom: '64px', position: 'relative', zIndex: 1 }}>
-        <div
-          style={{
-            fontFamily: 'var(--font-mono)',
-            fontSize: '10px',
-            letterSpacing: '0.14em',
-            textTransform: 'uppercase',
-            color: 'rgba(255,255,255,0.3)',
-            marginBottom: '12px',
-          }}
-        >
+      <div className="mb-16 relative z-1">
+        <div className="font-mono text-[10px] tracking-[0.14em] uppercase text-white/30 mb-3">
           Why Work With Me
         </div>
-        <h2
-          style={{
-            fontFamily: 'var(--font-disp)',
-            fontWeight: 800,
-            fontSize: 'clamp(30px, 5vw, 52px)',
-            color: 'rgba(255,255,255,0.88)',
-            letterSpacing: '-0.03em',
-            lineHeight: 1.1,
-            margin: 0,
-          }}
-        >
+        <h2 className="text-[clamp(30px,5vw,52px)] text-white/88 tracking-[-0.03em] leading-[1.1] m-0">
           The details shape the experience.
         </h2>
       </div>
 
-      <div style={{ position: 'relative', zIndex: 1 }}>
+      <div className="relative z-1">
         {STATEMENTS.map((s, i) => (
           <div
             key={i}
-            className="why-statement"
-            style={{
-              borderTop: '1px solid rgba(255,255,255,0.07)',
-              padding: 'clamp(32px, 4vw, 48px) 0',
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 280px), 1fr))',
-              gap: '24px',
-              alignItems: 'start',
-            }}
+            className="why-statement border-t border-white/7 py-[clamp(32px,4vw,48px)] grid [grid-template-columns:repeat(auto-fit,minmax(min(100%,280px),1fr))] gap-6 items-start"
           >
-            <h3
-              style={{
-                fontFamily: 'var(--font-disp)',
-                fontWeight: 700,
-                fontSize: 'clamp(20px, 2.8vw, 30px)',
-                color: 'rgba(255,255,255,0.88)',
-                letterSpacing: '-0.025em',
-                lineHeight: 1.2,
-                margin: 0,
-              }}
-            >
+            <h3 className="text-[clamp(20px,2.8vw,30px)] text-white/88 tracking-[-0.025em] leading-[1.2] m-0">
               {s.headline}
             </h3>
-            <p
-              style={{
-                fontFamily: 'var(--font-body)',
-                fontWeight: 300,
-                fontSize: 'clamp(14px, 1.5vw, 16px)',
-                color: 'rgba(255,255,255,0.45)',
-                lineHeight: 1.7,
-                margin: 0,
-              }}
-            >
+            <p className="font-body font-light text-[clamp(14px,1.5vw,16px)] text-white/45 leading-[1.7] m-0">
               {s.body}
             </p>
           </div>
         ))}
-        <div style={{ borderTop: '1px solid rgba(255,255,255,0.07)' }} />
+        <div className="border-t border-white/7" />
       </div>
     </section>
   );

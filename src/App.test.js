@@ -1,8 +1,11 @@
-import { render, screen } from '@testing-library/react';
-import App from './App';
+import { APP_ROUTE_PATHS } from './appRoutes';
 
-test('renders learn react link', () => {
-  render(<App />);
-  const linkElement = screen.getByText(/learn react/i);
-  expect(linkElement).toBeInTheDocument();
+test('defines the public app routes', () => {
+  expect(APP_ROUTE_PATHS).toEqual([
+    '/',
+    '/portfolio',
+    '/projects',
+    '/projects/:slug',
+    '/work-with-me',
+  ]);
 });

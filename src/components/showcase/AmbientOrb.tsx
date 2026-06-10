@@ -15,19 +15,8 @@ const AmbientOrb: React.FC<AmbientOrbProps> = ({ color }) => (
       backgroundColor: { duration: 1.4, ease: 'easeInOut' },
       scale: { duration: 9, repeat: Infinity, ease: 'easeInOut' },
     }}
-    style={{
-      position: 'absolute',
-      top: '50%',
-      left: '50%',
-      width: 900,
-      height: 900,
-      borderRadius: '50%',
-      transform: 'translate(-50%, -50%)',
-      filter: 'blur(130px)',
-      opacity: 0.36,
-      pointerEvents: 'none',
-      zIndex: 1,
-    }}
+    className="absolute top-1/2 left-1/2 w-[900px] h-[900px] rounded-full opacity-36 pointer-events-none z-1 [filter:blur(130px)]"
+    style={{ transform: 'translate(-50%, -50%)' }}
   />
 );
 

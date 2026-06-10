@@ -7,6 +7,7 @@ import StoryPage from '@/pages/StoryPage';
 import ProjectsPage from '@/pages/ProjectsPage';
 import ProjectDetailPage from '@/pages/ProjectDetailPage';
 import WorkWithMePage from '@/pages/WorkWithMePage';
+import { APP_ROUTE_PATHS } from '@/appRoutes';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // LEGACY: The old single-page AppContent has been preserved below (commented
@@ -18,11 +19,11 @@ const App: React.FC = () => (
     <AudienceProvider>
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<GatewayPage />} />
-          <Route path="/portfolio" element={<StoryPage />} />
-          <Route path="/projects" element={<ProjectsPage />} />
-          <Route path="/projects/:slug" element={<ProjectDetailPage />} />
-          <Route path="/work-with-me" element={<WorkWithMePage />} />
+          <Route path={APP_ROUTE_PATHS[0]} element={<GatewayPage />} />
+          <Route path={APP_ROUTE_PATHS[1]} element={<StoryPage />} />
+          <Route path={APP_ROUTE_PATHS[2]} element={<ProjectsPage />} />
+          <Route path={APP_ROUTE_PATHS[3]} element={<ProjectDetailPage />} />
+          <Route path={APP_ROUTE_PATHS[4]} element={<WorkWithMePage />} />
         </Routes>
       </BrowserRouter>
     </AudienceProvider>

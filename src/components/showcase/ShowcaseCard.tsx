@@ -13,98 +13,32 @@ const ShowcaseCard: React.FC<ShowcaseCardProps> = ({ project, interactive = true
   return (
     <div
       onClick={interactive ? () => navigate(`/projects/${project.id}`) : undefined}
-      style={{
-        width: '100%',
-        aspectRatio: '4 / 3',
-        backgroundColor: 'rgba(12, 12, 14, 0.95)',
-        borderRadius: 28,
-        overflow: 'hidden',
-        boxShadow:
-          '0 20px 60px rgba(0,0,0,0.16), 0 8px 24px rgba(0,0,0,0.10), 0 2px 8px rgba(0,0,0,0.06)',
-        position: 'relative',
-        cursor: interactive ? 'pointer' : 'default',
-        userSelect: 'none',
-      }}
+      className="w-full aspect-[4/3] bg-[rgba(12,12,14,0.95)] rounded-[28px] overflow-hidden relative select-none [box-shadow:0_20px_60px_rgba(0,0,0,0.16),0_8px_24px_rgba(0,0,0,0.10),0_2px_8px_rgba(0,0,0,0.06)]"
+      style={{ cursor: interactive ? 'pointer' : 'default' }}
     >
       {/* Project image */}
       <img
         src={project.image}
         alt={project.title}
         draggable={false}
-        style={{
-          width: '100%',
-          height: '100%',
-          objectFit: 'cover',
-          display: 'block',
-          opacity: 0.88,
-        }}
+        className="w-full h-full object-cover block opacity-88"
       />
 
       {/* Bottom gradient with info */}
-      <div
-        style={{
-          position: 'absolute',
-          bottom: 0,
-          left: 0,
-          right: 0,
-          padding: '48px 28px 24px',
-          background: 'linear-gradient(to top, rgba(0,0,0,0.82) 0%, transparent 100%)',
-          display: 'flex',
-          alignItems: 'flex-end',
-          justifyContent: 'space-between',
-          gap: 12,
-        }}
-      >
+      <div className="absolute bottom-0 left-0 right-0 pt-12 pb-6 px-7 [background:linear-gradient(to_top,rgba(0,0,0,0.82)_0%,transparent_100%)] flex items-end justify-between gap-3">
         <div>
-          <p
-            style={{
-              fontFamily: 'var(--font-mono)',
-              fontSize: 11,
-              color: 'rgba(255,255,255,0.44)',
-              margin: '0 0 5px',
-              letterSpacing: '0.08em',
-              fontWeight: 400,
-              textTransform: 'uppercase',
-            }}
-          >
+          <p className="font-mono text-[11px] text-white/44 m-0 mb-1 tracking-[0.08em] font-normal uppercase">
             {project.category}
           </p>
-          <h3
-            style={{
-              fontFamily: 'var(--font-disp)',
-              fontSize: 17,
-              color: 'rgba(255,255,255,0.92)',
-              margin: 0,
-              fontWeight: 700,
-              letterSpacing: '-0.01em',
-            }}
-          >
+          <h3 className="text-[17px] text-white/92 tracking-[-0.01em] font-bold">
             {project.title}
           </h3>
         </div>
 
         {/* View pill */}
         {interactive && (
-          <div
-            style={{
-              flexShrink: 0,
-              padding: '8px 16px',
-              backgroundColor: 'rgba(255,255,255,0.1)',
-              backdropFilter: 'blur(10px)',
-              WebkitBackdropFilter: 'blur(10px)',
-              borderRadius: 100,
-              border: '1px solid rgba(255,255,255,0.14)',
-            }}
-          >
-            <span
-              style={{
-                fontFamily: 'var(--font-body)',
-                fontSize: 12,
-                color: 'rgba(255,255,255,0.75)',
-                fontWeight: 500,
-                whiteSpace: 'nowrap',
-              }}
-            >
+          <div className="shrink-0 py-2 px-4 bg-white/10 [backdrop-filter:blur(10px)] [-webkit-backdrop-filter:blur(10px)] rounded-full border border-white/14">
+            <span className="font-body text-[12px] text-white/75 font-medium whitespace-nowrap">
               View →
             </span>
           </div>
