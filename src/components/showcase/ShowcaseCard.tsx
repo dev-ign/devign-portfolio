@@ -1,6 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Project } from '@/data/projects';
+import { useIsMobile } from '@/hooks/useMediaQuery';
 
 interface ShowcaseCardProps {
   project: Project;
@@ -9,6 +10,7 @@ interface ShowcaseCardProps {
 
 const ShowcaseCard: React.FC<ShowcaseCardProps> = ({ project, interactive = true }) => {
   const navigate = useNavigate();
+  const isMobile = useIsMobile();
 
   return (
     <div
@@ -25,12 +27,21 @@ const ShowcaseCard: React.FC<ShowcaseCardProps> = ({ project, interactive = true
       />
 
       {/* Bottom gradient with info */}
-      <div className="absolute bottom-0 left-0 right-0 pt-12 pb-6 px-7 [background:linear-gradient(to_top,rgba(0,0,0,0.82)_0%,transparent_100%)] flex items-end justify-between gap-3">
+      <div
+        className="absolute bottom-0 left-0 right-0 [background:linear-gradient(to_top,rgba(0,0,0,0.82)_0%,transparent_100%)] flex items-end justify-between gap-3"
+        style={{ padding: isMobile ? '28px 18px 16px' : '48px 28px 24px' }}
+      >
         <div>
-          <p className="font-mono text-[11px] text-white/44 m-0 mb-1 tracking-[0.08em] font-normal uppercase">
+          <p
+            className="font-mono text-white/44 m-0 mb-1 tracking-[0.08em] font-normal uppercase"
+            style={{ fontSize: isMobile ? 10 : 11 }}
+          >
             {project.category}
           </p>
-          <h3 className="text-[17px] text-white/92 tracking-[-0.01em] font-bold">
+          <h3
+            className="text-white/92 tracking-[-0.01em] font-bold m-0"
+            style={{ fontSize: isMobile ? 15 : 17 }}
+          >
             {project.title}
           </h3>
         </div>

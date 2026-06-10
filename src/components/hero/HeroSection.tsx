@@ -347,8 +347,8 @@ const HeroSection: React.FC = () => {
             </Button>
             <Button
               component="a"
-              href="/Jonaferreiraresume.pdf"
-              download="Jonaferreiraresume.pdf"
+              href="/Jona_Ferreira_Resume-devign.pdf"
+              download="Jona_Ferreira_Resume-devign.pdf"
               sx={{
                 fontFamily: 'var(--font-mono)',
                 fontSize: '11px',

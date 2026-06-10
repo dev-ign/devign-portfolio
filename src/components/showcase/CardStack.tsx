@@ -2,6 +2,7 @@ import React, { useEffect, useRef } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import { Project } from '@/data/projects';
 import ShowcaseCard from './ShowcaseCard';
+import { useIsMobile } from '@/hooks/useMediaQuery';
 
 interface CardStackProps {
   projects: Project[];
@@ -45,6 +46,7 @@ const CardStack: React.FC<CardStackProps> = ({
   direction,
 }) => {
   const isFirstMount = useRef(true);
+  const isMobile = useIsMobile();
   useEffect(() => { isFirstMount.current = false; }, []);
 
   return (
@@ -59,7 +61,9 @@ const CardStack: React.FC<CardStackProps> = ({
           const idx = activeIndex + offset;
           if (idx >= projects.length) return null;
 
-          const yValues   = [-24, -20, -16, -12, -8, -4];
+          const yValues   = isMobile
+            ? [-14, -12, -10, -8, -5, -3]
+            : [-24, -20, -16, -12, -8, -4];
           const scaleVals = [0.940, 0.950, 0.960, 0.970, 0.980, 0.990];
           const rotzVals  = [2.5, -2.5, 2, -2, 1.5, -1.5];
           const opacityVals = [1, 0.7, 1, 1, 1, 1];
