@@ -1,4 +1,5 @@
 import { gsap } from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 const revealDefaults = {
   autoAlpha: 1,
