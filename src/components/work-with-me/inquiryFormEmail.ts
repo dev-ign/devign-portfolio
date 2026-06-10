@@ -105,7 +105,7 @@ export const buildInquiryEmailParams = (
     from_name: name,
     from_email: email,
     reply_to: email,
-    subject: `[Work With Me] ${selectedProjectTypes || 'Inquiry'} - ${formData.businessName.trim() || name}`,
+    subject: `[Work With Us] ${selectedProjectTypes || 'Inquiry'} - ${formData.businessName.trim() || name}`,
     message: buildInquiryMessage(formData, resourceFiles),
     name,
     email,

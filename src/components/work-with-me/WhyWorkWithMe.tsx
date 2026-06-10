@@ -45,7 +45,7 @@ const WhyWorkWithMe: React.FC = () => {
 
       <div className="mb-16 relative z-1">
         <div className="font-mono text-[10px] tracking-[0.14em] uppercase text-white/30 mb-3">
-          Why Work With Me
+          Why Work With Us
         </div>
         <h2 className="text-[clamp(30px,5vw,52px)] text-white/88 tracking-[-0.03em] leading-[1.1] m-0">
           The details shape the experience.

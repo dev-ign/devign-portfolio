@@ -161,7 +161,7 @@ export function runProjectsGridReveal(header: HTMLElement, cards: HTMLElement[])
   });
 }
 
-// Why Work With Me: each ruled row scrubs from near-invisible to full opacity
+// Why Work With Us: each ruled row scrubs from near-invisible to full opacity
 export function initWhyScrub(statements: HTMLElement[]) {
   statements.forEach((el) => {
     gsap.fromTo(
