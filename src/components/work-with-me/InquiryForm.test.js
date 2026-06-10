@@ -5,6 +5,7 @@ import {
   validateContactStep,
   validateInquiryFiles,
 } from './inquiryFormEmail';
+import { submitInquiry } from './inquiryFormSubmission';
 
 const validFormData = {
   name: 'Jordan Lee',
@@ -52,4 +53,44 @@ test('validates inquiry files by type, count, and size', () => {
     'huge.png is over the 10 MB limit.',
     'script.exe is not a supported asset type.',
   ]);
+});
+
+test('submits inquiry form data and files to the api route', async () => {
+  const originalFetch = global.fetch;
+  global.fetch = jest.fn().mockResolvedValue({
+    ok: true,
+    json: async () => ({ ok: true }),
+  });
+
+  const file = new File(['image-bytes'], 'image-1.png', { type: 'image/png' });
+  const result = await submitInquiry(validFormData, [file]);
+
+  expect(result).toEqual({ ok: true });
+  expect(global.fetch).toHaveBeenCalledWith('/api/inquiry', {
+    method: 'POST',
+    body: expect.any(FormData),
+  });
+
+  const body = global.fetch.mock.calls[0][1].body;
+  expect(body.get('name')).toBe('Jordan Lee');
+  expect(body.get('email')).toBe('jordan@example.com');
+  expect(body.get('projectTypes')).toBe(JSON.stringify(['product', 'video']));
+  expect(body.get('assets').name).toBe('image-1.png');
+
+  global.fetch = originalFetch;
+});
+
+test('returns a friendly message when inquiry api rejects submission', async () => {
+  const originalFetch = global.fetch;
+  global.fetch = jest.fn().mockResolvedValue({
+    ok: false,
+    json: async () => ({ error: 'Please upload fewer files.' }),
+  });
+
+  await expect(submitInquiry(validFormData, [])).resolves.toEqual({
+    ok: false,
+    message: 'Please upload fewer files.',
+  });
+
+  global.fetch = originalFetch;
 });
