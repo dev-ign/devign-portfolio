@@ -1,7 +1,6 @@
 import React, { useRef } from 'react';
-import { motion } from 'motion/react';
 import { useGSAPContext } from '@/hooks/useGSAPContext';
-import { initProcessPin } from '@/animations/workWithMeAnimations';
+import { initScrollEnterExit } from '@/animations/workWithMeAnimations';
 import { useIsMobile } from '@/hooks/useMediaQuery';
 
 const STEPS = [
@@ -27,20 +26,50 @@ const STEPS = [
   },
 ];
 
-const ease = [0.16, 1, 0.3, 1] as [number, number, number, number];
-
 const Process: React.FC = () => {
   const sectionRef = useRef<HTMLElement>(null);
   const isMobile = useIsMobile();
 
   useGSAPContext(
     () => {
-      if (isMobile || !sectionRef.current) return;
-      const stepEls = Array.from(
+      if (!sectionRef.current) return;
+      const eyebrow = sectionRef.current.querySelector<HTMLElement>('.process-eyebrow');
+      const title = sectionRef.current.querySelector<HTMLElement>('.process-title');
+      const cards = Array.from(
         sectionRef.current.querySelectorAll<HTMLElement>('.process-step')
       );
-      const mm = initProcessPin(sectionRef.current, stepEls);
-      return () => mm.revert();
+
+      if (eyebrow) {
+        initScrollEnterExit([eyebrow], {
+          trigger: eyebrow,
+          start: 'top 20%',
+          end: 'top 85%',
+          duration: 2,
+          y: 32,
+        });
+      }
+
+      if (title) {
+        initScrollEnterExit([title], {
+          trigger: title,
+          start: 'top 24%',
+          end: 'top t84%',
+          duration: 1.45,
+          y: 48,
+        });
+      }
+
+      cards.forEach((card, index) => {
+        initScrollEnterExit([card], {
+          trigger: card,
+          start: 'top 24%',
+          end: 'top 80%',
+          duration: 2,
+          delay: index * 0.5,
+          stagger: 0,
+          y: 46,
+        });
+      });
     },
     { scope: sectionRef, dependencies: [isMobile] }
   );
@@ -49,36 +78,14 @@ const Process: React.FC = () => {
     <section
       ref={sectionRef}
       id="process"
-      style={{
-        padding: 'clamp(80px, 10vw, 120px) clamp(24px, 8vw, 88px)',
-        background: '#E8E7E1',
-        overflow: isMobile ? undefined : 'hidden',
-      }}
+      className="py-[clamp(80px,10vw,120px)] px-[clamp(16px,6vw,88px)] bg-gateway"
+      style={{ overflow: isMobile ? undefined : 'hidden' }}
     >
-      <div style={{ marginBottom: '64px' }}>
-        <div
-          style={{
-            fontFamily: 'var(--font-mono)',
-            fontSize: '10px',
-            letterSpacing: '0.14em',
-            textTransform: 'uppercase',
-            color: 'rgba(0,0,0,0.35)',
-            marginBottom: '12px',
-          }}
-        >
+      <div className="mb-16">
+        <div className="process-eyebrow font-mono text-[10px] tracking-[0.14em] uppercase text-white/30 mb-3 will-change-[transform,opacity]">
           How It Works
         </div>
-        <h2
-          style={{
-            fontFamily: 'var(--font-disp)',
-            fontWeight: 800,
-            fontSize: 'clamp(30px, 5vw, 52px)',
-            color: '#0C0C0E',
-            letterSpacing: '-0.03em',
-            lineHeight: 1.1,
-            margin: 0,
-          }}
-        >
+        <h2 className="process-title text-[clamp(30px,5vw,52px)] text-white/88 tracking-[-0.03em] leading-[1.1] m-0 will-change-[transform,opacity]">
           A clear process,<br />no surprises.
         </h2>
       </div>
@@ -92,34 +99,22 @@ const Process: React.FC = () => {
       >
         {STEPS.map((step, i) =>
           isMobile ? (
-            <motion.div
+            <div
               key={step.number}
-              className="process-step"
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, amount: 0.4 }}
-              transition={{ duration: 0.6, ease, delay: i * 0.06 }}
-              style={{
-                borderTop: '1px solid rgba(0,0,0,0.1)',
-                padding: 'clamp(24px, 4vw, 36px) 0',
-              }}
+              className="process-step border-t border-white/7 py-[clamp(24px,4vw,36px)] will-change-[transform,opacity]"
             >
               <StepContent step={step} />
-            </motion.div>
+            </div>
           ) : (
             <div
               key={step.number}
-              className="process-step"
-              style={{
-                borderTop: '2px solid rgba(0,0,0,0.12)',
-                paddingTop: '28px',
-              }}
+              className="process-step border-t-2 border-white/8 pt-7 will-change-[transform,opacity]"
             >
               <StepContent step={step} />
             </div>
           )
         )}
-        {isMobile && <div style={{ borderTop: '1px solid rgba(0,0,0,0.1)' }} />}
+        {isMobile && <div className="border-t border-white/7" />}
       </div>
     </section>
   );
@@ -127,40 +122,13 @@ const Process: React.FC = () => {
 
 const StepContent: React.FC<{ step: (typeof STEPS)[number] }> = ({ step }) => (
   <>
-    <div
-      style={{
-        fontFamily: 'var(--font-mono)',
-        fontSize: '11px',
-        letterSpacing: '0.1em',
-        color: 'rgba(0,0,0,0.3)',
-        marginBottom: '20px',
-      }}
-    >
+    <div className="font-mono text-[11px] tracking-[0.1em] text-black/30 mb-5">
       {step.number}
     </div>
-    <h3
-      style={{
-        fontFamily: 'var(--font-disp)',
-        fontWeight: 700,
-        fontSize: 'clamp(20px, 2.4vw, 26px)',
-        color: '#0C0C0E',
-        letterSpacing: '-0.025em',
-        lineHeight: 1.2,
-        margin: '0 0 12px',
-      }}
-    >
+    <h3 className="text-[clamp(20px,2.4vw,26px)] text-white/88 tracking-[-0.025em] leading-[1.2] m-0 mb-3">
       {step.title}
     </h3>
-    <p
-      style={{
-        fontFamily: 'var(--font-body)',
-        fontWeight: 300,
-        fontSize: 'clamp(14px, 1.4vw, 15px)',
-        color: 'rgba(0,0,0,0.5)',
-        lineHeight: 1.7,
-        margin: 0,
-      }}
-    >
+    <p className="font-body font-light text-[clamp(14px,1.4vw,15px)] text-white/48 leading-[1.7] m-0">
       {step.body}
     </p>
   </>

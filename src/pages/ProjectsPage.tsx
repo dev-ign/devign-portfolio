@@ -1,199 +1,73 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { AnimatePresence, motion } from 'motion/react';
-import { projects } from '@/data/projects';
-import ShowcaseHeader from '@/components/showcase/ShowcaseHeader';
+import React, { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
+import { motion } from 'motion/react';
+import { projects, Project } from '@/data/projects';
 import AmbientOrb from '@/components/showcase/AmbientOrb';
-import CardStack from '@/components/showcase/CardStack';
+import ProjectCarousel from '@/components/showcase/ProjectCarousel';
 import ControlBar from '@/components/story/ControlBar';
 import { useIsMobile } from '@/hooks/useMediaQuery';
 
-const EASE_IN   = [0.16, 1, 0.3, 1] as const;
-const EASE_SLOW = [0.4, 0, 0.6, 1] as const;
-
 const ProjectsPage: React.FC = () => {
   const isMobile = useIsMobile();
-  const [activeIndex, setActiveIndex] = useState(0);
-  const [direction, setDirection] = useState(1);
-  const [introPhase, setIntroPhase] = useState<'hint' | 'cards'>('hint');
-  const introPhaseRef = useRef<'hint' | 'cards'>('hint');
-  const isAnimating = useRef(false);
-  const touchStartY = useRef(0);
-  const lockTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const [activeProject, setActiveProject] = useState<Project>(projects[0]);
 
   useEffect(() => {
     document.body.setAttribute('data-page', 'projects');
-    document.body.style.overflow = 'hidden';
-    return () => {
-      document.body.removeAttribute('data-page');
-      document.body.style.overflow = '';
-    };
+    return () => document.body.removeAttribute('data-page');
   }, []);
-
-  useEffect(() => { introPhaseRef.current = introPhase; }, [introPhase]);
-
-  const unlock = () => {
-    if (lockTimer.current) clearTimeout(lockTimer.current);
-    lockTimer.current = setTimeout(() => {
-      isAnimating.current = false;
-    }, 820);
-  };
-
-  const goNext = useCallback(() => {
-    if (introPhaseRef.current === 'hint') {
-      setIntroPhase('cards');
-      isAnimating.current = true;
-      unlock();
-      return;
-    }
-    if (isAnimating.current) return;
-    setActiveIndex((prev) => {
-      if (prev >= projects.length - 1) return prev;
-      isAnimating.current = true;
-      setDirection(1);
-      unlock();
-      return prev + 1;
-    });
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  const goPrev = useCallback(() => {
-    if (introPhaseRef.current === 'hint') {
-      setIntroPhase('cards');
-      isAnimating.current = true;
-      unlock();
-      return;
-    }
-    if (isAnimating.current) return;
-    setActiveIndex((prev) => {
-      if (prev <= 0) return prev;
-      isAnimating.current = true;
-      setDirection(-1);
-      unlock();
-      return prev - 1;
-    });
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  const jumpTo = useCallback((index: number) => {
-    if (introPhaseRef.current === 'hint') setIntroPhase('cards');
-    if (isAnimating.current) return;
-    setActiveIndex((prev) => {
-      if (index === prev) return prev;
-      isAnimating.current = true;
-      setDirection(index > prev ? 1 : -1);
-      unlock();
-      return index;
-    });
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  // Desktop: wheel events
-  useEffect(() => {
-    const handleWheel = (e: WheelEvent) => {
-      e.preventDefault();
-      if (Math.abs(e.deltaY) < 20) return;
-      if (e.deltaY > 0) goNext();
-      else goPrev();
-    };
-    window.addEventListener('wheel', handleWheel, { passive: false });
-    return () => window.removeEventListener('wheel', handleWheel);
-  }, [goNext, goPrev]);
-
-  // Mobile: touch swipe
-  useEffect(() => {
-    const handleTouchStart = (e: TouchEvent) => {
-      touchStartY.current = e.touches[0].clientY;
-    };
-    const handleTouchEnd = (e: TouchEvent) => {
-      const delta = touchStartY.current - e.changedTouches[0].clientY;
-      if (Math.abs(delta) < 50) return;
-      if (delta > 0) goNext();
-      else goPrev();
-    };
-    window.addEventListener('touchstart', handleTouchStart, { passive: true });
-    window.addEventListener('touchend', handleTouchEnd, { passive: true });
-    return () => {
-      window.removeEventListener('touchstart', handleTouchStart);
-      window.removeEventListener('touchend', handleTouchEnd);
-    };
-  }, [goNext, goPrev]);
-
-  // Keyboard navigation
-  useEffect(() => {
-    const handleKey = (e: KeyboardEvent) => {
-      if (e.key === 'ArrowDown' || e.key === 'ArrowRight') goNext();
-      if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') goPrev();
-    };
-    window.addEventListener('keydown', handleKey);
-    return () => window.removeEventListener('keydown', handleKey);
-  }, [goNext, goPrev]);
 
   return (
-    <div
-      style={{
-        width: '100vw',
-        height: '100vh',
-        backgroundColor: '#E8E7E1',
-        position: 'relative',
-        overflow: 'hidden',
-      }}
-    >
-      <AmbientOrb color={projects[activeIndex].accentColor} />
+    <div className="min-h-screen bg-editorial relative overflow-hidden px-[clamp(22px,6vw,72px)] py-[clamp(24px,5vw,44px)]">
+      <AmbientOrb color={activeProject.accentColor} />
 
-      <ShowcaseHeader
-        projects={projects}
-        activeIndex={activeIndex}
-        onThumbnailClick={jumpTo}
-      />
-
-      {/* Card area — switches between hint text and card stack */}
-      <div
-        style={{
-          position: 'absolute',
-          inset: 0,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          paddingTop: isMobile ? 120 : 150,
-          paddingBottom: 40,
-          zIndex: 10,
-        }}
+      <motion.header
+        initial={{ opacity: 0, y: -10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1], delay: 0.08 }}
+        className="relative z-10 mx-auto flex max-w-[1320px] items-center justify-between gap-5"
       >
-        <AnimatePresence mode="wait">
-          {introPhase === 'hint' ? (
-            <motion.div
-              key="hint"
-              initial={{ opacity: 0, y: 6 }}
-              animate={{ opacity: 1, y: 0, transition: { duration: 0.7, ease: EASE_IN } }}
-              exit={{ x: '110vw', opacity: 1, transition: { duration: 0.52, ease: EASE_SLOW } }}
-              style={{ textAlign: 'center', padding: '0 24px', userSelect: 'none' }}
-            >
-              <p
-                style={{
-                  fontFamily: 'var(--font-disp)',
-                  fontSize: 'clamp(28px, 4vw, 52px)',
-                  fontWeight: 300,
-                  color: 'rgba(26,26,26,0.22)',
-                  margin: 0,
-                  letterSpacing: '-0.02em',
-                  lineHeight: 1.2,
-                }}
-              >
-                Scroll to navigate projects
-              </p>
-            </motion.div>
-          ) : (
-            <motion.div key="cards" style={{ width: '100%', height: '100%' }}>
-              <CardStack
-                projects={projects}
-                activeIndex={activeIndex}
-                direction={direction}
-                onJumpTo={jumpTo}
-              />
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </div>
+        <Link
+          to="/portfolio"
+          className="font-disp text-[#333333] no-underline transition-opacity duration-200 hover:opacity-70"
+          style={{ fontSize: isMobile ? 18 : 24, fontWeight: 400, letterSpacing: '0.03em' }}
+        >
+          devign
+        </Link>
+        <Link
+          to="/portfolio"
+          className="font-mono text-[10px] uppercase tracking-[0.14em] text-[#1A1A1A]/45 no-underline transition-colors duration-200 hover:text-[#1A1A1A]/75"
+        >
+          Back
+        </Link>
+      </motion.header>
+
+      <main className="relative z-10 mx-auto flex min-h-[calc(100vh-112px)] max-w-[1320px] flex-col justify-center pt-[clamp(54px,8vh,92px)] pb-[92px]">
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.85, ease: [0.16, 1, 0.3, 1], delay: 0.18 }}
+          className="mx-auto mb-[clamp(36px,5vw,64px)] max-w-[760px] text-center"
+        >
+          <p className="m-0 mb-4 font-mono text-[10px] uppercase tracking-[0.16em] text-[#1A1A1A]/38">
+            Selected work
+          </p>
+          <h1 className="m-0 text-[clamp(44px,7vw,92px)] leading-[0.95] tracking-[-0.05em] text-[#1A1A1A]">
+            Projects
+          </h1>
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0, y: 14 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.85, ease: [0.16, 1, 0.3, 1], delay: 0.34 }}
+        >
+          <ProjectCarousel
+            projects={projects}
+            theme="light"
+            onActiveProjectChange={setActiveProject}
+          />
+        </motion.div>
+      </main>
 
       <ControlBar show={true} />
     </div>

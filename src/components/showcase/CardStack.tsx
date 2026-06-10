@@ -50,24 +50,11 @@ const CardStack: React.FC<CardStackProps> = ({
   useEffect(() => { isFirstMount.current = false; }, []);
 
   return (
-    <div
-      style={{
-        position: 'relative',
-        width: '100%',
-        height: '100%',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        perspective: '1400px',
-      }}
-    >
+    <div className="relative w-full h-full flex items-center justify-center [perspective:1400px]">
       {/* Card stack area */}
       <div
-        style={{
-          position: 'relative',
-          width: 'min(660px, 94vw)',
-          zIndex: 10,
-        }}
+        className="relative z-10"
+        style={{ width: 'min(660px, 94vw)' }}
       >
         {/* Peek cards — rendered back-to-front, peek from above the active card */}
         {[6, 5, 4, 3, 2, 1].map((offset) => {
@@ -98,16 +85,8 @@ const CardStack: React.FC<CardStackProps> = ({
                 rotateZ: rotzVals[i],
               }}
               transition={{ duration: 0.55, ease: EASE_IN, delay: isFirstMount.current ? (6 - offset) * 0.08 : 0 }}
-              style={{
-                position: 'absolute',
-                top: 0,
-                left: 0,
-                right: 0,
-                transformOrigin: 'center center',
-                pointerEvents: 'none',
-                zIndex: 10 - offset,
-                ...maskStyle,
-              }}
+              className="absolute top-0 left-0 right-0 [transform-origin:center_center] pointer-events-none"
+              style={{ zIndex: 10 - offset, ...maskStyle }}
             >
               <ShowcaseCard project={projects[idx]} interactive={false} />
             </motion.div>
@@ -115,7 +94,7 @@ const CardStack: React.FC<CardStackProps> = ({
         })}
 
         {/* Active card */}
-        <div style={{ position: 'relative', zIndex: 20, width: '100%', aspectRatio: '4/3' }}>
+        <div className="relative z-20 w-full aspect-[4/3]">
           <AnimatePresence custom={direction}>
             <motion.div
               key={activeIndex}

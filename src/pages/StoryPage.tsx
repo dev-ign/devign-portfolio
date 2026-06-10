@@ -10,7 +10,7 @@ const HEADING = "Hey, I'm Jona.";
 const PARAGRAPHS = [
   'I design and build digital experiences that live between product, engineering, and storytelling.',
   "With a background in UX engineering and software development, I turn complex ideas into products that feel intuitive, immersive, and memorable.",
-  "From research to polished production, I focus on creating experiences that people don’t just use, they connect with.",
+  "From research to polished production, I focus on creating experiences that people don't just use, they connect with.",
 ];
 
 const charVariants = {
@@ -22,10 +22,7 @@ const headingContainerVariants = {
   hidden: { opacity: 1 },
   visible: {
     opacity: 1,
-    transition: {
-      delayChildren: 0.55,
-      staggerChildren: 0.075,
-    },
+    transition: { delayChildren: 0.55, staggerChildren: 0.075 },
   },
 };
 
@@ -54,38 +51,19 @@ const StoryPage: React.FC = () => {
   }, []);
 
   return (
-    <div
-      style={{
-        minHeight: '100vh',
-        backgroundColor: '#E8E7E1',
-        position: 'relative',
-        overflowX: 'hidden',
-      }}
-    >
-      {/* Background orbit — project images circling behind text */}
+    <div className="min-h-screen bg-editorial relative overflow-x-hidden">
       <ProjectOrb show={bodyDone} />
 
-      {/* projects link — top right */}
+      {/* Top-right nav link */}
       <motion.div
         initial={{ opacity: 0, y: 4 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
-        style={{ position: 'absolute', top: 28, right: 36, zIndex: 1 }}
+        className="absolute top-7 right-9 z-1"
       >
         <Link
-          to="/portfolio/projects"
-          style={{
-            fontFamily: 'var(--font-disp)',
-            fontSize: 14,
-            fontWeight: 700,
-            letterSpacing: '0.04em',
-            color: '#1A1A1A',
-            textDecoration: 'none',
-            opacity: 0.55,
-            transition: 'opacity 0.2s ease',
-          }}
-          onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.opacity = '0.9'; }}
-          onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.opacity = '0.55'; }}
+          to="/projects"
+          className="font-disp text-[14px] font-bold tracking-[0.04em] text-[#1A1A1A] no-underline opacity-55 transition-opacity duration-200 hover:opacity-90"
         >
           projects
         </Link>
@@ -93,15 +71,10 @@ const StoryPage: React.FC = () => {
 
       {/* Main content column */}
       <div
+        className="max-w-[560px] mx-auto px-7 relative z-1"
         style={{
-          maxWidth: 560,
-          margin: '0 auto',
           paddingTop: isMobile ? '12vh' : '18vh',
-          paddingLeft: 28,
-          paddingRight: 28,
-          paddingBottom: isMobile ? 80 : 140,
-          position: 'relative',
-          zIndex: 1,
+          paddingBottom: isMobile ? '80px' : '140px',
         }}
       >
         {/* Typewriter heading */}
@@ -110,16 +83,7 @@ const StoryPage: React.FC = () => {
           initial="hidden"
           animate="visible"
           onAnimationComplete={() => setHeadingDone(true)}
-          style={{
-            fontFamily: 'var(--font-disp)',
-            fontSize: 'clamp(44px, 6vw, 72px)',
-            textAlign: 'center',
-            fontWeight: 700,
-            lineHeight: 1.08,
-            color: '#1A1A1A',
-            marginBottom: 40,
-            letterSpacing: '-0.025em',
-          }}
+          className="text-[clamp(44px,6vw,72px)] text-center font-bold leading-[1.08] text-[#1A1A1A] mb-10 tracking-[-0.025em]"
         >
           {Array.from(HEADING).map((char, i) => (
             <motion.span key={i} variants={charVariants}>
@@ -128,85 +92,52 @@ const StoryPage: React.FC = () => {
           ))}
         </motion.h1>
 
-        {/* Body paragraphs — staggered after heading */}
+        {/* Body paragraphs */}
         <motion.div
           variants={bodyContainerVariants}
           initial="hidden"
           animate={headingDone ? 'visible' : 'hidden'}
-          style={{ display: 'flex', flexDirection: 'column', alignItems: "center", gap: isMobile ? 14 : 22 }}
+          className="flex flex-col items-center"
+          style={{ gap: isMobile ? 14 : 22 }}
         >
           {PARAGRAPHS.map((para, i) => (
             <motion.p
               key={i}
               variants={paraVariants}
-              style={{
-                fontFamily: 'var(--font-body)',
-                fontSize: 'clamp(15px, 1.55vw, 17px)',
-                lineHeight: 1.78,
-                color: '#3A3A38',
-                margin: 0,
-                fontWeight: 300,
-                textAlign: "center",
-              }}
+              className="text-[clamp(15px,1.55vw,17px)] leading-[1.78] text-[#3A3A38] m-0 font-light text-center"
             >
               {para}
             </motion.p>
           ))}
 
-          {/* projects → link */}
+          {/* Continue to projects — glass button with complex hover */}
           <motion.div
             variants={paraVariants}
-            style={{ marginTop: 12 }}
+            className="mt-3"
             onAnimationComplete={() => setBodyDone(true)}
           >
             <Link
-              to="/portfolio/projects"
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: 8,
-                fontFamily: 'var(--font-disp)',
-                fontSize: 14,
-                fontWeight: 700,
-                letterSpacing: '0.01em',
-                color: '#F8FBFF',
-                textDecoration: 'none',
-                padding: '13px 26px',
-                borderRadius: 100,
-                border: '1px solid rgba(255, 255, 255, 0.42)',
-                background:
-                  'linear-gradient(135deg, rgba(25, 92, 255, 0.78) 0%, rgba(72, 157, 255, 0.58) 52%, rgba(255, 255, 255, 0.28) 100%)',
-                backdropFilter: 'blur(18px) saturate(1.25)',
-                WebkitBackdropFilter: 'blur(18px) saturate(1.25)',
-                boxShadow:
-                  'inset 0 1px 0 rgba(255,255,255,0.42), inset 0 -16px 28px rgba(10,52,180,0.18), 0 12px 28px rgba(31,106,255,0.22)',
-                transform: 'translateY(0) scale(1)',
-                transition:
-                  'background 0.35s ease, box-shadow 0.35s ease, transform 0.35s ease, border-color 0.35s ease, gap 0.35s ease',
-              }}
+              to="/projects"
+              className="inline-flex items-center gap-2 font-disp text-[14px] font-bold tracking-[0.01em] text-[#F8FBFF] no-underline py-[13px] px-[26px] rounded-full border border-white/42 [background:linear-gradient(135deg,rgba(25,92,255,0.78)_0%,rgba(72,157,255,0.58)_52%,rgba(255,255,255,0.28)_100%)] [backdrop-filter:blur(18px)_saturate(1.25)] [-webkit-backdrop-filter:blur(18px)_saturate(1.25)] [box-shadow:inset_0_1px_0_rgba(255,255,255,0.42),inset_0_-16px_28px_rgba(10,52,180,0.18),0_12px_28px_rgba(31,106,255,0.22)] transition-[background,box-shadow,transform,border-color,gap] duration-[350ms] ease-out"
               onMouseEnter={(e) => {
                 const el = e.currentTarget as HTMLElement;
                 const arrow = el.querySelector('svg') as SVGElement | null;
                 el.style.gap = '13px';
                 el.style.transform = 'translateY(-2px) scale(1.025)';
                 el.style.borderColor = 'rgba(255, 255, 255, 0.68)';
-                el.style.background =
-                  'linear-gradient(135deg, rgba(10, 76, 255, 0.84) 0%, rgba(8, 96, 168, 0.7) 48%, rgba(255, 255, 255, 0.36) 100%)';
-                el.style.boxShadow =
-                  'inset 0 1px 0 rgba(255,255,255,0.58), inset 0 -18px 32px rgba(10,52,180,0.22), 0 18px 38px rgba(31,106,255,0.34)';
+                el.style.background = 'linear-gradient(135deg, rgba(10, 76, 255, 0.84) 0%, rgba(8, 96, 168, 0.7) 48%, rgba(255, 255, 255, 0.36) 100%)';
+                el.style.boxShadow = 'inset 0 1px 0 rgba(255,255,255,0.58), inset 0 -18px 32px rgba(10,52,180,0.22), 0 18px 38px rgba(31,106,255,0.34)';
                 if (arrow) arrow.style.transform = 'translateX(3px)';
               }}
               onMouseLeave={(e) => {
                 const el = e.currentTarget as HTMLElement;
                 const arrow = el.querySelector('svg') as SVGElement | null;
                 el.style.gap = '8px';
-                el.style.transform = 'translateY(0) scale(1)';
+                el.style.transform = '';
                 el.style.borderColor = 'rgba(255, 255, 255, 0.42)';
-                el.style.background =
-                  'linear-gradient(135deg, rgba(25, 92, 255, 0.78) 0%, rgba(72, 157, 255, 0.58) 52%, rgba(255, 255, 255, 0.28) 100%)';
-                el.style.boxShadow =
-                  'inset 0 1px 0 rgba(255,255,255,0.42), inset 0 -16px 28px rgba(10,52,180,0.18), 0 12px 28px rgba(31,106,255,0.22)';
-                if (arrow) arrow.style.transform = 'translateX(0)';
+                el.style.background = 'linear-gradient(135deg, rgba(25, 92, 255, 0.78) 0%, rgba(72, 157, 255, 0.58) 52%, rgba(255, 255, 255, 0.28) 100%)';
+                el.style.boxShadow = 'inset 0 1px 0 rgba(255,255,255,0.42), inset 0 -16px 28px rgba(10,52,180,0.18), 0 12px 28px rgba(31,106,255,0.22)';
+                if (arrow) arrow.style.transform = '';
               }}
             >
               Continue to projects
@@ -230,7 +161,6 @@ const StoryPage: React.FC = () => {
         </motion.div>
       </div>
 
-      {/* Fixed bottom bar */}
       <ControlBar show={bodyDone} />
     </div>
   );
