@@ -100,7 +100,7 @@ const GatewayPage: React.FC = () => {
                 onClick={() => scrollToSection('inquiry')}
                 className="primary-hero-cta"
               >
-                <span>Work With Me</span>
+                <span>Work With Us</span>
               </button>
 
               <button
