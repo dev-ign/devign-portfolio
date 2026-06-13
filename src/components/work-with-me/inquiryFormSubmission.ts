@@ -6,10 +6,12 @@ export type InquirySubmissionResult =
 
 export const submitInquiry = async (
   formData: InquiryFormData,
-  resourceFiles: File[]
+  resourceFiles: File[],
+  companyWebsite = ''
 ): Promise<InquirySubmissionResult> => {
   const payload = new FormData();
 
+  payload.append('companyWebsite', companyWebsite.trim());
   payload.append('name', formData.name.trim());
   payload.append('email', formData.email.trim());
   payload.append('businessName', formData.businessName.trim());

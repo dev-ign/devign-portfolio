@@ -6,6 +6,7 @@ import formidable, {
 } from 'formidable';
 import { v2 as cloudinary } from 'cloudinary';
 import { Resend } from 'resend';
+import { sendInquiryEmails } from './lib/email/inquiryEmails';
 
 type ProjectTypeId = 'product' | 'system' | 'marketing' | 'app' | 'graphic' | 'video';
 
@@ -28,6 +29,16 @@ interface UploadedAsset {
   resourceType: string;
 }
 
+class HttpError extends Error {
+  statusCode: number;
+
+  constructor(statusCode: number, message: string) {
+    super(message);
+    this.name = 'HttpError';
+    this.statusCode = statusCode;
+  }
+}
+
 export const config = {
   api: {
     bodyParser: false,
@@ -45,12 +56,12 @@ export const PROJECT_TYPE_LABELS: Record<ProjectTypeId, string> = {
 
 export const FILE_LIMITS = {
   maxFiles: 6,
-  maxImageBytes: 10 * 1024 * 1024,
-  maxPdfBytes: 15 * 1024 * 1024,
-  maxVideoBytes: 75 * 1024 * 1024,
-  maxArchiveBytes: 25 * 1024 * 1024,
-  maxDesignFileBytes: 25 * 1024 * 1024,
-  maxTotalBytes: 100 * 1024 * 1024,
+  maxImageBytes: 4 * 1024 * 1024,
+  maxPdfBytes: 4 * 1024 * 1024,
+  maxVideoBytes: 4 * 1024 * 1024,
+  maxArchiveBytes: 4 * 1024 * 1024,
+  maxDesignFileBytes: 4 * 1024 * 1024,
+  maxTotalBytes: 4 * 1024 * 1024,
 } as const;
 
 const ACCEPTED_TYPES = new Set([
@@ -107,7 +118,7 @@ const formatFileSize = (bytes: number) => {
   return `${mb.toFixed(mb < 10 ? 1 : 0)} MB`;
 };
 
-const getSelectedProjectTypes = (projectTypes: ProjectTypeId[]) =>
+export const getSelectedProjectTypes = (projectTypes: ProjectTypeId[]) =>
   projectTypes.map(id => PROJECT_TYPE_LABELS[id]).filter(Boolean).join(', ');
 
 const getFileLimit = (file: FormidableFile) => {
@@ -201,6 +212,9 @@ export const parseInquiryFields = (fields: Fields): ParsedInquiry => ({
   details: getFirst(fields.details).trim(),
 });
 
+export const isSpamSubmission = (fields: Fields) =>
+  getFirst(fields.companyWebsite).trim().length > 0;
+
 const normalizeFiles = (files: Files) => {
   const rawFiles = files.assets;
   if (!rawFiles) return [];
@@ -250,51 +264,36 @@ export const uploadAsset = async (file: FormidableFile): Promise<UploadedAsset> 
   };
 };
 
-export const buildOwnerEmail = (inquiry: ParsedInquiry, assets: UploadedAsset[]) => {
-  const projectTypes = getSelectedProjectTypes(inquiry.projectTypes);
-  const assetLines = assets.length
-    ? assets.map(asset => `${asset.name} (${formatFileSize(asset.size)}): ${asset.url}`).join('\n')
-    : 'No assets uploaded';
+const getRequiredEnv = (key: string) => {
+  const value = process.env[key];
+  if (!value) {
+    console.error('Inquiry server configuration is missing a required environment variable.', { key });
+    throw new HttpError(500, 'Inquiry service is not configured correctly.');
+  }
 
-  return {
-    subject: `Lead - ${inquiry.email}`,
-    text: [
-      'New project inquiry',
-      '',
-      `Name: ${inquiry.name}`,
-      `Email: ${inquiry.email}`,
-      inquiry.businessName ? `Business: ${inquiry.businessName}` : 'Business: -',
-      inquiry.website ? `Website/Social: ${inquiry.website}` : 'Website/Social: -',
-      `Project Type: ${projectTypes || '-'}`,
-      `Budget: ${inquiry.budget || '-'}`,
-      `Timeline: ${inquiry.timeline || '-'}`,
-      '',
-      'Notes:',
-      inquiry.details || '(no notes provided)',
-      '',
-      'Attachments:',
-      assetLines,
-    ].join('\n'),
-  };
+  return value;
 };
 
-const getOwnerEmail = () => process.env.INQUIRY_TO_EMAIL || 'devignux@gmail.com';
-const getResendFromEmail = () => process.env.RESEND_FROM_EMAIL || 'Devign UX <onboarding@resend.dev>';
+const getOwnerEmail = () => getRequiredEnv('LEAD_NOTIFICATION_EMAIL');
+const getResendFromEmail = () => getRequiredEnv('RESEND_FROM_EMAIL');
 
 const ensureServerConfig = () => {
   const missing = [
     'RESEND_API_KEY',
-    'CLOUDINARY_CLOUD_NAME',
+    'RESEND_FROM_EMAIL',
+    'LEAD_NOTIFICATION_EMAIL',
+    'NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME',
     'CLOUDINARY_API_KEY',
     'CLOUDINARY_API_SECRET',
   ].filter(key => !process.env[key]);
 
   if (missing.length) {
-    throw new Error(`Missing server configuration: ${missing.join(', ')}`);
+    console.error('Inquiry server configuration is missing required environment variables.', { keys: missing });
+    throw new HttpError(500, 'Inquiry service is not configured correctly.');
   }
 
   cloudinary.config({
-    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+    cloud_name: process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME,
     api_key: process.env.CLOUDINARY_API_KEY,
     api_secret: process.env.CLOUDINARY_API_SECRET,
     secure: true,
@@ -318,6 +317,12 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
     ensureServerConfig();
 
     const { fields, files } = await parseMultipartForm(req);
+    if (isSpamSubmission(fields)) {
+      console.warn('Inquiry honeypot triggered');
+      sendJson(res, 200, { ok: true });
+      return;
+    }
+
     const inquiry = parseInquiryFields(fields);
     const assetFiles = normalizeFiles(files);
     const validationErrors = [
@@ -326,27 +331,53 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
     ];
 
     if (validationErrors.length) {
+      console.warn('Inquiry validation failed', {
+        validationErrorCount: validationErrors.length,
+        uploadedFileCount: assetFiles.length,
+      });
       sendJson(res, 400, { error: validationErrors[0] });
       return;
     }
 
-    const assets = await Promise.all(assetFiles.map(uploadAsset));
-    const email = buildOwnerEmail(inquiry, assets);
-    const resend = new Resend(process.env.RESEND_API_KEY);
+    let assets: UploadedAsset[];
+    try {
+      assets = await Promise.all(assetFiles.map(uploadAsset));
+      console.info('Inquiry assets uploaded', {
+        uploadedFileCount: assets.length,
+        resourceTypes: assets.map(asset => asset.resourceType),
+      });
+    } catch (error) {
+      console.error('Inquiry Cloudinary upload failed:', error);
+      throw new HttpError(502, 'Your files could not be uploaded right now. Please try again in a moment.');
+    }
 
-    await resend.emails.send({
-      from: getResendFromEmail(),
-      to: getOwnerEmail(),
-      replyTo: inquiry.email,
-      subject: email.subject,
-      text: email.text,
-    });
+    const resend = new Resend(getRequiredEnv('RESEND_API_KEY'));
+
+    try {
+      await sendInquiryEmails({
+        resend,
+        fromEmail: getResendFromEmail(),
+        ownerEmail: getOwnerEmail(),
+        inquiry,
+        assets,
+        submittedAt: new Date(),
+      });
+      console.info('Inquiry emails processed', { uploadedFileCount: assets.length });
+    } catch (error) {
+      console.error('Lead notification email failed:', error);
+      throw new HttpError(502, 'Your inquiry could not be emailed right now. Please try again in a moment.');
+    }
 
     sendJson(res, 200, { ok: true });
   } catch (error) {
     console.error('Inquiry API error:', error);
-    sendJson(res, 500, {
-      error: 'Your inquiry could not be sent right now. Please try again in a moment.',
+    const statusCode = error instanceof HttpError ? error.statusCode : 500;
+    const message = error instanceof HttpError
+      ? error.message
+      : 'Your inquiry could not be sent right now. Please try again in a moment.';
+
+    sendJson(res, statusCode, {
+      error: message,
     });
   }
 }

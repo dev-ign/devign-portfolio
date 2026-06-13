@@ -1,10 +1,10 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
-import App from '@/App';
+import App from './App';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import reportWebVitals from '@/reportWebVitals';
+import reportWebVitals from './reportWebVitals';
 
 gsap.registerPlugin(ScrollTrigger);
 

@@ -121,14 +121,16 @@ const DonorDirectoryAnimation: React.FC<Props> = ({ className }) => (
 
     {/* ── Row 3 hover highlight (animated) ── */}
     <motion.rect
-      x="0" y="231" width="900" height="44"
+      x={0} y={231} width={900} height={44}
       fill="#2a1838"
+      initial={{ opacity: 0 }}
       animate={{ opacity: [0, 0, 0.65, 0.65, 0.65, 0, 0] }}
       transition={{ duration: 8, times: ROW_TIMES, repeat: Infinity }}
     />
     <motion.rect
-      x="0" y="231" width="3" height="44"
+      x={0} y={231} width={3} height={44}
       fill="#b06ef3"
+      initial={{ opacity: 0 }}
       animate={{ opacity: [0, 0, 1, 1, 1, 0, 0] }}
       transition={{ duration: 8, times: ROW_TIMES, repeat: Infinity }}
     />
@@ -150,8 +152,9 @@ const DonorDirectoryAnimation: React.FC<Props> = ({ className }) => (
 
     {/* Cursor tap pulse on row 3 */}
     <motion.circle
-      cx="100" cy="253" r="6"
+      cx={100} cy={253} r={6}
       fill="#b06ef3"
+      initial={{ fillOpacity: 0, r: 6 }}
       animate={{ fillOpacity: [0, 0.4, 0, 0], r: [6, 12, 14, 6] }}
       transition={{ duration: 8, times: [0, 0.13, 0.20, 1], repeat: Infinity }}
     />
@@ -272,10 +275,13 @@ const DonorDirectoryAnimation: React.FC<Props> = ({ className }) => (
           <motion.rect
             key={bx}
             x={bx}
-            width="16"
-            rx="2"
+            y={306}
+            width={16}
+            height={0}
+            rx={2}
             fill="#4df0c6"
             opacity={op}
+            initial={{ height: 0, y: 306 }}
             animate={{
               height: [0, 0, finalH, finalH, 0],
               y: [306, 306, finalY, finalY, 306],

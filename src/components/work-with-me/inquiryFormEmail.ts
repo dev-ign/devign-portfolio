@@ -19,8 +19,6 @@ export interface ResourceFileSummary {
 
 export type ContactErrors = Partial<Record<'name' | 'email' | 'website', string>>;
 
-export const OWNER_EMAIL = 'devignux@gmail.com';
-
 export const PROJECT_TYPE_LABELS: Record<ProjectTypeId, string> = {
   product: 'Product design',
   system: 'Design system',
@@ -32,12 +30,12 @@ export const PROJECT_TYPE_LABELS: Record<ProjectTypeId, string> = {
 
 export const INQUIRY_FILE_LIMITS = {
   maxFiles: 6,
-  maxImageBytes: 10 * 1024 * 1024,
-  maxPdfBytes: 15 * 1024 * 1024,
-  maxVideoBytes: 75 * 1024 * 1024,
-  maxArchiveBytes: 25 * 1024 * 1024,
-  maxDesignFileBytes: 25 * 1024 * 1024,
-  maxTotalBytes: 100 * 1024 * 1024,
+  maxImageBytes: 4 * 1024 * 1024,
+  maxPdfBytes: 4 * 1024 * 1024,
+  maxVideoBytes: 4 * 1024 * 1024,
+  maxArchiveBytes: 4 * 1024 * 1024,
+  maxDesignFileBytes: 4 * 1024 * 1024,
+  maxTotalBytes: 4 * 1024 * 1024,
 } as const;
 
 export const INQUIRY_ACCEPTED_FILE_TYPES = [

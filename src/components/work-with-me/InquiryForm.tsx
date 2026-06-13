@@ -66,6 +66,7 @@ const InquiryForm: React.FC = () => {
   const [budgetTouched, setBudgetTouched] = useState(false);
   const [timelineTouched, setTimelineTouched] = useState(false);
   const [resourceFiles, setResourceFiles] = useState<File[]>([]);
+  const [companyWebsite, setCompanyWebsite] = useState('');
   const [formData, setFormData] = useState<InquiryFormData>({
     name: '', email: '', businessName: '', website: '',
     projectTypes: [], budget: '', timeline: '', details: '',
@@ -149,6 +150,8 @@ const InquiryForm: React.FC = () => {
   };
 
   const handleSubmit = async () => {
+    if (submitting) return;
+
     setSubmitError('');
     const nextContactErrors = validateContactStep(formData);
     if (Object.keys(nextContactErrors).length > 0) {
@@ -184,7 +187,7 @@ const InquiryForm: React.FC = () => {
 
     setSubmitting(true);
     try {
-      const result = await submitInquiry(formData, resourceFiles);
+      const result = await submitInquiry(formData, resourceFiles, companyWebsite);
       if (!result.ok) {
         setSubmitError(result.message);
         return;
@@ -537,6 +540,16 @@ const InquiryForm: React.FC = () => {
       </div>
 
       <div className="inquiry-reveal max-w-[560px]">
+        <input
+          type="text"
+          name="companyWebsite"
+          autoComplete="off"
+          tabIndex={-1}
+          value={companyWebsite}
+          onChange={event => setCompanyWebsite(event.target.value)}
+          style={{ display: 'none' }}
+          aria-hidden="true"
+        />
         {/* Step indicator dots */}
         <div className="flex gap-1.5 mb-10">
           {Array.from({ length: TOTAL_STEPS }).map((_, i) => (

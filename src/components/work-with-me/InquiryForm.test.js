@@ -42,15 +42,16 @@ test('validates required contact fields and rejects malformed field values', () 
 test('validates inquiry files by type, count, and size', () => {
   expect(validateInquiryFiles([
     { name: 'reference.png', size: 1024, type: 'image/png' },
-    { name: 'walkthrough.mp4', size: 20 * 1024 * 1024, type: 'video/mp4' },
+    { name: 'walkthrough.mp4', size: 1.5 * 1024 * 1024, type: 'video/mp4' },
     { name: 'wireframe.fig', size: 2 * 1024 * 1024, type: '' },
   ])).toEqual([]);
 
   expect(validateInquiryFiles([
-    { name: 'huge.png', size: 11 * 1024 * 1024, type: 'image/png' },
+    { name: 'huge.png', size: 5 * 1024 * 1024, type: 'image/png' },
     { name: 'script.exe', size: 1024, type: 'application/x-msdownload' },
   ])).toEqual([
-    'huge.png is over the 10 MB limit.',
+    'Keep total uploads under 4.0 MB.',
+    'huge.png is over the 4.0 MB limit.',
     'script.exe is not a supported asset type.',
   ]);
 });
@@ -74,8 +75,24 @@ test('submits inquiry form data and files to the api route', async () => {
   const body = global.fetch.mock.calls[0][1].body;
   expect(body.get('name')).toBe('Jordan Lee');
   expect(body.get('email')).toBe('jordan@example.com');
+  expect(body.get('companyWebsite')).toBe('');
   expect(body.get('projectTypes')).toBe(JSON.stringify(['product', 'video']));
   expect(body.get('assets').name).toBe('image-1.png');
+
+  global.fetch = originalFetch;
+});
+
+test('submits a filled honeypot field when present so the api can silently reject spam', async () => {
+  const originalFetch = global.fetch;
+  global.fetch = jest.fn().mockResolvedValue({
+    ok: true,
+    json: async () => ({ ok: true }),
+  });
+
+  await submitInquiry(validFormData, [], 'https://spam.example');
+
+  const body = global.fetch.mock.calls[0][1].body;
+  expect(body.get('companyWebsite')).toBe('https://spam.example');
 
   global.fetch = originalFetch;
 });
