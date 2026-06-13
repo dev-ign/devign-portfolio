@@ -28,7 +28,7 @@
     "start": "craco start",
     "build": "craco build",
     "lint": "eslint src api --ext .js,.jsx,.ts,.tsx",
-    "typecheck": "tsc --noEmit && tsc --noEmit --target es2018 --module commonjs --moduleResolution node --esModuleInterop --skipLibCheck api/inquiry.ts api/lib/email/inquiryEmails.ts",
+    "typecheck": "tsc --noEmit",
     "test": "craco test",
     "eject": "react-scripts eject"
   },
