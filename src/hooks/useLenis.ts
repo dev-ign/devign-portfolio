@@ -3,10 +3,12 @@ import Lenis from 'lenis';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
-export function useLenis(): RefObject<Lenis | null> {
+export function useLenis(enabled = true): RefObject<Lenis | null> {
   const ref = useRef<Lenis | null>(null);
 
   useEffect(() => {
+    if (!enabled) return;
+
     const lenis = new Lenis();
     ref.current = lenis;
 
@@ -24,7 +26,7 @@ export function useLenis(): RefObject<Lenis | null> {
       lenis.destroy();
       ref.current = null;
     };
-  }, []);
+  }, [enabled]);
 
   return ref;
 }

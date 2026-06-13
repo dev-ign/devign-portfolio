@@ -1,8 +1,11 @@
 import {
-  buildInquiryEmailParams,
-  buildInquiryConfirmationParams,
+  formatFileSize,
+  getResourceSummary,
+  getSelectedProjectTypes,
   validateContactStep,
+  validateInquiryFiles,
 } from './inquiryFormEmail';
+import { submitInquiry } from './inquiryFormSubmission';
 
 const validFormData = {
   name: 'Jordan Lee',
@@ -15,39 +18,13 @@ const validFormData = {
   details: 'We need a redesigned product flow and launch video.',
 };
 
-const files = [
-  { name: 'brand-guide.pdf', size: 2048 },
-  { name: 'homepage.png', size: 1536 },
-];
-
-test('builds owner inquiry email for devignux@gmail.com with all submitted details', () => {
-  const params = buildInquiryEmailParams(validFormData, files);
-
-  expect(params.to_email).toBe('devignux@gmail.com');
-  expect(params.from_name).toBe('Jordan Lee');
-  expect(params.from_email).toBe('jordan@example.com');
-  expect(params.reply_to).toBe('jordan@example.com');
-  expect(params.subject).toContain('Product design, Video');
-  expect(params.message).toContain('Name: Jordan Lee');
-  expect(params.message).toContain('Email: jordan@example.com');
-  expect(params.message).toContain('Business: Northstar Studio');
-  expect(params.message).toContain('Website/Social: https://northstar.example');
-  expect(params.message).toContain('Project types: Product design, Video');
-  expect(params.message).toContain('Budget: $5k-$10k');
-  expect(params.message).toContain('Timeline: 2-4 Weeks');
-  expect(params.message).toContain('Resources/assets: brand-guide.pdf (2.0 KB), homepage.png (1.5 KB)');
-  expect(params.message).toContain('We need a redesigned product flow and launch video.');
-});
-
-test('builds confirmation email for the user who submitted the inquiry', () => {
-  const params = buildInquiryConfirmationParams(validFormData, files);
-
-  expect(params.to_email).toBe('jordan@example.com');
-  expect(params.from_name).toBe('Devign UX');
-  expect(params.subject).toBe('Your Devign inquiry was received');
-  expect(params.message).toContain('Hi Jordan Lee,');
-  expect(params.message).toContain('I received your inquiry and will review the details soon.');
-  expect(params.message).toContain('Project types: Product design, Video');
+test('formats inquiry project types and uploaded resources', () => {
+  expect(getSelectedProjectTypes(validFormData.projectTypes)).toBe('Product design, Video');
+  expect(formatFileSize(1536)).toBe('1.5 KB');
+  expect(getResourceSummary([
+    { name: 'brand-guide.pdf', size: 2048 },
+    { name: 'homepage.png', size: 1536 },
+  ])).toBe('brand-guide.pdf (2.0 KB), homepage.png (1.5 KB)');
 });
 
 test('validates required contact fields and rejects malformed field values', () => {
@@ -60,4 +37,77 @@ test('validates required contact fields and rejects malformed field values', () 
   expect(validateContactStep({ ...validFormData, website: 'not a link' })).toEqual({
     website: 'Enter a valid website URL or Instagram handle.',
   });
+});
+
+test('validates inquiry files by type, count, and size', () => {
+  expect(validateInquiryFiles([
+    { name: 'reference.png', size: 1024, type: 'image/png' },
+    { name: 'walkthrough.mp4', size: 1.5 * 1024 * 1024, type: 'video/mp4' },
+    { name: 'wireframe.fig', size: 2 * 1024 * 1024, type: '' },
+  ])).toEqual([]);
+
+  expect(validateInquiryFiles([
+    { name: 'huge.png', size: 5 * 1024 * 1024, type: 'image/png' },
+    { name: 'script.exe', size: 1024, type: 'application/x-msdownload' },
+  ])).toEqual([
+    'Keep total uploads under 4.0 MB.',
+    'huge.png is over the 4.0 MB limit.',
+    'script.exe is not a supported asset type.',
+  ]);
+});
+
+test('submits inquiry form data and files to the api route', async () => {
+  const originalFetch = global.fetch;
+  global.fetch = jest.fn().mockResolvedValue({
+    ok: true,
+    json: async () => ({ ok: true }),
+  });
+
+  const file = new File(['image-bytes'], 'image-1.png', { type: 'image/png' });
+  const result = await submitInquiry(validFormData, [file]);
+
+  expect(result).toEqual({ ok: true });
+  expect(global.fetch).toHaveBeenCalledWith('/api/inquiry', {
+    method: 'POST',
+    body: expect.any(FormData),
+  });
+
+  const body = global.fetch.mock.calls[0][1].body;
+  expect(body.get('name')).toBe('Jordan Lee');
+  expect(body.get('email')).toBe('jordan@example.com');
+  expect(body.get('companyWebsite')).toBe('');
+  expect(body.get('projectTypes')).toBe(JSON.stringify(['product', 'video']));
+  expect(body.get('assets').name).toBe('image-1.png');
+
+  global.fetch = originalFetch;
+});
+
+test('submits a filled honeypot field when present so the api can silently reject spam', async () => {
+  const originalFetch = global.fetch;
+  global.fetch = jest.fn().mockResolvedValue({
+    ok: true,
+    json: async () => ({ ok: true }),
+  });
+
+  await submitInquiry(validFormData, [], 'https://spam.example');
+
+  const body = global.fetch.mock.calls[0][1].body;
+  expect(body.get('companyWebsite')).toBe('https://spam.example');
+
+  global.fetch = originalFetch;
+});
+
+test('returns a friendly message when inquiry api rejects submission', async () => {
+  const originalFetch = global.fetch;
+  global.fetch = jest.fn().mockResolvedValue({
+    ok: false,
+    json: async () => ({ error: 'Please upload fewer files.' }),
+  });
+
+  await expect(submitInquiry(validFormData, [])).resolves.toEqual({
+    ok: false,
+    message: 'Please upload fewer files.',
+  });
+
+  global.fetch = originalFetch;
 });

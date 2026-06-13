@@ -68,3 +68,20 @@ This section has moved here: [https://facebook.github.io/create-react-app/docs/d
 ### `npm run build` fails to minify
 
 This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+
+## Inquiry Form Integration
+
+The Work With Me inquiry form submits to `/api/inquiry`.
+
+Required deployment variables:
+
+```bash
+RESEND_API_KEY=
+RESEND_FROM_EMAIL=Devign UX <onboarding@resend.dev>
+INQUIRY_TO_EMAIL=devignux@gmail.com
+CLOUDINARY_CLOUD_NAME=dnct9yomi
+CLOUDINARY_API_KEY=495538234431571
+CLOUDINARY_API_SECRET=
+```
+
+Files are uploaded to Cloudinary under `devign/inquiries` before the owner email is sent with Resend. Keep `RESEND_API_KEY` and `CLOUDINARY_API_SECRET` in the hosting provider environment, not in committed source.

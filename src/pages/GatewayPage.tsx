@@ -1,7 +1,13 @@
 import React, { useEffect, useRef } from 'react';
 import { useGSAPContext } from '@/hooks/useGSAPContext';
 import { useLenis } from '@/hooks/useLenis';
-import { runGatewayEntrance, initVideoScrub } from '@/animations/gatewayAnimations';
+import {
+  runGatewayEntrance,
+  initVideoScrub,
+  initPosterScroll,
+  initGatewayServicesTypography,
+} from '@/animations/gatewayAnimations';
+import { isTouchDevice } from '@/utils/deviceDetect';
 import GatewayNav from '@/components/gateway/GatewayNav';
 import Services from '@/components/work-with-me/Services';
 import Process from '@/components/work-with-me/Process';
@@ -11,28 +17,45 @@ import InquiryForm from '@/components/work-with-me/InquiryForm';
 import FAQ from '@/components/work-with-me/FAQ';
 
 const GatewayPage: React.FC = () => {
-  const heroRef   = useRef<HTMLDivElement>(null);
-  const mediaRef  = useRef<HTMLDivElement>(null);
-  const videoRef  = useRef<HTMLVideoElement>(null);
+  const isTouch = isTouchDevice();
+
+  const heroRef    = useRef<HTMLDivElement>(null);
+  const mediaRef   = useRef<HTMLDivElement>(null);
+  const videoRef   = useRef<HTMLVideoElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
   const sectionsRef = useRef<HTMLDivElement>(null);
-  const lenisRef  = useLenis();
+  const typographyRef = useRef<HTMLElement>(null);
+  const lenisRef   = useLenis(!isTouch);
 
   useEffect(() => {
     document.body.setAttribute('data-page', 'gateway');
     return () => document.body.removeAttribute('data-page');
   }, []);
 
-  // Entrance animation — headline + CTA fade/slide in
+  // Entrance animation — headline + subheadline + CTA stagger in
   useGSAPContext(() => {
     if (contentRef.current) {
       runGatewayEntrance(contentRef.current);
     }
   }, []);
 
-  // Scroll-driven video scrub — plays forward on scroll-down, reverses on scroll-up
   useGSAPContext(() => {
-    if (!heroRef.current || !mediaRef.current || !videoRef.current || !contentRef.current || !sectionsRef.current) return;
+    if (!typographyRef.current) return;
+    return initGatewayServicesTypography(typographyRef.current);
+  }, []);
+
+  // Scroll animation — video scrub on desktop, poster parallax on touch
+  useGSAPContext(() => {
+    if (!heroRef.current || !mediaRef.current || !contentRef.current || !sectionsRef.current) return;
+    if (isTouch) {
+      return initPosterScroll(
+        heroRef.current,
+        mediaRef.current,
+        contentRef.current,
+        sectionsRef.current
+      );
+    }
+    if (!videoRef.current) return;
     return initVideoScrub(
       heroRef.current,
       videoRef.current,
@@ -44,18 +67,33 @@ const GatewayPage: React.FC = () => {
 
   const scrollToSection = (id: string) => {
     if (id === 'top') {
-      lenisRef.current?.scrollTo(0);
+      if (lenisRef.current) {
+        lenisRef.current.scrollTo(0);
+      } else {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
       return;
     }
 
-    const target = document.getElementById(id);
+    const target =
+      id === 'services'
+        ? typographyRef.current
+        : document.getElementById(id);
     if (!target) return;
 
     const sectionsTransform = sectionsRef.current
       ? new DOMMatrixReadOnly(getComputedStyle(sectionsRef.current).transform).m42
       : 0;
-    const targetY = target.getBoundingClientRect().top + window.scrollY - sectionsTransform - 96;
-    lenisRef.current?.scrollTo(targetY);
+    const targetTransform = id === 'services' ? window.innerHeight * -0.62 : sectionsTransform;
+    const navClearance = id === 'services' ? 96 : 96;
+    const targetY =
+      target.getBoundingClientRect().top + window.scrollY - sectionsTransform + targetTransform - navClearance;
+
+    if (lenisRef.current) {
+      lenisRef.current.scrollTo(targetY);
+    } else {
+      window.scrollTo({ top: targetY, behavior: 'smooth' });
+    }
   };
 
   return (
@@ -65,26 +103,35 @@ const GatewayPage: React.FC = () => {
       {/* ── Hero ── */}
       <div ref={heroRef} className="min-h-dvh relative overflow-hidden bg-gateway">
 
-        {/* Video — scrubbed by scroll, not autoplayed. */}
+        {/* Media — video (desktop) or poster image (touch/tablet) */}
         <div
           ref={mediaRef}
           className="absolute inset-[-5%] z-0 will-change-[transform,opacity] [backface-visibility:hidden] [transform:translate3d(0,0,0)]"
         >
-          <video
-            ref={videoRef}
-            muted
-            playsInline
-            preload="auto"
-            className="w-full h-full object-cover"
-          >
-            <source src="/gateway-parallax.mp4" type="video/mp4" />
-          </video>
+          {isTouch ? (
+            <img
+              src="/gateway-hero-poster.jpg"
+              alt=""
+              aria-hidden="true"
+              className="w-full h-full object-cover"
+            />
+          ) : (
+            <video
+              ref={videoRef}
+              muted
+              playsInline
+              preload="auto"
+              className="w-full h-full object-cover"
+            >
+              <source src="/gateway-parallax.mp4" type="video/mp4" />
+            </video>
+          )}
         </div>
 
         {/* Content */}
         <div className="relative z-2 min-h-dvh flex flex-col items-center justify-center pt-[clamp(40px,6vw,80px)] pb-[clamp(96px,14vh,150px)] px-[clamp(20px,4vw,40px)] text-center">
 
-          <div ref={contentRef} className="flex flex-col items-center gap-10 will-change-[transform,opacity] backface-visibility:hidden transform:translate3d(0,0,0)">
+          <div ref={contentRef} className="flex flex-col items-center gap-10 will-change-[transform,opacity] backface-hidden translate-z-0">
             {/* Headline */}
             <div className="hero-reveal-item max-w-[820px]">
               <h1 className="text-[clamp(30px,4.8vw,58px)] leading-[1.4] tracking-[-0.01em] text-white">
@@ -94,8 +141,16 @@ const GatewayPage: React.FC = () => {
               </h1>
             </div>
 
+            {/* Subheadline */}
+            <div className="hero-reveal-item max-w-186 px-4 sm:px-0">
+              <p className="hero-subheadline">
+                Helping brands navigate the digital landscape through thoughtful design,
+                modern development, creative production, and ongoing partnership.
+              </p>
+            </div>
+
             {/* CTA buttons */}
-            <div className="hero-reveal-item flex gap-3.5 mt-12 flex-wrap justify-center">
+            <div className="hero-reveal-item flex gap-3.5 flex-wrap justify-center mt-6 sm:mt-8">
               <button
                 onClick={() => scrollToSection('inquiry')}
                 className="primary-hero-cta"
@@ -118,7 +173,22 @@ const GatewayPage: React.FC = () => {
       </div>
 
       {/* ── Content sections ── */}
-      <div ref={sectionsRef} className="relative z-3 bg-gateway">
+      <div ref={sectionsRef} className="relative z-3 bg-gateway mb-[-62vh]" data-gateway-sections>
+        <section
+          ref={typographyRef}
+          className="gateway-services-typography h-[clamp(170px,24vw,320px)] bg-gateway relative overflow-hidden"
+          aria-hidden="true"
+        >
+          <div className="gateway-services-typography-track">
+            <div className="gateway-services-typography-sequence">
+              {['Apps.', 'Web.', 'Design.', 'Motion.'].map((word) => (
+                <span key={word} className="gateway-service-typography-word">
+                  {word}
+                </span>
+              ))}
+            </div>
+          </div>
+        </section>
         <Services />
         <Process />
         <ProjectsShowcase />

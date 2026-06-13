@@ -14,13 +14,12 @@ export interface InquiryFormData {
 export interface ResourceFileSummary {
   name: string;
   size: number;
+  type?: string;
 }
 
 export type ContactErrors = Partial<Record<'name' | 'email' | 'website', string>>;
 
-const OWNER_EMAIL = 'devignux@gmail.com';
-
-const PROJECT_TYPE_LABELS: Record<ProjectTypeId, string> = {
+export const PROJECT_TYPE_LABELS: Record<ProjectTypeId, string> = {
   product: 'Product design',
   system: 'Design system',
   marketing: 'Marketing website',
@@ -28,6 +27,52 @@ const PROJECT_TYPE_LABELS: Record<ProjectTypeId, string> = {
   graphic: 'Graphic design',
   video: 'Video',
 };
+
+export const INQUIRY_FILE_LIMITS = {
+  maxFiles: 6,
+  maxImageBytes: 4 * 1024 * 1024,
+  maxPdfBytes: 4 * 1024 * 1024,
+  maxVideoBytes: 4 * 1024 * 1024,
+  maxArchiveBytes: 4 * 1024 * 1024,
+  maxDesignFileBytes: 4 * 1024 * 1024,
+  maxTotalBytes: 4 * 1024 * 1024,
+} as const;
+
+export const INQUIRY_ACCEPTED_FILE_TYPES = [
+  'image/jpeg',
+  'image/png',
+  'image/webp',
+  'image/gif',
+  'image/svg+xml',
+  'application/pdf',
+  'video/mp4',
+  'video/quicktime',
+  'video/webm',
+  'application/zip',
+  'application/x-zip-compressed',
+  'application/postscript',
+  'application/illustrator',
+  'image/vnd.adobe.photoshop',
+] as const;
+
+export const INQUIRY_ACCEPTED_EXTENSIONS = [
+  '.jpg',
+  '.jpeg',
+  '.png',
+  '.webp',
+  '.gif',
+  '.svg',
+  '.pdf',
+  '.mp4',
+  '.mov',
+  '.webm',
+  '.zip',
+  '.ai',
+  '.eps',
+  '.psd',
+  '.fig',
+  '.sketch',
+] as const;
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 const INSTAGRAM_HANDLE_PATTERN = /^@[\w.]{2,30}$/;
@@ -75,85 +120,64 @@ export const getResourceSummary = (resourceFiles: ResourceFileSummary[]) =>
     ? resourceFiles.map(file => `${file.name} (${formatFileSize(file.size)})`).join(', ')
     : 'No resources uploaded';
 
-const buildInquiryMessage = (formData: InquiryFormData, resourceFiles: ResourceFileSummary[]) => {
-  const selectedProjectTypes = getSelectedProjectTypes(formData.projectTypes);
-
-  return [
-    `Name: ${formData.name.trim()}`,
-    `Email: ${formData.email.trim()}`,
-    `Business: ${formData.businessName.trim() || '-'}`,
-    `Website/Social: ${formData.website.trim() || '-'}`,
-    `Project types: ${selectedProjectTypes || '-'}`,
-    `Budget: ${formData.budget || '-'}`,
-    `Timeline: ${formData.timeline || '-'}`,
-    `Resources/assets: ${getResourceSummary(resourceFiles)}`,
-    `\nDetails:\n${formData.details.trim() || '(no details provided)'}`,
-  ].join('\n');
+export const getFileExtension = (fileName: string) => {
+  const match = fileName.toLowerCase().match(/\.[^.]+$/);
+  return match ? match[0] : '';
 };
 
-export const buildInquiryEmailParams = (
-  formData: InquiryFormData,
-  resourceFiles: ResourceFileSummary[]
-) => {
-  const selectedProjectTypes = getSelectedProjectTypes(formData.projectTypes);
-  const name = formData.name.trim();
-  const email = formData.email.trim();
-
-  return {
-    to_email: OWNER_EMAIL,
-    to_name: 'Devign UX',
-    from_name: name,
-    from_email: email,
-    reply_to: email,
-    subject: `[Work With Us] ${selectedProjectTypes || 'Inquiry'} - ${formData.businessName.trim() || name}`,
-    message: buildInquiryMessage(formData, resourceFiles),
-    name,
-    email,
-    business_name: formData.businessName.trim(),
-    website: formData.website.trim(),
-    project_types: selectedProjectTypes,
-    budget: formData.budget,
-    timeline: formData.timeline,
-    details: formData.details.trim(),
-    resources: getResourceSummary(resourceFiles),
-  };
+export const isInquiryFileTypeAccepted = (file: ResourceFileSummary) => {
+  const extension = getFileExtension(file.name);
+  return (
+    INQUIRY_ACCEPTED_FILE_TYPES.includes(file.type as (typeof INQUIRY_ACCEPTED_FILE_TYPES)[number]) ||
+    INQUIRY_ACCEPTED_EXTENSIONS.includes(extension as (typeof INQUIRY_ACCEPTED_EXTENSIONS)[number])
+  );
 };
 
-export const buildInquiryConfirmationParams = (
-  formData: InquiryFormData,
-  resourceFiles: ResourceFileSummary[]
-) => {
-  const selectedProjectTypes = getSelectedProjectTypes(formData.projectTypes);
-  const name = formData.name.trim();
-  const email = formData.email.trim();
+export const getInquiryFileLimit = (file: ResourceFileSummary) => {
+  const extension = getFileExtension(file.name);
 
-  return {
-    to_email: email,
-    to_name: name,
-    from_name: 'Devign UX',
-    from_email: OWNER_EMAIL,
-    reply_to: OWNER_EMAIL,
-    subject: 'Your Devign inquiry was received',
-    message: [
-      `Hi ${name},`,
-      '',
-      'I received your inquiry and will review the details soon.',
-      '',
-      'Your inquiry summary:',
-      `Project types: ${selectedProjectTypes || '-'}`,
-      `Budget: ${formData.budget || '-'}`,
-      `Timeline: ${formData.timeline || '-'}`,
-      `Resources/assets: ${getResourceSummary(resourceFiles)}`,
-      '',
-      'I will reach out with next steps soon.',
-      '',
-      'Devign UX',
-    ].join('\n'),
-    name,
-    email,
-    project_types: selectedProjectTypes,
-    budget: formData.budget,
-    timeline: formData.timeline,
-    resources: getResourceSummary(resourceFiles),
-  };
+  if (file.type?.startsWith('image/') || ['.ai', '.eps', '.psd'].includes(extension)) {
+    return INQUIRY_FILE_LIMITS.maxImageBytes;
+  }
+
+  if (file.type === 'application/pdf' || extension === '.pdf') {
+    return INQUIRY_FILE_LIMITS.maxPdfBytes;
+  }
+
+  if (file.type?.startsWith('video/') || ['.mp4', '.mov', '.webm'].includes(extension)) {
+    return INQUIRY_FILE_LIMITS.maxVideoBytes;
+  }
+
+  if (extension === '.fig' || extension === '.sketch') {
+    return INQUIRY_FILE_LIMITS.maxDesignFileBytes;
+  }
+
+  return INQUIRY_FILE_LIMITS.maxArchiveBytes;
+};
+
+export const validateInquiryFiles = (files: ResourceFileSummary[]) => {
+  const errors: string[] = [];
+  const totalBytes = files.reduce((sum, file) => sum + file.size, 0);
+
+  if (files.length > INQUIRY_FILE_LIMITS.maxFiles) {
+    errors.push(`Add up to ${INQUIRY_FILE_LIMITS.maxFiles} files.`);
+  }
+
+  if (totalBytes > INQUIRY_FILE_LIMITS.maxTotalBytes) {
+    errors.push(`Keep total uploads under ${formatFileSize(INQUIRY_FILE_LIMITS.maxTotalBytes)}.`);
+  }
+
+  files.forEach(file => {
+    if (!isInquiryFileTypeAccepted(file)) {
+      errors.push(`${file.name} is not a supported asset type.`);
+      return;
+    }
+
+    const limit = getInquiryFileLimit(file);
+    if (file.size > limit) {
+      errors.push(`${file.name} is over the ${formatFileSize(limit)} limit.`);
+    }
+  });
+
+  return errors;
 };

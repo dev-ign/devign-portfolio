@@ -10,6 +10,7 @@ const ghost = {
 } as const;
 
 const ORB_SIZE = 720;
+const easeOutExpo = [0.16, 1, 0.3, 1] as const;
 
 const technologies = [
   'React',
@@ -41,7 +42,7 @@ const rowVariants = {
   visible: {
     opacity: 1,
     x: 0,
-    transition: { duration: 0.6, ease: [0.16, 1, 0.3, 1] as any },
+    transition: { duration: 0.6, ease: easeOutExpo },
   },
 };
 

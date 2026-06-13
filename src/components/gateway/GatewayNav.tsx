@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'motion/react';
 import { Icon } from '@iconify/react';
+import BrandLogo from '@/components/BrandLogo';
 
 type GatewayNavProps = {
   onScrollTo: (id: string) => void;
@@ -46,19 +47,19 @@ const GatewayNav: React.FC<GatewayNavProps> = ({ onScrollTo }) => {
       <header className="fixed inset-x-0 top-7 z-80 flex justify-center px-4 pointer-events-none">
         <nav
           aria-label="Primary"
-          className={`pointer-events-auto flex max-w-[calc(100vw-32px)] items-center gap-2 rounded-full py-2 pl-5 pr-2 shadow-[1px_1px_46px_rgba(179,175,181,0.05)] transition-[background,border-color,box-shadow,backdrop-filter] duration-500 sm:gap-4 sm:pl-7 ${
+          className={`pointer-events-auto flex max-w-[calc(100vw-32px)] items-center gap-2 rounded-[100px] py-2 pl-5 pr-2 transition-[background,border-color,box-shadow,backdrop-filter] duration-500 sm:gap-4 sm:pl-7 ${
             isGlass
-              ? 'border border-white/12 bg-black/35 shadow-[0_18px_70px_rgba(0,0,0,0.25),1px_1px_46px_rgba(179,175,181,0.06)] [backdrop-filter:blur(14px)] [-webkit-backdrop-filter:blur(14px)]'
+              ? 'nav-floating border'
               : 'border border-transparent bg-transparent shadow-none [backdrop-filter:blur(0px)] [-webkit-backdrop-filter:blur(0px)]'
           }`}
         >
           <button
             type="button"
             onClick={() => handleNavClick('top')}
-            className="mr-1 cursor-pointer whitespace-nowrap border-none bg-transparent p-0 font-disp text-[13px] font-extrabold tracking-[0.08em] text-white/88 sm:mr-2 sm:text-[14px]"
+            className="mr-1 inline-flex cursor-pointer items-center whitespace-nowrap border-none bg-transparent p-0 sm:mr-2"
             aria-label="Scroll to top"
           >
-            devign<span className="text-[#C9B8E8]">UX</span>
+            <BrandLogo markSize={26} textSize={14} gap={7} />
           </button>
 
           {/* Desktop nav items */}

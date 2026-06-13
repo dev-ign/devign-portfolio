@@ -39,7 +39,7 @@ export function initVideoScrub(
 
     if (nextSectionEl) {
       gsap.set(nextSectionEl, {
-        y: '10vh',
+        y: '18vh',
         force3D: true,
         willChange: 'transform',
       });
@@ -50,8 +50,8 @@ export function initVideoScrub(
       scrollTrigger: {
         trigger: heroEl,
         start: 'top top',
-        end: '+=140%',
-        scrub: 0.45,
+        end: '+=170%',
+        scrub: 0.65,
         pin: true,
         pinSpacing: true,
         anticipatePin: 1,
@@ -63,6 +63,7 @@ export function initVideoScrub(
 
     timeline
       .to(proxy, {
+        duration: 0.95,
         currentTime: Math.max(videoEl.duration - 0.04, 0),
         onUpdate() {
           const nextTime = proxy.currentTime;
@@ -74,26 +75,30 @@ export function initVideoScrub(
       .to(mediaEl, {
         yPercent: -9,
         scale: 1.01,
+        duration: 0.95,
+      }, 0)
+      .to(mediaEl, {
         autoAlpha: 0,
-        duration: 0.52,
-      }, 0);
+        duration: 0.36,
+        ease: 'power2.inOut',
+      }, 0.68);
 
     if (contentTargets.length) {
       timeline.to(contentTargets, {
         autoAlpha: 0,
-        y: -22,
-        stagger: 0.05,
-        duration: 0.32,
+        y: -42,
+        stagger: 0.08,
+        duration: 0.52,
         ease: 'power2.inOut',
-      }, 0.62);
+      }, 0.96);
     }
 
     if (nextSectionEl) {
       timeline.to(nextSectionEl, {
-        y: 0,
-        duration: 0.58,
+        y: '-62vh',
+        duration: 0.9,
         ease: 'power2.out',
-      }, 0);
+      }, 1.12);
     }
 
     ScrollTrigger.refresh();
@@ -133,6 +138,78 @@ export function initVideoScrub(
   };
 }
 
+// Poster-image scroll animation for touch/tablet devices.
+// Mirrors initVideoScrub's timeline structure and pacing without any video API.
+export function initPosterScroll(
+  heroEl: HTMLElement,
+  mediaEl: HTMLElement,
+  contentEl?: HTMLElement,
+  nextSectionEl?: HTMLElement
+): () => void {
+  gsap.set(mediaEl, {
+    autoAlpha: 1,
+    scale: 1.05,
+    yPercent: 0,
+    force3D: true,
+    transformOrigin: '50% 50%',
+    willChange: 'transform, opacity',
+  });
+
+  if (contentEl) {
+    gsap.set(contentEl, { autoAlpha: 1, yPercent: 0, force3D: true });
+  }
+
+  if (nextSectionEl) {
+    gsap.set(nextSectionEl, { y: '18vh', force3D: true, willChange: 'transform' });
+  }
+
+  const timeline = gsap.timeline({
+    defaults: { ease: 'none' },
+    scrollTrigger: {
+      trigger: heroEl,
+      start: 'top top',
+      end: '+=170%',
+      scrub: 0.65,
+      pin: true,
+      pinSpacing: true,
+      anticipatePin: 1,
+      invalidateOnRefresh: true,
+    },
+  });
+
+  const contentTargets = contentEl ? Array.from(contentEl.children) : [];
+
+  timeline
+    .to(mediaEl, { yPercent: -9, scale: 1.0, duration: 0.95 }, 0)
+    .to(mediaEl, {
+      autoAlpha: 0,
+      duration: 0.36,
+      ease: 'power2.inOut',
+    }, 0.68);
+
+  if (contentTargets.length) {
+    timeline.to(contentTargets, {
+      autoAlpha: 0,
+      y: -42,
+      stagger: 0.08,
+      duration: 0.52,
+      ease: 'power2.inOut',
+    }, 0.96);
+  }
+
+  if (nextSectionEl) {
+    timeline.to(nextSectionEl, { y: '-62vh', duration: 0.9, ease: 'power2.out' }, 1.12);
+  }
+
+  ScrollTrigger.refresh();
+  window.requestAnimationFrame(() => ScrollTrigger.refresh());
+
+  return () => {
+    timeline.scrollTrigger?.kill();
+    timeline.kill();
+  };
+}
+
 export function runGatewayEntrance(contentEl: HTMLElement) {
   const targets = Array.from(contentEl.children);
   const tl = gsap.timeline({ defaults: { ease: 'power3.out' } });
@@ -153,6 +230,73 @@ export function runGatewayEntrance(contentEl: HTMLElement) {
     }
   );
   return tl;
+}
+
+export function initGatewayServicesTypography(containerEl: HTMLElement): () => void {
+  const track = containerEl.querySelector<HTMLElement>('.gateway-services-typography-track');
+  const words = Array.from(containerEl.querySelectorAll<HTMLElement>('.gateway-service-typography-word'));
+
+  if (!track || words.length === 0) return () => undefined;
+
+  const enterDuration = 0.8;
+  const driftDuration = 4;
+  const exitDuration = 0.6;
+  const pauseDuration = 0.3;
+  const wordDuration = enterDuration + driftDuration + exitDuration + pauseDuration;
+  const cycleDuration = wordDuration * words.length;
+  const peakOpacity = 0.1;
+  const getStartX = () => Math.min(window.innerWidth * 0.18, 96);
+  const getDriftX = () => -Math.min(window.innerWidth * 0.1, 48);
+  const getExitX = () => -Math.min(window.innerWidth * 0.28, 150);
+
+  gsap.set(track, {
+    x: 0,
+    force3D: true,
+    willChange: 'transform',
+  });
+
+  gsap.set(words, {
+    autoAlpha: 0,
+    x: getStartX,
+    force3D: true,
+    willChange: 'transform, opacity',
+  });
+
+  const timelines = words.map((word, index) => {
+    const tl = gsap.timeline({
+      repeat: -1,
+      repeatDelay: cycleDuration - wordDuration,
+      delay: index * wordDuration,
+    });
+
+    tl.fromTo(
+      word,
+      { x: getStartX, autoAlpha: 0 },
+      { x: 0, autoAlpha: peakOpacity, duration: enterDuration, ease: 'power3.out' },
+      0
+    );
+    tl.to(word, {
+      x: getDriftX,
+      autoAlpha: peakOpacity,
+      duration: driftDuration,
+      ease: 'none',
+    });
+    tl.to(word, {
+      x: getExitX,
+      autoAlpha: 0,
+      duration: exitDuration,
+      ease: 'power3.in',
+    });
+    tl.to(word, { autoAlpha: 0, duration: pauseDuration, ease: 'none' });
+
+    return tl;
+  });
+
+  return () => {
+    timelines.forEach((timeline) => timeline.kill());
+    gsap.set(track, { clearProps: 'all' });
+    gsap.set(words, { clearProps: 'all' });
+  };
 }
 
 // Returns a cleanup function. Uses gsap.quickTo for smooth orb interpolation —

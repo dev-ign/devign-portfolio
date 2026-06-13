@@ -3,6 +3,7 @@ import { Project, ProjectType } from '@/data/projects';
 import { filterProjectsByType, projectTypeTabs } from '@/data/projectFilters';
 import DonorDirectoryAnimation from '@/components/showcase/DonorDirectoryAnimation';
 import TemplateManagerAnimation from '@/components/showcase/TemplateManagerAnimation';
+import TalentSearchWorkflowAnimation from '@/components/showcase/TalentSearchWorkflowAnimation';
 
 interface ProjectCarouselProps {
   projects: Project[];
@@ -144,6 +145,8 @@ const ProjectCarousel: React.FC<ProjectCarouselProps> = ({
                   <TemplateManagerAnimation className="h-full w-full" />
                 ) : project.id === 'gravyty-donor-directory' ? (
                   <DonorDirectoryAnimation className="h-full w-full" />
+                ) : project.id === 'urge-talent' ? (
+                  <TalentSearchWorkflowAnimation className="h-full w-full" />
                 ) : (
                   <img
                     src={project.image}

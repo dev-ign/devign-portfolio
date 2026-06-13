@@ -61,7 +61,7 @@ const Services: React.FC = () => {
       if (title) {
         initScrollEnterExit([title], {
           trigger: title,
-          start: 'top 15%',
+          start: 'top 30%',
           end: 'top 85%',
           duration: 2,
           y: 48,
@@ -71,7 +71,7 @@ const Services: React.FC = () => {
       if (copy) {
         initScrollEnterExit([copy], {
           trigger: copy,
-          start: 'top 15%',
+          start: 'top 30%',
           end: '90% 85%',
           duration: 3,
           y: 36,

@@ -4,14 +4,17 @@ import { Icon } from '@iconify/react';
 import { useGSAPContext } from '@/hooks/useGSAPContext';
 import { initScrollEnterExit } from '@/animations/workWithMeAnimations';
 import {
-  buildInquiryConfirmationParams,
-  buildInquiryEmailParams,
+  INQUIRY_ACCEPTED_EXTENSIONS,
+  INQUIRY_ACCEPTED_FILE_TYPES,
+  INQUIRY_FILE_LIMITS,
   formatFileSize,
   validateContactStep,
+  validateInquiryFiles,
   type ContactErrors,
   type InquiryFormData,
   type ProjectTypeId,
 } from './inquiryFormEmail';
+import { submitInquiry } from './inquiryFormSubmission';
 
 type Budget = 'Under $2k' | '$2k–$5k' | '$5k–$10k' | '$10k+' | 'Not sure yet';
 type Timeline = 'ASAP' | '2–4 Weeks' | '1–2 Months' | 'Flexible';
@@ -34,18 +37,8 @@ const TIMELINES: Timeline[] = ['ASAP', '2–4 Weeks', '1–2 Months', 'Flexible'
 
 const TOTAL_STEPS = 6;
 const RESOURCE_ACCEPT = [
-  'image/jpeg',
-  'image/png',
-  'image/webp',
-  'image/gif',
-  'image/svg+xml',
-  'application/pdf',
-  '.ai',
-  '.eps',
-  '.psd',
-  '.fig',
-  '.sketch',
-  '.zip',
+  ...INQUIRY_ACCEPTED_FILE_TYPES,
+  ...INQUIRY_ACCEPTED_EXTENSIONS,
 ].join(',');
 
 const stepVariants = {
@@ -67,11 +60,13 @@ const InquiryForm: React.FC = () => {
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [submitError, setSubmitError] = useState('');
+  const [fileError, setFileError] = useState('');
   const [contactErrors, setContactErrors] = useState<ContactErrors>({});
   const [projectTypesTouched, setProjectTypesTouched] = useState(false);
   const [budgetTouched, setBudgetTouched] = useState(false);
   const [timelineTouched, setTimelineTouched] = useState(false);
   const [resourceFiles, setResourceFiles] = useState<File[]>([]);
+  const [companyWebsite, setCompanyWebsite] = useState('');
   const [formData, setFormData] = useState<InquiryFormData>({
     name: '', email: '', businessName: '', website: '',
     projectTypes: [], budget: '', timeline: '', details: '',
@@ -99,8 +94,10 @@ const InquiryForm: React.FC = () => {
 
   const addResourceFiles = (files: FileList | null) => {
     if (!files?.length) return;
+
     setResourceFiles(prev => {
       const next = [...prev];
+
       Array.from(files).forEach(file => {
         const exists = next.some(existing =>
           existing.name === file.name &&
@@ -109,12 +106,26 @@ const InquiryForm: React.FC = () => {
         );
         if (!exists) next.push(file);
       });
+
+      const validationErrors = validateInquiryFiles(next);
+      if (validationErrors.length) {
+        setFileError(validationErrors[0]);
+        return prev;
+      }
+
+      setFileError('');
+      setSubmitError('');
       return next;
     });
   };
 
   const removeResourceFile = (index: number) => {
-    setResourceFiles(prev => prev.filter((_, i) => i !== index));
+    setResourceFiles(prev => {
+      const next = prev.filter((_, i) => i !== index);
+      const validationErrors = validateInquiryFiles(next);
+      setFileError(validationErrors[0] || '');
+      return next;
+    });
   };
 
   const goNext = () => {
@@ -139,6 +150,8 @@ const InquiryForm: React.FC = () => {
   };
 
   const handleSubmit = async () => {
+    if (submitting) return;
+
     setSubmitError('');
     const nextContactErrors = validateContactStep(formData);
     if (Object.keys(nextContactErrors).length > 0) {
@@ -165,20 +178,25 @@ const InquiryForm: React.FC = () => {
       setStep(4);
       return;
     }
+    const fileValidationErrors = validateInquiryFiles(resourceFiles);
+    if (fileValidationErrors.length) {
+      setFileError(fileValidationErrors[0]);
+      setStep(6);
+      return;
+    }
 
     setSubmitting(true);
     try {
-      const emailjs = (await import('@emailjs/browser')).default;
-      const publicKey = process.env.REACT_APP_EMAILJS_PUBLIC_KEY;
-      if (!publicKey) throw new Error('EmailJS not configured');
+      const result = await submitInquiry(formData, resourceFiles, companyWebsite);
+      if (!result.ok) {
+        setSubmitError(result.message);
+        return;
+      }
 
-      emailjs.init(publicKey);
-      await emailjs.send('portfolio-gmail', 'template_mzi5nzb', buildInquiryEmailParams(formData, resourceFiles));
-      await emailjs.send('portfolio-gmail', 'template_mzi5nzb', buildInquiryConfirmationParams(formData, resourceFiles));
       setSubmitted(true);
     } catch (err) {
       console.error('InquiryForm submit error:', err);
-      setSubmitError('Something went wrong sending your inquiry. Please check your details and try again.');
+      setSubmitError('Your inquiry could not be sent right now. Please try again in a moment.');
     } finally {
       setSubmitting(false);
     }
@@ -424,9 +442,15 @@ const InquiryForm: React.FC = () => {
                 Drop files here or choose files
               </span>
               <span className="mt-2 font-body text-[12px] font-light leading-[1.5] text-white/42">
-                JPG, PNG, PDF, ZIP, Figma, brand files, and related assets.
+                Up to {INQUIRY_FILE_LIMITS.maxFiles} files. Images {formatFileSize(INQUIRY_FILE_LIMITS.maxImageBytes)}, PDFs {formatFileSize(INQUIRY_FILE_LIMITS.maxPdfBytes)}, videos {formatFileSize(INQUIRY_FILE_LIMITS.maxVideoBytes)}.
               </span>
             </label>
+
+            {fileError && (
+              <p className="mt-3 font-body text-[12px] leading-[1.55] text-[#FFB3B3]" role="alert">
+                {fileError}
+              </p>
+            )}
 
             {resourceFiles.length > 0 && (
               <div className="mt-4 flex flex-col gap-2">
@@ -484,10 +508,13 @@ const InquiryForm: React.FC = () => {
             ✦
           </motion.div>
           <h3 className="font-disp font-extrabold text-[clamp(28px,4vw,38px)] text-white/90 tracking-[-0.03em] m-0 mb-4">
-            You're all set.
+            Thank you! Your inquiry has been received.
           </h3>
           <p className="font-body font-light text-[15px] text-white/50 leading-[1.75] m-0">
-            Your inquiry was sent to Devign UX, and a confirmation email was sent to {formData.email.trim()}.
+            I've received your project details and will review everything shortly. If I believe we're a good fit, I'll reach out within 1–2 business days to discuss next steps.
+          </p>
+          <p className="mt-4 font-body font-light text-[15px] text-white/42 leading-[1.75]">
+            In the meantime, feel free to gather any additional materials, references, or inspiration you'd like to share.
           </p>
         </motion.div>
       </section>
@@ -513,6 +540,16 @@ const InquiryForm: React.FC = () => {
       </div>
 
       <div className="inquiry-reveal max-w-[560px]">
+        <input
+          type="text"
+          name="companyWebsite"
+          autoComplete="off"
+          tabIndex={-1}
+          value={companyWebsite}
+          onChange={event => setCompanyWebsite(event.target.value)}
+          style={{ display: 'none' }}
+          aria-hidden="true"
+        />
         {/* Step indicator dots */}
         <div className="flex gap-1.5 mb-10">
           {Array.from({ length: TOTAL_STEPS }).map((_, i) => (
@@ -584,11 +621,40 @@ const InquiryForm: React.FC = () => {
             </button>
           )}
         </div>
-        {submitError && (
-          <p className="mt-5 font-body text-[13px] leading-[1.55] text-[#FF8A8A]" role="alert">
-            {submitError}
-          </p>
-        )}
+        <AnimatePresence>
+          {submitError && (
+            <motion.div
+              initial={{ opacity: 0, y: 12, scale: 0.98 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: 8, scale: 0.98 }}
+              transition={{ duration: 0.24, ease }}
+              className="fixed bottom-5 left-4 right-4 z-[80] mx-auto max-w-[440px] rounded-[8px] border border-white/12 bg-[#100D16]/70 px-4 py-3 shadow-[0_22px_80px_rgba(0,0,0,0.42)] backdrop-blur-xl"
+              role="alert"
+            >
+              <div className="flex items-start gap-3">
+                <span className="mt-0.5 grid h-7 w-7 shrink-0 place-items-center rounded-full border border-[#FFB3B3]/20 bg-[#FF8A8A]/10 text-[#FFB3B3]">
+                  <Icon icon="solar:danger-triangle-bold-duotone" className="h-4 w-4" />
+                </span>
+                <div className="min-w-0">
+                  <p className="m-0 font-disp text-[14px] font-bold tracking-[-0.01em] text-white/88">
+                    Inquiry not sent
+                  </p>
+                  <p className="m-0 mt-1 font-body text-[13px] font-light leading-[1.55] text-white/56">
+                    {submitError}
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setSubmitError('')}
+                  className="ml-auto grid h-7 w-7 shrink-0 place-items-center rounded-full border border-white/8 bg-white/5 text-white/42 transition-colors duration-200 hover:text-white"
+                  aria-label="Dismiss inquiry error"
+                >
+                  <Icon icon="solar:close-circle-bold" className="h-4 w-4" />
+                </button>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
     </section>
   );

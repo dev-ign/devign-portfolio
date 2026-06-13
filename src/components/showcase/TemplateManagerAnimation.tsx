@@ -67,14 +67,16 @@ const TemplateManagerAnimation: React.FC<Props> = ({ className }) => (
 
     {/* ── Annual Fund folder — animated highlight ── */}
     <motion.rect
-      x="1" y="173" width="186" height="30"
+      x={1} y={173} width={186} height={30}
       fill="#7B8CDE"
+      initial={{ opacity: 0 }}
       animate={{ opacity: [0, 0, 0, 0.13, 0.13, 0, 0] }}
       transition={{ duration: DUR, times: [0, 0.375, 0.43, 0.46, 0.875, 0.9375, 1], repeat: Infinity }}
     />
     <motion.rect
-      x="1" y="173" width="3" height="30"
+      x={1} y={173} width={3} height={30}
       fill="#7B8CDE"
+      initial={{ opacity: 0 }}
       animate={{ opacity: [0, 0, 0, 1, 1, 0, 0] }}
       transition={{ duration: DUR, times: [0, 0.375, 0.43, 0.46, 0.875, 0.9375, 1], repeat: Infinity }}
     />
@@ -175,14 +177,16 @@ const TemplateManagerAnimation: React.FC<Props> = ({ className }) => (
     {/* ── Row 3 (ACTIVE) ── */}
     <rect x="189" y="227" width="711" height="47" fill="#0f0f1a" />
     <motion.rect
-      x="189" y="227" width="711" height="47"
+      x={189} y={227} width={711} height={47}
       fill="#191530"
+      initial={{ opacity: 0 }}
       animate={{ opacity: [0, 0, 1, 1, 0, 0] }}
       transition={{ duration: DUR, times: [0, 0.125, 0.1875, 0.875, 0.9375, 1], repeat: Infinity }}
     />
     <motion.rect
-      x="189" y="227" width="3" height="47"
+      x={189} y={227} width={3} height={47}
       fill="#7B8CDE"
+      initial={{ opacity: 0 }}
       animate={{ opacity: [0, 0, 1, 1, 0, 0] }}
       transition={{ duration: DUR, times: [0, 0.125, 0.1875, 0.875, 0.9375, 1], repeat: Infinity }}
     />
@@ -203,8 +207,9 @@ const TemplateManagerAnimation: React.FC<Props> = ({ className }) => (
 
     {/* Cursor tap pulse on action dots */}
     <motion.circle
-      cx="832" cy="250" r="6"
+      cx={832} cy={250} r={6}
       fill="#7B8CDE"
+      initial={{ fillOpacity: 0, r: 6 }}
       animate={{ fillOpacity: [0, 0.45, 0, 0], r: [6, 15, 18, 6] }}
       transition={{ duration: DUR, times: [0, 0.265, 0.32, 1], repeat: Infinity }}
     />
