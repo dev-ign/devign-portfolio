@@ -25,16 +25,16 @@ const BrandLogo: React.FC<BrandLogoProps> = ({
       }}
     >
       <img
-        src="/devign-logo.png"
+        src="/devignuxlogo-mono.svg"
         alt=""
-        width={Math.round(markSize * 2.03)}
+        width={markSize}
         height={markSize}
         style={{
           display: 'block',
           flex: '0 0 auto',
           height: markSize,
           objectFit: 'contain',
-          width: 'auto',
+          width: markSize,
         }}
       />
       <span

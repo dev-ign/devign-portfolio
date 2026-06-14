@@ -1,6 +1,21 @@
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
+interface ScrubOptions {
+  end?: string;
+  pin?: boolean;
+  pinSpacing?: boolean;
+  mediaFadeStart?: number;
+  mediaFadeDuration?: number;
+  mediaYPercent?: number;
+  mediaStartScale?: number;
+  mediaEndScale?: number;
+  contentExitAt?: number;
+  contentExitY?: number;
+  nextSectionStartY?: string;
+  nextSectionEndY?: string;
+}
+
 // Scroll-driven video scrub: maps the pinned hero scroll range to full video duration.
 // Uses one ScrollTrigger timeline so video time, parallax movement, and fade stay
 // locked to the same scroll progress.
@@ -9,7 +24,8 @@ export function initVideoScrub(
   videoEl: HTMLVideoElement,
   mediaEl: HTMLElement,
   contentEl?: HTMLElement,
-  nextSectionEl?: HTMLElement
+  nextSectionEl?: HTMLElement,
+  options: ScrubOptions = {}
 ): () => void {
   const proxy = { currentTime: 0 };
   let timeline: gsap.core.Timeline | null = null;
@@ -17,12 +33,23 @@ export function initVideoScrub(
   const setup = () => {
     if (!Number.isFinite(videoEl.duration) || videoEl.duration <= 0) return;
 
+    const end = options.end ?? '+=170%';
+    const pin = options.pin ?? true;
+    const pinSpacing = options.pinSpacing ?? true;
+    const mediaFadeStart = options.mediaFadeStart ?? 0.68;
+    const mediaFadeDuration = options.mediaFadeDuration ?? 0.36;
+    const mediaYPercent = options.mediaYPercent ?? -9;
+    const mediaStartScale = options.mediaStartScale ?? 1.08;
+    const mediaEndScale = options.mediaEndScale ?? 1.01;
+    const contentExitAt = options.contentExitAt ?? 0.96;
+    const contentExitY = options.contentExitY ?? -42;
+
     videoEl.pause();
     videoEl.currentTime = 0.001;
 
     gsap.set(mediaEl, {
       autoAlpha: 1,
-      scale: 1.08,
+      scale: mediaStartScale,
       yPercent: 0,
       force3D: true,
       transformOrigin: '50% 50%',
@@ -39,7 +66,7 @@ export function initVideoScrub(
 
     if (nextSectionEl) {
       gsap.set(nextSectionEl, {
-        y: '18vh',
+        y: options.nextSectionStartY ?? '18vh',
         force3D: true,
         willChange: 'transform',
       });
@@ -50,10 +77,10 @@ export function initVideoScrub(
       scrollTrigger: {
         trigger: heroEl,
         start: 'top top',
-        end: '+=170%',
+        end,
         scrub: 0.65,
-        pin: true,
-        pinSpacing: true,
+        pin,
+        pinSpacing,
         anticipatePin: 1,
         invalidateOnRefresh: true,
       },
@@ -73,29 +100,29 @@ export function initVideoScrub(
         },
       }, 0)
       .to(mediaEl, {
-        yPercent: -9,
-        scale: 1.01,
+        yPercent: mediaYPercent,
+        scale: mediaEndScale,
         duration: 0.95,
       }, 0)
       .to(mediaEl, {
         autoAlpha: 0,
-        duration: 0.36,
+        duration: mediaFadeDuration,
         ease: 'power2.inOut',
-      }, 0.68);
+      }, mediaFadeStart);
 
     if (contentTargets.length) {
       timeline.to(contentTargets, {
         autoAlpha: 0,
-        y: -42,
+        y: contentExitY,
         stagger: 0.08,
         duration: 0.52,
         ease: 'power2.inOut',
-      }, 0.96);
+      }, contentExitAt);
     }
 
     if (nextSectionEl) {
       timeline.to(nextSectionEl, {
-        y: '-62vh',
+        y: options.nextSectionEndY ?? '-62vh',
         duration: 0.9,
         ease: 'power2.out',
       }, 1.12);
@@ -144,11 +171,23 @@ export function initPosterScroll(
   heroEl: HTMLElement,
   mediaEl: HTMLElement,
   contentEl?: HTMLElement,
-  nextSectionEl?: HTMLElement
+  nextSectionEl?: HTMLElement,
+  options: ScrubOptions = {}
 ): () => void {
+  const end = options.end ?? '+=170%';
+  const pin = options.pin ?? true;
+  const pinSpacing = options.pinSpacing ?? true;
+  const mediaFadeStart = options.mediaFadeStart ?? 0.68;
+  const mediaFadeDuration = options.mediaFadeDuration ?? 0.36;
+  const mediaYPercent = options.mediaYPercent ?? -9;
+  const mediaStartScale = options.mediaStartScale ?? 1.05;
+  const mediaEndScale = options.mediaEndScale ?? 1;
+  const contentExitAt = options.contentExitAt ?? 0.96;
+  const contentExitY = options.contentExitY ?? -42;
+
   gsap.set(mediaEl, {
     autoAlpha: 1,
-    scale: 1.05,
+    scale: mediaStartScale,
     yPercent: 0,
     force3D: true,
     transformOrigin: '50% 50%',
@@ -160,7 +199,11 @@ export function initPosterScroll(
   }
 
   if (nextSectionEl) {
-    gsap.set(nextSectionEl, { y: '18vh', force3D: true, willChange: 'transform' });
+    gsap.set(nextSectionEl, {
+      y: options.nextSectionStartY ?? '18vh',
+      force3D: true,
+      willChange: 'transform',
+    });
   }
 
   const timeline = gsap.timeline({
@@ -168,10 +211,10 @@ export function initPosterScroll(
     scrollTrigger: {
       trigger: heroEl,
       start: 'top top',
-      end: '+=170%',
+      end,
       scrub: 0.65,
-      pin: true,
-      pinSpacing: true,
+      pin,
+      pinSpacing,
       anticipatePin: 1,
       invalidateOnRefresh: true,
     },
@@ -180,25 +223,29 @@ export function initPosterScroll(
   const contentTargets = contentEl ? Array.from(contentEl.children) : [];
 
   timeline
-    .to(mediaEl, { yPercent: -9, scale: 1.0, duration: 0.95 }, 0)
+    .to(mediaEl, { yPercent: mediaYPercent, scale: mediaEndScale, duration: 0.95 }, 0)
     .to(mediaEl, {
       autoAlpha: 0,
-      duration: 0.36,
+      duration: mediaFadeDuration,
       ease: 'power2.inOut',
-    }, 0.68);
+    }, mediaFadeStart);
 
   if (contentTargets.length) {
     timeline.to(contentTargets, {
       autoAlpha: 0,
-      y: -42,
+      y: contentExitY,
       stagger: 0.08,
       duration: 0.52,
       ease: 'power2.inOut',
-    }, 0.96);
+    }, contentExitAt);
   }
 
   if (nextSectionEl) {
-    timeline.to(nextSectionEl, { y: '-62vh', duration: 0.9, ease: 'power2.out' }, 1.12);
+    timeline.to(nextSectionEl, {
+      y: options.nextSectionEndY ?? '-62vh',
+      duration: 0.9,
+      ease: 'power2.out',
+    }, 1.12);
   }
 
   ScrollTrigger.refresh();
@@ -230,6 +277,38 @@ export function runGatewayEntrance(contentEl: HTMLElement) {
     }
   );
   return tl;
+}
+
+export function initPosterParallax(sectionEl: HTMLElement, mediaEl: HTMLElement): () => void {
+  gsap.set(mediaEl, {
+    autoAlpha: 1,
+    scale: 1.1,
+    yPercent: 7,
+    force3D: true,
+    transformOrigin: '50% 50%',
+    willChange: 'transform',
+  });
+
+  const tween = gsap.to(mediaEl, {
+    yPercent: -7,
+    scale: 1.03,
+    ease: 'none',
+    scrollTrigger: {
+      trigger: sectionEl,
+      start: 'top bottom',
+      end: 'bottom top',
+      scrub: 0.75,
+      invalidateOnRefresh: true,
+    },
+  });
+
+  ScrollTrigger.refresh();
+  window.requestAnimationFrame(() => ScrollTrigger.refresh());
+
+  return () => {
+    tween.scrollTrigger?.kill();
+    tween.kill();
+  };
 }
 
 export function initGatewayServicesTypography(containerEl: HTMLElement): () => void {
