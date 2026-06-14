@@ -85,7 +85,10 @@ const GatewayPage: React.FC = () => {
       ? new DOMMatrixReadOnly(getComputedStyle(sectionsRef.current).transform).m42
       : 0;
     const targetTransform = id === 'services' ? window.innerHeight * -0.62 : sectionsTransform;
-    const navClearance = id === 'services' ? 96 : 96;
+    const navClearance =
+      id === 'inquiry'
+        ? Math.min(window.innerHeight * 0.78, 720)
+        : 96;
     const targetY =
       target.getBoundingClientRect().top + window.scrollY - sectionsTransform + targetTransform - navClearance;
 

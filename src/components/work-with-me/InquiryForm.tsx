@@ -45,7 +45,7 @@ const InquiryForm: React.FC = () => {
       return initPosterScroll(
         sectionRef.current,
         mediaRef.current,
-        contentRef.current,
+        undefined,
         undefined,
         scrubOptions
       );
@@ -57,7 +57,7 @@ const InquiryForm: React.FC = () => {
       sectionRef.current,
       videoRef.current,
       mediaRef.current,
-      contentRef.current,
+      undefined,
       undefined,
       scrubOptions
     );
