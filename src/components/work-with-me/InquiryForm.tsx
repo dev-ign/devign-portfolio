@@ -54,7 +54,7 @@ const InquiryForm: React.FC<InquiryFormProps> = ({ onOpenInquiry }) => {
           />
         </div>
 
-        <div className="absolute inset-0 z-[1] pointer-events-none [background:radial-gradient(circle_at_center,rgba(0,0,0,0.86)_0%,rgba(0,0,0,0.78)_28%,rgba(12,12,14,0.82)_62%,#0C0C0E_100%)]" />
+        <div className="absolute inset-0 z-[1] pointer-events-none [background:radial-gradient(circle_at_center,rgba(0,0,0,0.52)_0%,rgba(0,0,0,0.3)_28%,rgba(12,12,14,0.62)_62%,#0C0C0E_100%)]" />
         <div className="absolute inset-0 z-[1] pointer-events-none [background:radial-gradient(ellipse_at_center,rgba(12,12,14,0)_0%,rgba(12,12,14,0.24)_52%,#0C0C0E_100%)]" />
         <div className="absolute inset-x-0 top-0 z-[1] h-[36vh] pointer-events-none [background:linear-gradient(to_bottom,#0C0C0E_0%,rgba(12,12,14,0.82)_22%,rgba(12,12,14,0)_100%)]" />
         <div className="absolute inset-x-0 bottom-0 z-[1] h-[44vh] pointer-events-none [background:linear-gradient(to_bottom,rgba(12,12,14,0)_0%,rgba(12,12,14,0.84)_68%,#0C0C0E_100%)]" />
