@@ -279,51 +279,18 @@ export function runGatewayEntrance(contentEl: HTMLElement) {
   return tl;
 }
 
-export function initScrollRevealEntrance(triggerEl: HTMLElement, contentEl: HTMLElement): () => void {
-  const targets = Array.from(contentEl.children);
-
-  gsap.set(targets, {
-    autoAlpha: 0,
-    y: 18,
-    willChange: 'transform, opacity',
-  });
-
-  const trigger = ScrollTrigger.create({
-    trigger: triggerEl,
-    start: 'top 72%',
-    once: true,
-    onEnter: () => {
-      gsap.to(targets, {
-        autoAlpha: 1,
-        y: 0,
-        stagger: 0.1,
-        duration: 0.72,
-        ease: 'power3.out',
-        clearProps: 'willChange',
-      });
-    },
-  });
-
-  ScrollTrigger.refresh();
-
-  return () => {
-    trigger.kill();
-    gsap.killTweensOf(targets);
-  };
-}
-
 export function initPosterParallax(sectionEl: HTMLElement, mediaEl: HTMLElement): () => void {
   gsap.set(mediaEl, {
     autoAlpha: 1,
-    scale: 1.08,
-    yPercent: 4,
+    scale: 1.1,
+    yPercent: 7,
     force3D: true,
     transformOrigin: '50% 50%',
     willChange: 'transform',
   });
 
   const tween = gsap.to(mediaEl, {
-    yPercent: -4,
+    yPercent: -7,
     scale: 1.03,
     ease: 'none',
     scrollTrigger: {

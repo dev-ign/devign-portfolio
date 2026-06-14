@@ -12,7 +12,6 @@ jest.mock('@/hooks/useGSAPContext', () => ({
 
 jest.mock('@/animations/gatewayAnimations', () => ({
   initPosterParallax: jest.fn(() => () => undefined),
-  initScrollRevealEntrance: jest.fn(() => () => undefined),
 }), { virtual: true });
 
 jest.mock('@/animations/workWithMeAnimations', () => ({

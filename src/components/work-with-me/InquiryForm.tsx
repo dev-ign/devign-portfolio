@@ -2,8 +2,8 @@ import React, { useRef } from 'react';
 import { useGSAPContext } from '@/hooks/useGSAPContext';
 import {
   initPosterParallax,
-  initScrollRevealEntrance,
 } from '@/animations/gatewayAnimations';
+import { initScrollEnterExit } from '@/animations/workWithMeAnimations';
 
 type InquiryFormProps = {
   onOpenInquiry: () => void;
@@ -17,11 +17,19 @@ const InquiryForm: React.FC<InquiryFormProps> = ({ onOpenInquiry }) => {
   useGSAPContext(() => {
     if (!sectionRef.current || !mediaRef.current || !contentRef.current) return;
 
-    const cleanupEntrance = initScrollRevealEntrance(sectionRef.current, contentRef.current);
     const cleanupParallax = initPosterParallax(sectionRef.current, mediaRef.current);
+    const contentTargets = Array.from(contentRef.current.children) as HTMLElement[];
+    const entranceTriggers = initScrollEnterExit(contentTargets, {
+      trigger: sectionRef.current,
+      start: 'top 68%',
+      stagger: 0.1,
+      duration: 0.92,
+      y: 36,
+      exitWhen: 'bottom',
+    });
 
     return () => {
-      cleanupEntrance();
+      entranceTriggers?.forEach(trigger => trigger.kill());
       cleanupParallax();
     };
   }, []);

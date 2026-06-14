@@ -160,7 +160,8 @@ const GatewayPage: React.FC = () => {
             {/* CTA buttons */}
             <div className="hero-reveal-item flex gap-3.5 flex-wrap justify-center mt-6 sm:mt-8">
               <button
-                onClick={() => scrollToSection('inquiry')}
+                type="button"
+                onClick={openInquiry}
                 className="primary-hero-cta"
               >
                 <span>Work With Us</span>
