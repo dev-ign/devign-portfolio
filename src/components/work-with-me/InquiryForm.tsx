@@ -1,65 +1,29 @@
 import React, { useRef } from 'react';
 import { useGSAPContext } from '@/hooks/useGSAPContext';
 import {
-  initPosterScroll,
-  initVideoScrub,
-  runGatewayEntrance,
+  initPosterParallax,
+  initScrollRevealEntrance,
 } from '@/animations/gatewayAnimations';
-import { isTouchDevice } from '@/utils/deviceDetect';
 
 type InquiryFormProps = {
   onOpenInquiry: () => void;
 };
 
 const InquiryForm: React.FC<InquiryFormProps> = ({ onOpenInquiry }) => {
-  const isTouch = isTouchDevice();
   const sectionRef = useRef<HTMLElement>(null);
   const mediaRef = useRef<HTMLDivElement>(null);
-  const videoRef = useRef<HTMLVideoElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
-
-  useGSAPContext(() => {
-    if (contentRef.current) {
-      runGatewayEntrance(contentRef.current);
-    }
-  }, []);
 
   useGSAPContext(() => {
     if (!sectionRef.current || !mediaRef.current || !contentRef.current) return;
 
-    const scrubOptions = {
-      end: '+=120%',
-      pin: false,
-      pinSpacing: false,
-      mediaFadeStart: 0.72,
-      mediaFadeDuration: 0.32,
-      mediaYPercent: -6,
-      mediaStartScale: 1.08,
-      mediaEndScale: 1.02,
-      contentExitAt: 0.82,
-      contentExitY: -28,
+    const cleanupEntrance = initScrollRevealEntrance(sectionRef.current, contentRef.current);
+    const cleanupParallax = initPosterParallax(sectionRef.current, mediaRef.current);
+
+    return () => {
+      cleanupEntrance();
+      cleanupParallax();
     };
-
-    if (isTouch) {
-      return initPosterScroll(
-        sectionRef.current,
-        mediaRef.current,
-        undefined,
-        undefined,
-        scrubOptions
-      );
-    }
-
-    if (!videoRef.current) return;
-
-    return initVideoScrub(
-      sectionRef.current,
-      videoRef.current,
-      mediaRef.current,
-      undefined,
-      undefined,
-      scrubOptions
-    );
   }, []);
 
   return (
@@ -71,37 +35,21 @@ const InquiryForm: React.FC<InquiryFormProps> = ({ onOpenInquiry }) => {
       >
         <div
           ref={mediaRef}
-          className="absolute inset-[-5%] z-0 will-change-[transform,opacity] [backface-visibility:hidden] [transform:translate3d(0,0,0)]"
+          className="absolute inset-[-8%] z-0 will-change-transform [backface-visibility:hidden] [transform:translate3d(0,0,0)]"
         >
-          {isTouch ? (
-            <video
-              muted
-              playsInline
-              autoPlay
-              loop
-              preload="metadata"
-              className="h-full w-full object-cover"
-              aria-hidden="true"
-            >
-              <source src="/inquiry-bg.mp4" type="video/mp4" />
-            </video>
-          ) : (
-            <video
-              ref={videoRef}
-              muted
-              playsInline
-              preload="metadata"
-              className="h-full w-full object-cover"
-              aria-hidden="true"
-            >
-              <source src="/inquiry-bg.mp4" type="video/mp4" />
-            </video>
-          )}
+          <img
+            src="/inquiry-bg-poster.jpg"
+            alt=""
+            aria-hidden="true"
+            className="h-full w-full object-cover opacity-90"
+            loading="lazy"
+          />
         </div>
 
-        <div className="absolute inset-0 z-[1] pointer-events-none [background:radial-gradient(circle_at_center,rgba(0,0,0,0.72)_0%,rgba(0,0,0,0.56)_34%,rgba(12,12,14,0.82)_72%,#0C0C0E_100%)]" />
-        <div className="absolute inset-x-0 top-0 z-[1] h-[22vh] pointer-events-none [background:linear-gradient(to_bottom,#0C0C0E_0%,rgba(12,12,14,0)_100%)]" />
-        <div className="absolute inset-x-0 bottom-0 z-[1] h-[34vh] pointer-events-none [background:linear-gradient(to_bottom,rgba(12,12,14,0)_0%,#0C0C0E_100%)]" />
+        <div className="absolute inset-0 z-[1] pointer-events-none [background:radial-gradient(circle_at_center,rgba(0,0,0,0.86)_0%,rgba(0,0,0,0.78)_28%,rgba(12,12,14,0.82)_62%,#0C0C0E_100%)]" />
+        <div className="absolute inset-0 z-[1] pointer-events-none [background:radial-gradient(ellipse_at_center,rgba(12,12,14,0)_0%,rgba(12,12,14,0.24)_52%,#0C0C0E_100%)]" />
+        <div className="absolute inset-x-0 top-0 z-[1] h-[36vh] pointer-events-none [background:linear-gradient(to_bottom,#0C0C0E_0%,rgba(12,12,14,0.82)_22%,rgba(12,12,14,0)_100%)]" />
+        <div className="absolute inset-x-0 bottom-0 z-[1] h-[44vh] pointer-events-none [background:linear-gradient(to_bottom,rgba(12,12,14,0)_0%,rgba(12,12,14,0.84)_68%,#0C0C0E_100%)]" />
 
         <div className="relative z-[2] flex min-h-[clamp(620px,92dvh,860px)] items-center justify-center px-[clamp(20px,4vw,40px)] py-[clamp(96px,14vh,150px)] text-center">
           <div

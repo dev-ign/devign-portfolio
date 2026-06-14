@@ -11,24 +11,19 @@ jest.mock('@/hooks/useGSAPContext', () => ({
 }), { virtual: true });
 
 jest.mock('@/animations/gatewayAnimations', () => ({
-  initVideoScrub: jest.fn(() => () => undefined),
-  initPosterScroll: jest.fn(() => () => undefined),
-  runGatewayEntrance: jest.fn(),
+  initPosterParallax: jest.fn(() => () => undefined),
+  initScrollRevealEntrance: jest.fn(() => () => undefined),
 }), { virtual: true });
 
 jest.mock('@/animations/workWithMeAnimations', () => ({
   initScrollEnterExit: jest.fn(() => () => undefined),
 }), { virtual: true });
 
-jest.mock('@/utils/deviceDetect', () => ({
-  isTouchDevice: jest.fn(() => false),
-}), { virtual: true });
-
 describe('InquiryForm section modal experience', () => {
   test('renders the hero-style inquiry copy and calls the modal opener from the section CTA', () => {
     const onOpenInquiry = jest.fn();
 
-    render(<InquiryForm onOpenInquiry={onOpenInquiry} />);
+    const { container } = render(<InquiryForm onOpenInquiry={onOpenInquiry} />);
 
     expect(screen.getByRole('heading', { name: /let's start something\./i })).toBeInTheDocument();
     expect(
@@ -36,6 +31,8 @@ describe('InquiryForm section modal experience', () => {
         /whether you're launching something new, refining an existing product, or reimagining your digital presence/i
       )
     ).toBeInTheDocument();
+    expect(container.querySelector('img[src="/inquiry-bg-poster.jpg"]')).toBeInTheDocument();
+    expect(container.querySelector('video')).not.toBeInTheDocument();
 
     fireEvent.click(screen.getByRole('button', { name: /work with us/i }));
 
