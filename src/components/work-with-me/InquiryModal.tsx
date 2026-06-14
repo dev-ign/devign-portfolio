@@ -26,11 +26,6 @@ const InquiryModal: React.FC<InquiryModalProps> = ({ open, onClose }) => {
     closeButtonRef.current?.focus();
 
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') {
-        onClose();
-        return;
-      }
-
       if (event.key !== 'Tab') {
         return;
       }
@@ -87,26 +82,23 @@ const InquiryModal: React.FC<InquiryModalProps> = ({ open, onClose }) => {
     <AnimatePresence>
       {open && (
         <motion.div
-          className="fixed inset-0 z-[70] flex items-center justify-center px-[clamp(12px,3vw,28px)] py-[clamp(16px,4vh,40px)]"
+          className="fixed inset-0 z-[120] flex items-center justify-center p-0 sm:px-[clamp(12px,3vw,28px)] sm:py-[clamp(16px,4vh,40px)]"
           role="presentation"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.24, ease }}
         >
-          <button
-            type="button"
+          <div
             aria-hidden="true"
-            tabIndex={-1}
             className="absolute inset-0 cursor-default border-0 bg-black/62 backdrop-blur-[18px]"
-            onClick={onClose}
           />
           <motion.div
             ref={panelRef}
             role="dialog"
             aria-modal="true"
             aria-labelledby="inquiry-modal-title"
-            className="relative z-[1] grid max-h-[min(88dvh,820px)] w-full max-w-[720px] grid-rows-[auto_1fr] overflow-hidden rounded-[8px] border border-white/12 bg-[#0C0C0E]/92 text-white shadow-[0_28px_120px_rgba(0,0,0,0.58)] backdrop-blur-2xl"
+            className="relative z-[1] grid h-dvh max-h-dvh w-full max-w-none grid-rows-[auto_1fr] overflow-hidden rounded-none border-0 bg-[#0C0C0E]/96 text-white shadow-[0_28px_120px_rgba(0,0,0,0.58)] backdrop-blur-2xl sm:h-auto sm:max-h-[min(88dvh,820px)] sm:max-w-[720px] sm:rounded-[8px] sm:border sm:border-white/12 sm:bg-[#0C0C0E]/92"
             initial={{ opacity: 0, y: 28, scale: 0.96 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 18, scale: 0.98 }}

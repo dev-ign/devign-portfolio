@@ -1,5 +1,5 @@
 import React from 'react';
-import { fireEvent, render, screen, waitFor, within } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import InquiryForm from './InquiryForm';
 
 jest.mock('@iconify/react', () => ({
@@ -25,8 +25,10 @@ jest.mock('@/utils/deviceDetect', () => ({
 }), { virtual: true });
 
 describe('InquiryForm section modal experience', () => {
-  test('renders the hero-style inquiry copy and opens the modal stepper', () => {
-    render(<InquiryForm />);
+  test('renders the hero-style inquiry copy and calls the modal opener from the section CTA', () => {
+    const onOpenInquiry = jest.fn();
+
+    render(<InquiryForm onOpenInquiry={onOpenInquiry} />);
 
     expect(screen.getByRole('heading', { name: /let's start something\./i })).toBeInTheDocument();
     expect(
@@ -37,28 +39,6 @@ describe('InquiryForm section modal experience', () => {
 
     fireEvent.click(screen.getByRole('button', { name: /work with us/i }));
 
-    const dialog = screen.getByRole('dialog', { name: /project inquiry/i });
-
-    expect(dialog).toBeInTheDocument();
-    expect(within(dialog).getByRole('heading', { name: /let's start with you\./i })).toBeInTheDocument();
-    expect(within(dialog).getByLabelText(/^name\s*\*?$/i)).toBeInTheDocument();
-    expect(within(dialog).getByLabelText(/email/i)).toBeInTheDocument();
-  });
-
-  test('closes the inquiry modal from the close button and escape key', async () => {
-    render(<InquiryForm />);
-
-    fireEvent.click(screen.getByRole('button', { name: /work with us/i }));
-    const dialog = screen.getByRole('dialog', { name: /project inquiry/i });
-    expect(dialog).toBeInTheDocument();
-
-    fireEvent.click(within(dialog).getByRole('button', { name: /close inquiry form/i }));
-    await waitFor(() => expect(screen.queryByRole('dialog', { name: /project inquiry/i })).not.toBeInTheDocument());
-
-    fireEvent.click(screen.getByRole('button', { name: /work with us/i }));
-    expect(screen.getByRole('dialog', { name: /project inquiry/i })).toBeInTheDocument();
-
-    fireEvent.keyDown(document, { key: 'Escape' });
-    await waitFor(() => expect(screen.queryByRole('dialog', { name: /project inquiry/i })).not.toBeInTheDocument());
+    expect(onOpenInquiry).toHaveBeenCalledTimes(1);
   });
 });

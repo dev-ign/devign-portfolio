@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useGSAPContext } from '@/hooks/useGSAPContext';
 import { useLenis } from '@/hooks/useLenis';
 import {
@@ -14,6 +14,7 @@ import Process from '@/components/work-with-me/Process';
 import ProjectsShowcase from '@/components/work-with-me/ProjectsShowcase';
 import BusinessOutcomes from '@/components/work-with-me/BusinessOutcomes';
 import InquiryForm from '@/components/work-with-me/InquiryForm';
+import InquiryModal from '@/components/work-with-me/InquiryModal';
 import FAQ from '@/components/work-with-me/FAQ';
 
 const GatewayPage: React.FC = () => {
@@ -26,6 +27,10 @@ const GatewayPage: React.FC = () => {
   const sectionsRef = useRef<HTMLDivElement>(null);
   const typographyRef = useRef<HTMLElement>(null);
   const lenisRef   = useLenis(!isTouch);
+  const [inquiryOpen, setInquiryOpen] = useState(false);
+
+  const openInquiry = useCallback(() => setInquiryOpen(true), []);
+  const closeInquiry = useCallback(() => setInquiryOpen(false), []);
 
   useEffect(() => {
     document.body.setAttribute('data-page', 'gateway');
@@ -101,7 +106,7 @@ const GatewayPage: React.FC = () => {
 
   return (
     <div>
-      <GatewayNav onScrollTo={scrollToSection} />
+      <GatewayNav onScrollTo={scrollToSection} onOpenInquiry={openInquiry} />
 
       {/* ── Hero ── */}
       <div ref={heroRef} className="min-h-dvh relative overflow-hidden bg-gateway">
@@ -196,9 +201,11 @@ const GatewayPage: React.FC = () => {
         <Process />
         <ProjectsShowcase />
         <BusinessOutcomes />
-        <InquiryForm />
+        <InquiryForm onOpenInquiry={openInquiry} />
         <FAQ />
       </div>
+
+      <InquiryModal open={inquiryOpen} onClose={closeInquiry} />
     </div>
   );
 };

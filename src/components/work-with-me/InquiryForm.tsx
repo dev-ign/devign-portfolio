@@ -1,4 +1,4 @@
-import React, { useCallback, useRef, useState } from 'react';
+import React, { useRef } from 'react';
 import { useGSAPContext } from '@/hooks/useGSAPContext';
 import {
   initPosterScroll,
@@ -6,18 +6,17 @@ import {
   runGatewayEntrance,
 } from '@/animations/gatewayAnimations';
 import { isTouchDevice } from '@/utils/deviceDetect';
-import InquiryModal from './InquiryModal';
 
-const InquiryForm: React.FC = () => {
+type InquiryFormProps = {
+  onOpenInquiry: () => void;
+};
+
+const InquiryForm: React.FC<InquiryFormProps> = ({ onOpenInquiry }) => {
   const isTouch = isTouchDevice();
-  const [modalOpen, setModalOpen] = useState(false);
   const sectionRef = useRef<HTMLElement>(null);
   const mediaRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
-
-  const openModal = useCallback(() => setModalOpen(true), []);
-  const closeModal = useCallback(() => setModalOpen(false), []);
 
   useGSAPContext(() => {
     if (contentRef.current) {
@@ -125,7 +124,7 @@ const InquiryForm: React.FC = () => {
             <div className="hero-reveal-item mt-3">
               <button
                 type="button"
-                onClick={openModal}
+                onClick={onOpenInquiry}
                 className="primary-hero-cta"
               >
                 <span>Work With Us</span>
@@ -134,8 +133,6 @@ const InquiryForm: React.FC = () => {
           </div>
         </div>
       </section>
-
-      <InquiryModal open={modalOpen} onClose={closeModal} />
     </>
   );
 };

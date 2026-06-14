@@ -6,6 +6,7 @@ import BrandLogo from '@/components/BrandLogo';
 
 type GatewayNavProps = {
   onScrollTo: (id: string) => void;
+  onOpenInquiry: () => void;
 };
 
 const NAV_ITEMS = [
@@ -17,7 +18,7 @@ const NAV_ITEMS = [
 
 const ease = [0.16, 1, 0.3, 1] as [number, number, number, number];
 
-const GatewayNav: React.FC<GatewayNavProps> = ({ onScrollTo }) => {
+const GatewayNav: React.FC<GatewayNavProps> = ({ onScrollTo, onOpenInquiry }) => {
   const [isGlass, setIsGlass] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
 
@@ -40,6 +41,11 @@ const GatewayNav: React.FC<GatewayNavProps> = ({ onScrollTo }) => {
   const handleNavClick = (target: string) => {
     setMenuOpen(false);
     onScrollTo(target);
+  };
+
+  const handleInquiryClick = () => {
+    setMenuOpen(false);
+    onOpenInquiry();
   };
 
   return (
@@ -93,7 +99,7 @@ const GatewayNav: React.FC<GatewayNavProps> = ({ onScrollTo }) => {
 
           <button
             type="button"
-            onClick={() => handleNavClick('inquiry')}
+            onClick={handleInquiryClick}
             className="hidden cursor-pointer whitespace-nowrap rounded-full border-none bg-[#BE97ED]/23 px-5 py-3 font-body text-[14px] font-normal tracking-[-0.02em] text-white/76 transition-[background,color,transform] duration-200 hover:-translate-y-0.5 hover:bg-[#BE97ED]/34 hover:text-white sm:block"
           >
             Lets Work
@@ -151,7 +157,7 @@ const GatewayNav: React.FC<GatewayNavProps> = ({ onScrollTo }) => {
                     initial={{ opacity: 0, x: -8 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ duration: 0.18, delay: NAV_ITEMS.length * 0.04, ease }}
-                    onClick={() => handleNavClick('inquiry')}
+                    onClick={handleInquiryClick}
                     className="mx-1 mb-1 cursor-pointer rounded-[12px] border-none bg-[#BE97ED]/14 px-5 py-[14px] text-left font-body text-[16px] font-normal tracking-[-0.01em] text-[#D4AEFF]/90 transition-[background,color] duration-150 hover:bg-[#BE97ED]/24 hover:text-white active:bg-[#BE97ED]/30"
                   >
                     Lets Work →
