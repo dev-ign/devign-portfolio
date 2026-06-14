@@ -268,8 +268,9 @@ const InquiryStepperForm: React.FC<InquiryStepperFormProps> = ({ onSubmitted }) 
           <div className="flex flex-col gap-5">
             <h3 className={`${stepH3Cn} mb-2`}>Let's start with you.</h3>
             <div>
-              <label className={labelCn}>Name *</label>
+              <label htmlFor="inquiry-name" className={labelCn}>Name *</label>
               <input
+                id="inquiry-name"
                 className={inputCn}
                 value={formData.name}
                 onBlur={() => setContactErrors(validateContactStep(formData))}
@@ -281,8 +282,9 @@ const InquiryStepperForm: React.FC<InquiryStepperFormProps> = ({ onSubmitted }) 
               {contactErrors.name && <p id="inquiry-name-error" className={errorCn}>{contactErrors.name}</p>}
             </div>
             <div>
-              <label className={labelCn}>Email *</label>
+              <label htmlFor="inquiry-email" className={labelCn}>Email *</label>
               <input
+                id="inquiry-email"
                 className={inputCn}
                 type="email"
                 value={formData.email}
@@ -295,12 +297,13 @@ const InquiryStepperForm: React.FC<InquiryStepperFormProps> = ({ onSubmitted }) 
               {contactErrors.email && <p id="inquiry-email-error" className={errorCn}>{contactErrors.email}</p>}
             </div>
             <div>
-              <label className={labelCn}>Business name (optional)</label>
-              <input className={inputCn} value={formData.businessName} onChange={e => set('businessName')(e.target.value)} placeholder="Your business" />
+              <label htmlFor="inquiry-business-name" className={labelCn}>Business name (optional)</label>
+              <input id="inquiry-business-name" className={inputCn} value={formData.businessName} onChange={e => set('businessName')(e.target.value)} placeholder="Your business" />
             </div>
             <div>
-              <label className={labelCn}>Current website or Instagram (optional)</label>
+              <label htmlFor="inquiry-website" className={labelCn}>Current website or Instagram (optional)</label>
               <input
+                id="inquiry-website"
                 className={inputCn}
                 value={formData.website}
                 onBlur={() => setContactErrors(validateContactStep(formData))}
@@ -375,8 +378,9 @@ const InquiryStepperForm: React.FC<InquiryStepperFormProps> = ({ onSubmitted }) 
           <div className="flex flex-col gap-4">
             <h3 className={`${stepH3Cn} mb-2`}>Tell me about your project.</h3>
             <div>
-              <label className={labelCn}>Project details — A few sentences are helpful.</label>
+              <label htmlFor="inquiry-details" className={labelCn}>Project details — A few sentences are helpful.</label>
               <textarea
+                id="inquiry-details"
                 value={formData.details}
                 onChange={e => set('details')(e.target.value)}
                 rows={5}

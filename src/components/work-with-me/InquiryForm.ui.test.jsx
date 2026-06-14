@@ -1,5 +1,5 @@
 import React from 'react';
-import { fireEvent, render, screen, within } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import InquiryForm from './InquiryForm';
 
 jest.mock('@iconify/react', () => ({
@@ -45,7 +45,7 @@ describe('InquiryForm section modal experience', () => {
     expect(within(dialog).getByLabelText(/email/i)).toBeInTheDocument();
   });
 
-  test('closes the inquiry modal from the close button and escape key', () => {
+  test('closes the inquiry modal from the close button and escape key', async () => {
     render(<InquiryForm />);
 
     fireEvent.click(screen.getByRole('button', { name: /work with us/i }));
@@ -53,12 +53,12 @@ describe('InquiryForm section modal experience', () => {
     expect(dialog).toBeInTheDocument();
 
     fireEvent.click(within(dialog).getByRole('button', { name: /close inquiry form/i }));
-    expect(screen.queryByRole('dialog', { name: /project inquiry/i })).not.toBeInTheDocument();
+    await waitFor(() => expect(screen.queryByRole('dialog', { name: /project inquiry/i })).not.toBeInTheDocument());
 
     fireEvent.click(screen.getByRole('button', { name: /work with us/i }));
     expect(screen.getByRole('dialog', { name: /project inquiry/i })).toBeInTheDocument();
 
     fireEvent.keyDown(document, { key: 'Escape' });
-    expect(screen.queryByRole('dialog', { name: /project inquiry/i })).not.toBeInTheDocument();
+    await waitFor(() => expect(screen.queryByRole('dialog', { name: /project inquiry/i })).not.toBeInTheDocument());
   });
 });
