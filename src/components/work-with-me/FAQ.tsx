@@ -68,7 +68,7 @@ const FAQ: React.FC = () => {
         </h2>
       </div>
 
-      <div className="max-w-[720px]">
+      <div className="">
         {FAQS.map((faq, i) => (
           <div
             key={i}

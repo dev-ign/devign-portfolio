@@ -175,8 +175,8 @@ export function initPosterScroll(
   options: ScrubOptions = {}
 ): () => void {
   const end = options.end ?? '+=170%';
-  const pin = options.pin ?? true;
-  const pinSpacing = options.pinSpacing ?? true;
+  const pin = options.pin ?? false;
+  const pinSpacing = options.pinSpacing ?? false;
   const mediaFadeStart = options.mediaFadeStart ?? 0.68;
   const mediaFadeDuration = options.mediaFadeDuration ?? 0.36;
   const mediaYPercent = options.mediaYPercent ?? -9;
@@ -317,15 +317,12 @@ export function initGatewayServicesTypography(containerEl: HTMLElement): () => v
 
   if (!track || words.length === 0) return () => undefined;
 
-  const enterDuration = 0.8;
-  const driftDuration = 4;
-  const exitDuration = 0.6;
-  const pauseDuration = 0.3;
-  const wordDuration = enterDuration + driftDuration + exitDuration + pauseDuration;
-  const cycleDuration = wordDuration * words.length;
+  const fadeInDuration = 0.8;
+  const visibleDuration = 4;
+  const fadeOutDuration = 0.6;
+  const wordDuration = fadeInDuration + visibleDuration + fadeOutDuration;
   const peakOpacity = 0.1;
   const getStartX = () => Math.min(window.innerWidth * 0.18, 96);
-  const getDriftX = () => -Math.min(window.innerWidth * 0.1, 48);
   const getExitX = () => -Math.min(window.innerWidth * 0.28, 150);
 
   gsap.set(track, {
@@ -341,38 +338,31 @@ export function initGatewayServicesTypography(containerEl: HTMLElement): () => v
     willChange: 'transform, opacity',
   });
 
-  const timelines = words.map((word, index) => {
-    const tl = gsap.timeline({
-      repeat: -1,
-      repeatDelay: cycleDuration - wordDuration,
-      delay: index * wordDuration,
-    });
+  const timeline = gsap.timeline({ repeat: -1 });
 
-    tl.fromTo(
+  words.forEach((word, index) => {
+    const start = index * wordDuration;
+
+    timeline.fromTo(
       word,
-      { x: getStartX, autoAlpha: 0 },
-      { x: 0, autoAlpha: peakOpacity, duration: enterDuration, ease: 'power3.out' },
-      0
+      { x: getStartX },
+      { x: getExitX, duration: wordDuration, ease: 'none' },
+      start
     );
-    tl.to(word, {
-      x: getDriftX,
+    timeline.to(word, {
       autoAlpha: peakOpacity,
-      duration: driftDuration,
-      ease: 'none',
-    });
-    tl.to(word, {
-      x: getExitX,
+      duration: fadeInDuration,
+      ease: 'power2.out',
+    }, start);
+    timeline.to(word, {
       autoAlpha: 0,
-      duration: exitDuration,
+      duration: fadeOutDuration,
       ease: 'power3.in',
-    });
-    tl.to(word, { autoAlpha: 0, duration: pauseDuration, ease: 'none' });
-
-    return tl;
+    }, start + fadeInDuration + visibleDuration);
   });
 
   return () => {
-    timelines.forEach((timeline) => timeline.kill());
+    timeline.kill();
     gsap.set(track, { clearProps: 'all' });
     gsap.set(words, { clearProps: 'all' });
   };
