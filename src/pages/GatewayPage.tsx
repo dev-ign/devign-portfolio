@@ -8,7 +8,7 @@ import {
   initGatewayServicesTypography,
 } from '@/animations/gatewayAnimations';
 import { isTouchDevice } from '@/utils/deviceDetect';
-import GatewayNav from '@/components/gateway/GatewayNav';
+import GlobalNavigation from '@/components/navigation/GlobalNavigation';
 import Services from '@/components/work-with-me/Services';
 import Process from '@/components/work-with-me/Process';
 import ProjectsShowcase from '@/components/work-with-me/ProjectsShowcase';
@@ -106,7 +106,7 @@ const GatewayPage: React.FC = () => {
 
   return (
     <div>
-      <GatewayNav onScrollTo={scrollToSection} onOpenInquiry={openInquiry} />
+      <GlobalNavigation onScrollTo={scrollToSection} onOpenInquiry={openInquiry} />
 
       {/* ── Hero ── */}
       <div ref={heroRef} className="min-h-dvh relative overflow-hidden bg-gateway">

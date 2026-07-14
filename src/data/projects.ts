@@ -43,7 +43,7 @@ export const projects: Project[] = [
   {
     id: 'gravyty-template-manager',
     title: 'Template Manager',
-    category: 'Enterprise SaaS · 2024',
+    category: 'Enterprise SaaS · 2025',
     projectType: 'code',
     description:
       'Self-serve email template system for fundraising teams — replacing support-dependent HTML editing with a structured TinyMCE editor and category-based organization.',
