@@ -39,22 +39,28 @@ export function initScrollEnterExit(
   const duration = options.duration ?? revealDefaults.duration;
   const stagger = options.stagger ?? 0.08;
   const exitWhen = options.exitWhen ?? 'top';
+  const isTouchLayout =
+    typeof window !== 'undefined' &&
+    window.matchMedia('(max-width: 639px), (pointer: coarse)').matches;
   let isVisible = false;
   const revealVars = {
     ...revealDefaults,
     duration,
     delay: options.delay ?? 0,
     stagger,
+    onComplete: () => gsap.set(targets, { clearProps: 'willChange' }),
   };
 
   gsap.set(targets, fromState);
 
   const reveal = () => {
+    if (isVisible) return;
     isVisible = true;
     gsap.to(targets, revealVars);
   };
 
   const exit = (direction: 1 | -1) => {
+    if (!isVisible) return;
     isVisible = false;
     gsap.to(targets, {
       autoAlpha: 0,
@@ -66,49 +72,44 @@ export function initScrollEnterExit(
     });
   };
 
-  const enterTrigger = ScrollTrigger.create({
+  const revealIfVisible = () => {
+    if (isVisible) return;
+    const rect = trigger.getBoundingClientRect();
+    if (rect.bottom > 0 && rect.top < window.innerHeight * 0.9) reveal();
+  };
+
+  // On touch layouts, each group gets one one-shot trigger. Elements never get
+  // hidden again after entering, so a fast swipe cannot skip a narrow reveal
+  // window and leave an entire section permanently transparent.
+  if (isTouchLayout) {
+    const mobileTrigger = ScrollTrigger.create({
+      trigger,
+      start: 'top 88%',
+      once: true,
+      invalidateOnRefresh: true,
+      onEnter: reveal,
+      onRefresh: revealIfVisible,
+    });
+
+    return [mobileTrigger];
+  }
+
+  // Desktop keeps the reversible entrance/exit behavior with one trigger per
+  // group. This avoids the previous global `0 → max` trigger and forced layout
+  // read on every scroll tick for every animated element.
+  const desktopTrigger = ScrollTrigger.create({
     trigger,
     start: options.start ?? 'top 64%',
+    end: exitWhen === 'bottom' ? 'bottom top' : 'top top',
     invalidateOnRefresh: true,
     onEnter: reveal,
     onEnterBack: reveal,
+    onLeave: () => exit(1),
     onLeaveBack: () => exit(-1),
+    onRefresh: revealIfVisible,
   });
 
-  const exitTrigger = ScrollTrigger.create({
-    start: 0,
-    end: 'max',
-    invalidateOnRefresh: true,
-    onUpdate: (self) => {
-      const rect = trigger.getBoundingClientRect();
-      const shouldExitDown =
-        exitWhen === 'bottom'
-          ? rect.bottom <= 20
-          : rect.top <= 20;
-
-      if (self.direction === 1 && shouldExitDown) {
-        exit(1);
-      }
-
-      if (self.direction === -1 && !isVisible && rect.top > 0 && rect.top < window.innerHeight * 0.7) {
-        reveal();
-      }
-    },
-    onLeave: () => {
-      const rect = trigger.getBoundingClientRect();
-      const shouldExitDown =
-        exitWhen === 'bottom'
-          ? rect.bottom <= 20
-          : rect.top <= 20;
-
-      if (shouldExitDown) exit(1);
-    },
-    onLeaveBack: () => {
-      if (isVisible) exit(-1);
-    },
-  });
-
-  return [enterTrigger, exitTrigger];
+  return [desktopTrigger];
 }
 
 // Hero: headline lines + sub + CTA stagger up on load

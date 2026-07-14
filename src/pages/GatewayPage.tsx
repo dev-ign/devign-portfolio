@@ -89,7 +89,8 @@ const GatewayPage: React.FC = () => {
     const sectionsTransform = sectionsRef.current
       ? new DOMMatrixReadOnly(getComputedStyle(sectionsRef.current).transform).m42
       : 0;
-    const targetTransform = id === 'services' ? window.innerHeight * -0.62 : sectionsTransform;
+    const targetTransform =
+      id === 'services' && !isTouch ? window.innerHeight * -0.62 : sectionsTransform;
     const navClearance =
       id === 'inquiry'
         ? Math.min(window.innerHeight * 0.78, 720)
@@ -109,7 +110,10 @@ const GatewayPage: React.FC = () => {
       <GlobalNavigation onScrollTo={scrollToSection} onOpenInquiry={openInquiry} />
 
       {/* ── Hero ── */}
-      <div ref={heroRef} className="min-h-dvh relative overflow-hidden bg-gateway">
+      <div
+        ref={heroRef}
+        className={`${isTouch ? 'min-h-svh' : 'min-h-dvh'} relative overflow-hidden bg-gateway`}
+      >
 
         {/* Media — video (desktop) or poster image (touch/tablet) */}
         <div
@@ -137,7 +141,7 @@ const GatewayPage: React.FC = () => {
         </div>
 
         {/* Content */}
-        <div className="relative z-2 min-h-dvh flex flex-col items-center justify-center pt-[clamp(40px,6vw,80px)] pb-[clamp(96px,14vh,150px)] px-[clamp(20px,4vw,40px)] text-center">
+        <div className={`relative z-2 ${isTouch ? 'min-h-svh' : 'min-h-dvh'} flex flex-col items-center justify-center pt-[clamp(40px,6vw,80px)] pb-[clamp(96px,14vh,150px)] px-[clamp(20px,4vw,40px)] text-center`}>
 
           <div ref={contentRef} className="flex flex-col items-center gap-10 will-change-[transform,opacity] backface-hidden translate-z-0">
             {/* Headline */}
@@ -178,11 +182,15 @@ const GatewayPage: React.FC = () => {
         </div>
 
         {/* Bottom feather — hero dissolves into dark sections */}
-        <div className="absolute bottom-0 left-0 right-0 h-[35vh] pointer-events-none z-2 [background:linear-gradient(to_bottom,transparent_0%,rgba(12,12,14,0.08)_60%,#0C0C0E_100%)]" />
+        <div className="absolute bottom-0 left-0 right-0 h-[48dvh] sm:h-[35vh] pointer-events-none z-2 [background:linear-gradient(to_bottom,transparent_0%,rgba(12,12,14,0.14)_48%,#0C0C0E_100%)]" />
       </div>
 
       {/* ── Content sections ── */}
-      <div ref={sectionsRef} className="relative z-3 bg-gateway mb-[-62vh]" data-gateway-sections>
+      <div
+        ref={sectionsRef}
+        className={`relative z-3 bg-gateway ${isTouch ? 'mb-0' : 'mb-[-62vh]'}`}
+        data-gateway-sections
+      >
         <section
           ref={typographyRef}
           className="gateway-services-typography h-[clamp(170px,24vw,320px)] bg-gateway relative overflow-hidden"

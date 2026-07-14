@@ -174,16 +174,15 @@ export function initPosterScroll(
   nextSectionEl?: HTMLElement,
   options: ScrubOptions = {}
 ): () => void {
-  const end = options.end ?? '+=170%';
-  const pin = options.pin ?? false;
-  const pinSpacing = options.pinSpacing ?? false;
-  const mediaFadeStart = options.mediaFadeStart ?? 0.68;
-  const mediaFadeDuration = options.mediaFadeDuration ?? 0.36;
-  const mediaYPercent = options.mediaYPercent ?? -9;
-  const mediaStartScale = options.mediaStartScale ?? 1.05;
+  // Touch devices use the document's native flow. Moving the following section
+  // with transforms makes its visual position diverge from its layout position,
+  // which creates seams and stale ScrollTrigger measurements on mobile Safari.
+  const end = options.end ?? 'bottom top';
+  const mediaFadeStart = options.mediaFadeStart ?? 0.12;
+  const mediaFadeDuration = options.mediaFadeDuration ?? 0.7;
+  const mediaYPercent = options.mediaYPercent ?? -4;
+  const mediaStartScale = options.mediaStartScale ?? 1.04;
   const mediaEndScale = options.mediaEndScale ?? 1;
-  const contentExitAt = options.contentExitAt ?? 0.96;
-  const contentExitY = options.contentExitY ?? -42;
 
   gsap.set(mediaEl, {
     autoAlpha: 1,
@@ -195,14 +194,16 @@ export function initPosterScroll(
   });
 
   if (contentEl) {
-    gsap.set(contentEl, { autoAlpha: 1, yPercent: 0, force3D: true });
+    // Keep hero copy readable over the dark canvas as the poster fades away.
+    gsap.set(contentEl, { autoAlpha: 1, y: 0, yPercent: 0, force3D: true });
   }
 
   if (nextSectionEl) {
+    // Explicitly restore normal flow in case a prior responsive layout left
+    // transform styles behind during an orientation/pointer-mode change.
     gsap.set(nextSectionEl, {
-      y: options.nextSectionStartY ?? '18vh',
-      force3D: true,
-      willChange: 'transform',
+      y: 0,
+      clearProps: 'transform,willChange',
     });
   }
 
@@ -212,41 +213,20 @@ export function initPosterScroll(
       trigger: heroEl,
       start: 'top top',
       end,
-      scrub: 0.65,
-      pin,
-      pinSpacing,
-      anticipatePin: 1,
+      scrub: 0.28,
+      pin: false,
+      pinSpacing: false,
       invalidateOnRefresh: true,
     },
   });
 
-  const contentTargets = contentEl ? Array.from(contentEl.children) : [];
-
   timeline
-    .to(mediaEl, { yPercent: mediaYPercent, scale: mediaEndScale, duration: 0.95 }, 0)
+    .to(mediaEl, { yPercent: mediaYPercent, scale: mediaEndScale, duration: 1 }, 0)
     .to(mediaEl, {
       autoAlpha: 0,
       duration: mediaFadeDuration,
       ease: 'power2.inOut',
     }, mediaFadeStart);
-
-  if (contentTargets.length) {
-    timeline.to(contentTargets, {
-      autoAlpha: 0,
-      y: contentExitY,
-      stagger: 0.08,
-      duration: 0.52,
-      ease: 'power2.inOut',
-    }, contentExitAt);
-  }
-
-  if (nextSectionEl) {
-    timeline.to(nextSectionEl, {
-      y: options.nextSectionEndY ?? '-62vh',
-      duration: 0.9,
-      ease: 'power2.out',
-    }, 1.12);
-  }
 
   ScrollTrigger.refresh();
   window.requestAnimationFrame(() => ScrollTrigger.refresh());
