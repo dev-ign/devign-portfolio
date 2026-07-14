@@ -79,7 +79,18 @@ test('poster scroll does not pin touch layouts by default so native mobile scrol
   expect(mockTimelineInstances).toHaveLength(1);
   expect(mockTimelineInstances[0].config.scrollTrigger).toMatchObject({
     trigger: hero,
+    end: 'bottom top',
     pin: false,
     pinSpacing: false,
   });
+
+  const animatedTargets = mockTimelineInstances[0].steps.map((step) => step.target);
+  expect(animatedTargets).toContain(media);
+  expect(animatedTargets).not.toContain(content.firstElementChild);
+  expect(animatedTargets).not.toContain(sections);
+
+  expect(mockSet).toHaveBeenCalledWith(
+    sections,
+    expect.objectContaining({ y: 0, clearProps: 'transform,willChange' })
+  );
 });
