@@ -49,31 +49,31 @@ const CaseStudiesPage: React.FC = () => {
         !headerBackdropRef.current
       ) return;
 
-      ScrollTrigger.create({
-        trigger: sectionRef.current,
-        start: 'top top',
-        end: 'max',
-        pin: headerRef.current,
-        pinSpacing: false,
-        anticipatePin: 1,
-        invalidateOnRefresh: true,
-        refreshPriority: 10,
-      });
-
       const media = gsap.matchMedia();
 
       media.add(
         {
           desktop: '(min-width: 768px)',
-          mobile: '(max-width: 767px)',
           reduceMotion: '(prefers-reduced-motion: reduce)',
         },
         (context) => {
           const { desktop, reduceMotion } = context.conditions as {
             desktop: boolean;
-            mobile: boolean;
             reduceMotion: boolean;
           };
+
+          if (!desktop) return;
+
+          ScrollTrigger.create({
+            trigger: sectionRef.current,
+            start: 'top top',
+            end: 'max',
+            pin: headerRef.current,
+            pinSpacing: false,
+            anticipatePin: 1,
+            invalidateOnRefresh: true,
+            refreshPriority: 10,
+          });
 
           if (reduceMotion) return;
 
@@ -95,8 +95,8 @@ const CaseStudiesPage: React.FC = () => {
             .to(
               titleRef.current,
               {
-                scale: desktop ? 0.46 : 0.66,
-                y: desktop ? -35 : -24,
+                scale: 0.46,
+                y: -35,
                 duration: 1,
               },
               'compact'
