@@ -22,7 +22,7 @@ describe('InquiryForm section modal experience', () => {
   test('renders the hero-style inquiry copy and calls the modal opener from the section CTA', () => {
     const onOpenInquiry = jest.fn();
 
-    const { container } = render(<InquiryForm onOpenInquiry={onOpenInquiry} />);
+    render(<InquiryForm onOpenInquiry={onOpenInquiry} />);
 
     expect(screen.getByRole('heading', { name: /let's start something\./i })).toBeInTheDocument();
     expect(
@@ -30,8 +30,7 @@ describe('InquiryForm section modal experience', () => {
         /whether you're launching something new, refining an existing product, or reimagining your digital presence/i
       )
     ).toBeInTheDocument();
-    expect(container.querySelector('img[src="/inquiry-bg-poster.jpg"]')).toBeInTheDocument();
-    expect(container.querySelector('video')).not.toBeInTheDocument();
+    expect(screen.getByAltText('')).toHaveAttribute('src', '/inquiry-bg-poster.jpg');
 
     fireEvent.click(screen.getByRole('button', { name: /work with us/i }));
 

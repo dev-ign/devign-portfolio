@@ -33,43 +33,29 @@ const Process: React.FC = () => {
   useGSAPContext(
     () => {
       if (!sectionRef.current) return;
-      const eyebrow = sectionRef.current.querySelector<HTMLElement>('.process-eyebrow');
-      const title = sectionRef.current.querySelector<HTMLElement>('.process-title');
+      const intro = sectionRef.current.querySelector<HTMLElement>('.process-intro');
+      const grid = sectionRef.current.querySelector<HTMLElement>('.process-grid');
       const cards = Array.from(
         sectionRef.current.querySelectorAll<HTMLElement>('.process-step')
       );
 
-      if (eyebrow) {
-        initScrollEnterExit([eyebrow], {
-          trigger: eyebrow,
-          start: 'top 20%',
-          end: 'top 85%',
-          duration: 2,
-          y: 32,
+      if (intro) {
+        initScrollEnterExit(Array.from(intro.children) as HTMLElement[], {
+          trigger: intro,
+          stagger: 0.1,
+          duration: 1.12,
+          y: 42,
         });
       }
 
-      if (title) {
-        initScrollEnterExit([title], {
-          trigger: title,
-          start: 'top 24%',
-          end: 'top t84%',
-          duration: 1.45,
-          y: 48,
+      if (grid) {
+        initScrollEnterExit(cards, {
+          trigger: grid,
+          stagger: 0.09,
+          duration: 1.08,
+          y: 40,
         });
       }
-
-      cards.forEach((card, index) => {
-        initScrollEnterExit([card], {
-          trigger: card,
-          start: 'top 24%',
-          end: 'top 80%',
-          duration: 2,
-          delay: index * 0.5,
-          stagger: 0,
-          y: 46,
-        });
-      });
     },
     { scope: sectionRef, dependencies: [isMobile] }
   );
@@ -81,7 +67,7 @@ const Process: React.FC = () => {
       className="py-[clamp(80px,10vw,120px)] px-[clamp(16px,6vw,88px)] bg-gateway"
       style={{ overflow: isMobile ? undefined : 'hidden' }}
     >
-      <div className="mb-16">
+      <div className="process-intro mb-16">
         <div className="process-eyebrow font-mono text-[10px] tracking-[0.14em] uppercase text-white/30 mb-3 will-change-[transform,opacity]">
           How It Works
         </div>
@@ -91,6 +77,7 @@ const Process: React.FC = () => {
       </div>
 
       <div
+        className="process-grid"
         style={{
           display: 'grid',
           gridTemplateColumns: isMobile ? '1fr' : 'repeat(4, 1fr)',

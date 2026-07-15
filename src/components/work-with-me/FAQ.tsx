@@ -41,13 +41,10 @@ const FAQ: React.FC = () => {
         sectionRef.current.querySelectorAll<HTMLElement>('.faq-reveal')
       );
       initScrollEnterExit(targets, {
-        trigger: sectionRef.current,
+        trigger: targets[0] ?? sectionRef.current,
         stagger: 0.08,
-        start: 'top 64%',
-        end: 'bottom top',
         duration: 1.22,
         y: 44,
-        exitWhen: 'bottom',
       });
     },
     { scope: sectionRef, dependencies: [] }

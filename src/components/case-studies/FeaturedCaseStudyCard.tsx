@@ -5,20 +5,21 @@ import { Project } from '@/data/projects';
 interface FeaturedCaseStudyCardProps {
   project: Project;
   backgroundGradient: string;
+  caseStudyPath?: string;
+  comingSoon?: boolean;
   children: React.ReactNode;
 }
 
 const FeaturedCaseStudyCard: React.FC<FeaturedCaseStudyCardProps> = ({
   project,
   backgroundGradient,
+  caseStudyPath,
+  comingSoon = false,
   children,
-}) => (
-  <article className="h-full w-full">
-    <Link
-      to={`/projects/${project.id}`}
-      aria-label={`View ${project.title} case study`}
-      className="group relative isolate flex h-full w-full flex-col overflow-hidden rounded-[clamp(20px,2vw,28px)] border border-white/10 text-white no-underline shadow-[0_30px_72px_rgba(4,5,16,0.4),inset_0_1px_0_rgba(255,255,255,0.15)]"
-    >
+}) => {
+  const cardClassName = `${comingSoon ? '' : 'group'} relative isolate flex h-full w-full flex-col overflow-hidden rounded-[clamp(20px,2vw,28px)] border border-white/10 text-white no-underline shadow-[0_30px_72px_rgba(4,5,16,0.4),inset_0_1px_0_rgba(255,255,255,0.15)]`;
+  const content = (
+    <>
       <div
         aria-hidden="true"
         className="pointer-events-none absolute inset-0 -z-10"
@@ -34,7 +35,7 @@ const FeaturedCaseStudyCard: React.FC<FeaturedCaseStudyCardProps> = ({
           aria-hidden="true"
           className="pointer-events-none absolute inset-x-[8%] bottom-[-5%] h-1/2 rounded-full bg-[#17182d]/45 blur-[42px]"
         />
-        <div className="relative overflow-hidden rounded-[clamp(10px,1.3vw,16px)] border border-white/12 bg-[#0f0f1a] shadow-[0_26px_58px_rgba(11,12,35,0.42),0_8px_22px_rgba(11,12,35,0.26)] transition-transform duration-700 ease-out group-hover:-translate-y-1.5 group-focus-visible:-translate-y-1.5">
+        <div className={`relative overflow-hidden rounded-[clamp(10px,1.3vw,16px)] border border-white/12 bg-[#0f0f1a] shadow-[0_26px_58px_rgba(11,12,35,0.42),0_8px_22px_rgba(11,12,35,0.26)] ${comingSoon ? '' : 'transition-transform duration-700 ease-out group-hover:-translate-y-1.5 group-focus-visible:-translate-y-1.5'}`}>
           {children}
         </div>
       </div>
@@ -52,13 +53,35 @@ const FeaturedCaseStudyCard: React.FC<FeaturedCaseStudyCardProps> = ({
           </p>
         </div>
 
-        <span className="mt-auto inline-flex w-fit shrink-0 items-center gap-2 rounded-full border border-white/18 bg-white/10 px-4 py-2.5 font-mono text-[9px] uppercase tracking-[0.1em] text-white/82 backdrop-blur-md transition-[background-color,border-color,transform] duration-300 group-hover:-translate-y-0.5 group-hover:border-white/30 group-hover:bg-white/16 group-focus-visible:-translate-y-0.5 group-focus-visible:border-white/30 group-focus-visible:bg-white/16">
-          View case study
-          <span aria-hidden="true">↗</span>
+        <span className={`mt-auto inline-flex w-fit shrink-0 items-center gap-2 rounded-full border px-4 py-2.5 font-mono text-[9px] uppercase tracking-[0.1em] backdrop-blur-md ${comingSoon ? 'border-white/12 bg-black/14 text-white/52' : 'border-white/18 bg-white/10 text-white/82 transition-[background-color,border-color,transform] duration-300 group-hover:-translate-y-0.5 group-hover:border-white/30 group-hover:bg-white/16 group-focus-visible:-translate-y-0.5 group-focus-visible:border-white/30 group-focus-visible:bg-white/16'}`}>
+          {comingSoon ? 'Coming soon' : 'View case study'}
+          {!comingSoon && <span aria-hidden="true">↗</span>}
         </span>
       </div>
-    </Link>
-  </article>
-);
+    </>
+  );
+
+  return (
+    <article className="h-full w-full">
+      {comingSoon ? (
+        <div
+          aria-label={`${project.title} case study coming soon`}
+          aria-disabled="true"
+          className={cardClassName}
+        >
+          {content}
+        </div>
+      ) : (
+        <Link
+          to={caseStudyPath ?? `/projects/${project.id}`}
+          aria-label={`View ${project.title} case study`}
+          className={cardClassName}
+        >
+          {content}
+        </Link>
+      )}
+    </article>
+  );
+};
 
 export default FeaturedCaseStudyCard;

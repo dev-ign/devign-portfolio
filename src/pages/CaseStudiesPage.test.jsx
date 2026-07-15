@@ -20,14 +20,22 @@ jest.mock('@/data/projects', () => ({
   ],
 }), { virtual: true });
 
-jest.mock('@/components/case-studies/FeaturedCaseStudyCard', () => ({ project, children }) => (
-  <a
-    href={`/projects/${project.id}`}
-    aria-label={`View ${project.title} case study`}
-  >
-    {children}
-    {project.title}
-  </a>
+jest.mock('@/components/case-studies/FeaturedCaseStudyCard', () => ({ project, caseStudyPath, comingSoon, children }) => (
+  comingSoon ? (
+    <div aria-label={`${project.title} case study coming soon`} aria-disabled="true">
+      {children}
+      {project.title}
+      <span>Coming soon</span>
+    </div>
+  ) : (
+    <a
+      href={caseStudyPath ?? `/projects/${project.id}`}
+      aria-label={`View ${project.title} case study`}
+    >
+      {children}
+      {project.title}
+    </a>
+  )
 ), { virtual: true });
 
 jest.mock('@/components/showcase/TemplateManagerAnimation', () => () => (
@@ -74,10 +82,13 @@ test('renders the case-studies navigation and opens the inquiry modal', () => {
   expect(screen.getByText(/^selected work$/i)).toBeInTheDocument();
   expect(
     screen.getByRole('link', { name: /view template manager case study/i })
-  ).toHaveAttribute('href', '/projects/gravyty-template-manager');
-  expect(
-    screen.getByRole('link', { name: /view donor directory case study/i })
-  ).toHaveAttribute('href', '/projects/gravyty-donor-directory');
+  ).toHaveAttribute('href', '/case-studies/gravyty-template-manager');
+  expect(screen.queryByRole('link', { name: /donor directory/i })).not.toBeInTheDocument();
+  expect(screen.getByLabelText(/donor directory case study coming soon/i)).toHaveAttribute(
+    'aria-disabled',
+    'true'
+  );
+  expect(screen.getByText(/^coming soon$/i)).toBeInTheDocument();
 
   fireEvent.click(screen.getByRole('button', { name: /^lets work$/i }));
 

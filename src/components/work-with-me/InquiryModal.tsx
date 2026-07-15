@@ -91,6 +91,7 @@ const InquiryModal: React.FC<InquiryModalProps> = ({ open, onClose }) => {
         >
           <div
             aria-hidden="true"
+            data-testid="inquiry-modal-backdrop"
             className="absolute inset-0 cursor-default border-0 bg-black/62 backdrop-blur-[18px]"
           />
           <motion.div

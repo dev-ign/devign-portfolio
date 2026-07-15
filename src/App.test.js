@@ -8,5 +8,6 @@ test('defines the public app routes', () => {
     '/projects/:slug',
     '/work-with-me',
     '/case-studies',
+    '/case-studies/:slug',
   ]);
 });

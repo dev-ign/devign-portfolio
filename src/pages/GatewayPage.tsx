@@ -24,7 +24,6 @@ const GatewayPage: React.FC = () => {
   const mediaRef   = useRef<HTMLDivElement>(null);
   const videoRef   = useRef<HTMLVideoElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
-  const sectionsRef = useRef<HTMLDivElement>(null);
   const typographyRef = useRef<HTMLElement>(null);
   const lenisRef   = useLenis(!isTouch);
   const [inquiryOpen, setInquiryOpen] = useState(false);
@@ -51,13 +50,12 @@ const GatewayPage: React.FC = () => {
 
   // Scroll animation — video scrub on desktop, poster parallax on touch
   useGSAPContext(() => {
-    if (!heroRef.current || !mediaRef.current || !contentRef.current || !sectionsRef.current) return;
+    if (!heroRef.current || !mediaRef.current || !contentRef.current) return;
     if (isTouch) {
       return initPosterScroll(
         heroRef.current,
         mediaRef.current,
-        contentRef.current,
-        sectionsRef.current
+        contentRef.current
       );
     }
     if (!videoRef.current) return;
@@ -65,8 +63,7 @@ const GatewayPage: React.FC = () => {
       heroRef.current,
       videoRef.current,
       mediaRef.current,
-      contentRef.current,
-      sectionsRef.current
+      contentRef.current
     );
   }, []);
 
@@ -86,17 +83,12 @@ const GatewayPage: React.FC = () => {
         : document.getElementById(id);
     if (!target) return;
 
-    const sectionsTransform = sectionsRef.current
-      ? new DOMMatrixReadOnly(getComputedStyle(sectionsRef.current).transform).m42
-      : 0;
-    const targetTransform =
-      id === 'services' && !isTouch ? window.innerHeight * -0.62 : sectionsTransform;
     const navClearance =
       id === 'inquiry'
         ? Math.min(window.innerHeight * 0.78, 720)
         : 96;
     const targetY =
-      target.getBoundingClientRect().top + window.scrollY - sectionsTransform + targetTransform - navClearance;
+      target.getBoundingClientRect().top + window.scrollY - navClearance;
 
     if (lenisRef.current) {
       lenisRef.current.scrollTo(targetY);
@@ -187,8 +179,7 @@ const GatewayPage: React.FC = () => {
 
       {/* ── Content sections ── */}
       <div
-        ref={sectionsRef}
-        className={`relative z-3 bg-gateway ${isTouch ? 'mb-0' : 'mb-[-62vh]'}`}
+        className="relative z-3 bg-gateway"
         data-gateway-sections
       >
         <section

@@ -5,6 +5,7 @@ import { AudienceProvider } from '@/context/AudienceContext';
 import { ThemeProvider } from '@/context/ThemeContext';
 import GatewayPage from '@/pages/GatewayPage';
 import CaseStudiesPage from '@/pages/CaseStudiesPage';
+import CaseStudyDetailPage from '@/pages/CaseStudyDetailPage';
 import ProjectDetailPage from '@/pages/ProjectDetailPage';
 import ProjectsPage from '@/pages/ProjectsPage';
 import StoryPage from '@/pages/StoryPage';
@@ -21,6 +22,7 @@ const App: React.FC = () => (
           <Route path={APP_ROUTE_PATHS[3]} element={<ProjectDetailPage />} />
           <Route path={APP_ROUTE_PATHS[4]} element={<WorkWithMePage />} />
           <Route path={APP_ROUTE_PATHS[5]} element={<CaseStudiesPage />} />
+          <Route path={APP_ROUTE_PATHS[6]} element={<CaseStudyDetailPage />} />
         </Routes>
       </BrowserRouter>
     </AudienceProvider>

@@ -18,13 +18,10 @@ const BusinessOutcomes: React.FC = () => {
         sectionRef.current.querySelectorAll<HTMLElement>('.business-reveal')
       );
       initScrollEnterExit(targets, {
-        trigger: sectionRef.current,
+        trigger: targets[0] ?? sectionRef.current,
         stagger: 0.1,
-        start: 'top 64%',
-        end: 'bottom top',
         duration: 1.24,
         y: 46,
-        exitWhen: 'bottom',
       });
     },
     { scope: sectionRef, dependencies: [] }

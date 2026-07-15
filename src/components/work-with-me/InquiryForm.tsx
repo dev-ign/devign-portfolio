@@ -20,12 +20,10 @@ const InquiryForm: React.FC<InquiryFormProps> = ({ onOpenInquiry }) => {
     const cleanupParallax = initPosterParallax(sectionRef.current, mediaRef.current);
     const contentTargets = Array.from(contentRef.current.children) as HTMLElement[];
     const entranceTriggers = initScrollEnterExit(contentTargets, {
-      trigger: sectionRef.current,
-      start: 'top 68%',
+      trigger: contentRef.current,
       stagger: 0.1,
       duration: 0.92,
       y: 36,
-      exitWhen: 'bottom',
     });
 
     return () => {

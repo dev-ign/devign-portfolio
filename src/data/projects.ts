@@ -1,10 +1,10 @@
-import urgeProjectImage from '@/assets/urge-project.png';
-import chancletazoProjectImage from '@/assets/chancletazo-project.png';
-import swProjectImage from '@/assets/sw-project.png';
-import givzeyProjectImage from '@/assets/givzey-project.png';
-import gradumProjectImage from '@/assets/gradum-project.png';
-import templateManagerImage from '@/assets/template-manager-project.svg';
-import donorDirectoryImage from '@/assets/donor-directory-project.svg';
+import urgeProjectImage from '../assets/urge-project.png';
+import chancletazoProjectImage from '../assets/chancletazo-project.png';
+import swProjectImage from '../assets/sw-project.png';
+import givzeyProjectImage from '../assets/givzey-project.png';
+import gradumProjectImage from '../assets/gradum-project.png';
+import templateManagerImage from '../assets/template-manager-project.svg';
+import donorDirectoryImage from '../assets/donor-directory-project.svg';
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -15,6 +15,43 @@ export type CaseStudySection =
   | { label: string; type: 'imagestrip'; content: Array<{ label: string }> };
 
 export type ProjectType = 'code' | 'design' | 'videos';
+
+export interface CaseStudyNarrativeSection {
+  id: string;
+  title: string;
+  subtitle: string;
+  paragraphs: string[];
+}
+
+export interface TemplateManagerCaseStudyNarrative {
+  hero: {
+    title: string;
+    subtitle: string;
+  };
+  opportunity: CaseStudyNarrativeSection;
+  workflow: CaseStudyNarrativeSection & {
+    roles: Array<{ title: string; responsibilities: string[] }>;
+    conclusion: string;
+  };
+  organization: CaseStudyNarrativeSection;
+  editing: CaseStudyNarrativeSection;
+  sharing: CaseStudyNarrativeSection;
+  discovery: CaseStudyNarrativeSection & { filters: string[] };
+  errors: CaseStudyNarrativeSection;
+  implementation: CaseStudyNarrativeSection & { responsibilities: string[] };
+  impact: {
+    id: string;
+    title: string;
+    metrics: Array<{ value: string; label: string }>;
+    outcomeTitle: string;
+    outcomes: Array<{ title: string; description: string }>;
+  };
+  reflection: {
+    id: string;
+    title: string;
+    body: string;
+  };
+}
 
 export interface Project {
   id: string;
@@ -34,6 +71,7 @@ export interface Project {
     heroBackground: string;
     footerImpact: string;
     sections: CaseStudySection[];
+    narrative?: TemplateManagerCaseStudyNarrative;
   };
 }
 
@@ -58,6 +96,160 @@ export const projects: Project[] = [
     caseStudy: {
       heroBackground: templateManagerImage,
       footerImpact: 'Self-serve email templates · TinyMCE editor · React + Django',
+      narrative: {
+        hero: {
+          title: 'Templates Manager',
+          subtitle:
+            'Empowering fundraising teams to create, organize, and share email templates through a self-service templating platform.',
+        },
+        opportunity: {
+          id: 'opportunity',
+          title: 'Opportunity',
+          subtitle: 'From Support Tickets to Self-Service',
+          paragraphs: [
+            'Fundraising teams relied on support engineers whenever they needed to create or update email templates. Even small content changes often required editing HTML, creating unnecessary delays and making campaign management difficult for non-technical users.',
+            'The opportunity was to design a system that gave users ownership over their templates while maintaining formatting consistency across the organization.',
+          ],
+        },
+        workflow: {
+          id: 'workflow',
+          title: 'Understanding the Workflow',
+          subtitle: 'Designing Around Real User Roles',
+          paragraphs: [
+            'Rather than designing a simple CRUD interface, I first mapped how templates moved throughout an organization.',
+            'The platform needed to support two distinct user types:',
+          ],
+          roles: [
+            {
+              title: 'Managers',
+              responsibilities: [
+                'View templates across all managed fundraisers',
+                'Create shared templates',
+                'Assign templates to individual team members',
+                'Maintain messaging consistency',
+              ],
+            },
+            {
+              title: 'Fundraisers',
+              responsibilities: [
+                'Create personal templates',
+                'Access manager-assigned templates',
+                'Customize and organize their own library',
+                'Quickly select templates while composing emails',
+              ],
+            },
+          ],
+          conclusion: 'This permission model became the foundation for the entire experience.',
+        },
+        organization: {
+          id: 'organization',
+          title: 'Organizing a Growing Library',
+          subtitle: 'Making Large Template Libraries Easy to Navigate',
+          paragraphs: [
+            'As organizations grew, template collections became difficult to manage.',
+            'I designed a category-based navigation system using collapsible accordions that allowed users to quickly browse templates by type while reducing visual clutter.',
+            'The interface made it easy to scan, locate, and manage dozens of templates without overwhelming the user.',
+          ],
+        },
+        editing: {
+          id: 'editing',
+          title: 'Safe Editing Without HTML',
+          subtitle: 'A Familiar Editing Experience',
+          paragraphs: [
+            'One of the biggest usability challenges was removing the need for users to edit raw HTML.',
+            'I integrated and customized TinyMCE to provide a structured editing experience where users could update subjects, body content, formatting, links, and images while preserving the underlying email structure.',
+            'This allowed non-technical users to confidently create professional emails without breaking layouts.',
+          ],
+        },
+        sharing: {
+          id: 'sharing',
+          title: 'Sharing Across Teams',
+          subtitle: 'Collaboration Built Into the Workflow',
+          paragraphs: [
+            'Templates were no longer isolated to individual users.',
+            'Managers could create shared templates and assign them directly to their fundraising teams, ensuring everyone started from approved messaging while still allowing fundraisers to maintain their own personal library.',
+            'This reduced duplicated work and created a more consistent communication experience across organizations.',
+          ],
+        },
+        discovery: {
+          id: 'discovery',
+          title: 'Find the Right Template, Fast',
+          subtitle: 'Easy Template Filters',
+          paragraphs: [
+            'As template libraries grew, finding the right email became just as important as creating one. I designed a flexible search and filtering experience that helped users quickly narrow large collections based on their role and workflow.',
+            'Depending on permissions, users could filter templates by:',
+          ],
+          filters: [
+            'Assigned fundraiser (Managers)',
+            'Favorites',
+            'Shared vs. personal templates',
+            'Engagement rate',
+            'Template categories',
+            'Search by template name or keywords',
+          ],
+        },
+        errors: {
+          id: 'errors',
+          title: 'Preventing User Errors',
+          subtitle: 'Designing for Edge Cases',
+          paragraphs: [
+            "Managing default templates introduced scenarios where multiple templates could accidentally be marked as the organization's default.",
+            'To prevent conflicts, I designed validation flows that detected duplicate defaults before saving changes and guided users toward a valid configuration.',
+            'Instead of simply displaying an error after the fact, the interface helped users make the correct decision during the workflow.',
+          ],
+        },
+        implementation: {
+          id: 'implementation',
+          title: 'Technical Implementation',
+          subtitle: 'From Design to Production',
+          paragraphs: ['I designed and implemented the experience end-to-end.'],
+          responsibilities: [
+            'UX flows',
+            'UI design',
+            'React architecture',
+            'Django REST API integration',
+            'CRUD operations',
+            'TinyMCE customization',
+            'Permission-based rendering',
+            'State management',
+            'Template preview',
+            'API integration',
+          ],
+        },
+        impact: {
+          id: 'impact',
+          title: 'Impact',
+          metrics: [
+            { value: '0', label: 'HTML edits required' },
+            { value: '1', label: 'shared source of truth' },
+            { value: '100s', label: 'of users supported' },
+          ],
+          outcomeTitle: 'Outcome',
+          outcomes: [
+            {
+              title: 'Self Service',
+              description:
+                'Fundraisers could independently create, edit, and organize templates without relying on support teams.',
+            },
+            {
+              title: 'Consistency',
+              description:
+                'Shared templates helped organizations maintain consistent messaging across fundraising teams.',
+            },
+            {
+              title: 'Scalability',
+              description:
+                'A structured permission system and organized template library supported growing organizations with hundreds of users.',
+            },
+          ],
+        },
+        reflection: {
+          id: 'reflection',
+          title: 'Reflection',
+          body:
+            'Template Manager challenged me to design beyond individual screens and think about how content, permissions, collaboration, and scalability fit together as one cohesive product. It reinforced the importance of designing systems that empower users while simplifying operational workflows.',
+        },
+      },
       sections: [
         {
           label: 'Overview',

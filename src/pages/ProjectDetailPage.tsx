@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { Navigate, useParams, useNavigate } from 'react-router-dom';
 import { motion } from 'motion/react';
 import { projects } from '@/data/projects';
 import CaseStudyContent from '@/components/panel/CaseStudyContent';
@@ -26,6 +26,10 @@ const ProjectDetailPage: React.FC = () => {
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [slug]);
+
+  if (slug === 'gravyty-template-manager') {
+    return <Navigate to="/case-studies/gravyty-template-manager" replace />;
+  }
 
   if (!project) {
     return (

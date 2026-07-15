@@ -56,7 +56,8 @@ const CaseStudiesPage: React.FC = () => {
         pin: headerRef.current,
         pinSpacing: false,
         anticipatePin: 1,
-        refreshPriority: -10,
+        invalidateOnRefresh: true,
+        refreshPriority: 10,
       });
 
       const media = gsap.matchMedia();
@@ -150,17 +151,17 @@ const CaseStudiesPage: React.FC = () => {
       >
         <header
           ref={headerRef}
-          className="pointer-events-none relative z-30 w-full pt-[clamp(144px,17vh,184px)] pb-[clamp(64px,8vh,90px)] text-center"
+          className="pointer-events-none relative isolate z-30 w-full pt-[clamp(144px,17vh,184px)] pb-[clamp(64px,8vh,90px)] text-center"
         >
           <div
             ref={headerBackdropRef}
             aria-hidden="true"
-            className="pointer-events-none absolute left-1/2 top-0 -z-10 h-[clamp(300px,40vh,420px)] w-screen -translate-x-1/2 opacity-0 [background:linear-gradient(to_bottom,#0C0C0E_0%,rgba(12,12,14,0.96)_72%,transparent_100%)]"
+            className="pointer-events-none absolute left-1/2 top-0 z-0 h-[clamp(300px,40vh,420px)] w-screen -translate-x-1/2 opacity-0 [background:linear-gradient(to_bottom,#0C0C0E_0%,#0C0C0E_70%,rgba(12,12,14,0.98)_80%,transparent_100%)]"
           />
 
           <h1
             ref={titleRef}
-            className="m-0 will-change-transform text-[clamp(48px,8.4vw,116px)] leading-[0.92] tracking-[-0.055em] text-white/94"
+            className="relative z-10 m-0 will-change-transform text-[clamp(48px,8.4vw,116px)] leading-[0.92] tracking-[-0.055em] text-white/94"
           >
             Projects <span className="text-[#C6A1F2]">&amp;</span>{' '}
             <span className="whitespace-nowrap">Case Studies</span>
@@ -168,7 +169,7 @@ const CaseStudiesPage: React.FC = () => {
 
           <p
             ref={subtitleRef}
-            className="mx-auto mb-0 mt-[clamp(24px,3vw,36px)] max-w-[680px] will-change-[transform,opacity] font-body text-[clamp(15px,1.45vw,18px)] font-light leading-[1.75] text-white/50"
+            className="relative z-10 mx-auto mb-0 mt-[clamp(24px,3vw,36px)] max-w-[680px] will-change-[transform,opacity] font-body text-[clamp(15px,1.45vw,18px)] font-light leading-[1.75] text-white/50"
           >
             A mix of big-team builds and scrappy freelance favorites, shaped through UX/UI
             design and development. Take a look around. These are the projects I had the most
@@ -192,6 +193,12 @@ const CaseStudiesPage: React.FC = () => {
                 key={project.id}
                 project={project}
                 backgroundGradient={projectCardGradients[project.id]}
+                caseStudyPath={
+                  project.id === 'gravyty-template-manager'
+                    ? `/case-studies/${project.id}`
+                    : undefined
+                }
+                comingSoon={project.id === 'gravyty-donor-directory'}
               >
                 {project.id === 'gravyty-template-manager' ? (
                   <TemplateManagerAnimation className="block h-auto w-full" />

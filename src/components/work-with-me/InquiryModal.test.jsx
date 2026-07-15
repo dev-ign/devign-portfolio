@@ -8,14 +8,14 @@ jest.mock('@iconify/react', () => ({
 
 test('only closes from the X close button', () => {
   const onClose = jest.fn();
-  const { container } = render(<InquiryModal open onClose={onClose} />);
+  render(<InquiryModal open onClose={onClose} />);
 
   expect(screen.getByRole('dialog', { name: /project inquiry/i })).toBeInTheDocument();
 
   fireEvent.keyDown(document, { key: 'Escape' });
   expect(onClose).not.toHaveBeenCalled();
 
-  const backdrop = container.querySelector('[aria-hidden="true"]');
+  const backdrop = screen.getByTestId('inquiry-modal-backdrop');
   expect(backdrop).toBeInTheDocument();
   fireEvent.click(backdrop);
   expect(onClose).not.toHaveBeenCalled();
