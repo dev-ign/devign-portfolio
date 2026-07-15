@@ -15,6 +15,19 @@ const hiddenState = {
   willChange: 'transform, opacity',
 };
 
+const getRevealViewportPosition = () => {
+  const viewportHeight = window.innerHeight;
+  return viewportHeight <= 700 ? 88 : viewportHeight >= 1000 ? 80 : 84;
+};
+
+const getExitViewportPosition = () => {
+  const viewportHeight = window.innerHeight;
+  return viewportHeight <= 700 ? 6 : viewportHeight >= 1000 ? 14 : 10;
+};
+
+const getRevealStart = () => `clamp(top ${getRevealViewportPosition()}%)`;
+const getExitEnd = () => `clamp(bottom ${getExitViewportPosition()}%)`;
+
 export function initScrollEnterExit(
   elements: HTMLElement[],
   options: {
@@ -38,13 +51,14 @@ export function initScrollEnterExit(
   const fromState = { ...hiddenState, y };
   const duration = options.duration ?? revealDefaults.duration;
   const stagger = options.stagger ?? 0.08;
-  const exitWhen = options.exitWhen ?? 'top';
+  const exitWhen = options.exitWhen ?? 'bottom';
   const isTouchLayout =
     typeof window !== 'undefined' &&
     window.matchMedia('(max-width: 639px), (pointer: coarse)').matches;
   let isVisible = false;
   const revealVars = {
     ...revealDefaults,
+    overwrite: true as const,
     duration,
     delay: options.delay ?? 0,
     stagger,
@@ -67,15 +81,17 @@ export function initScrollEnterExit(
       y: direction === 1 ? -exitY : y,
       duration: options.exitDuration ?? Math.min(duration * 0.72, 0.92),
       ease: 'power2.inOut',
-      stagger: stagger ? Math.min(stagger, 0.05) : 0,
-      overwrite: 'auto',
+      stagger: 0,
+      overwrite: true,
     });
   };
 
   const revealIfVisible = () => {
     if (isVisible) return;
     const rect = trigger.getBoundingClientRect();
-    if (rect.bottom > 0 && rect.top < window.innerHeight * 0.9) reveal();
+    const revealLine = window.innerHeight * (getRevealViewportPosition() / 100);
+    const exitLine = window.innerHeight * (getExitViewportPosition() / 100);
+    if (rect.bottom > exitLine && rect.top < revealLine) reveal();
   };
 
   // On touch layouts, each group gets one one-shot trigger. Elements never get
@@ -99,8 +115,8 @@ export function initScrollEnterExit(
   // read on every scroll tick for every animated element.
   const desktopTrigger = ScrollTrigger.create({
     trigger,
-    start: options.start ?? 'top 64%',
-    end: exitWhen === 'bottom' ? 'bottom top' : 'top top',
+    start: options.start ?? getRevealStart,
+    end: options.end ?? (exitWhen === 'bottom' ? getExitEnd : 'top top'),
     invalidateOnRefresh: true,
     onEnter: reveal,
     onEnterBack: reveal,
@@ -129,9 +145,8 @@ export function runServicesIntroReveal(intro: HTMLElement) {
   initScrollEnterExit(
     (introChildren.length ? introChildren : [intro]) as HTMLElement[],
     {
-      trigger: intro.parentElement ?? intro,
+      trigger: intro,
       stagger: 0.11,
-      start: 'top 92%',
     }
   );
 }
@@ -141,7 +156,6 @@ export function runServicesStagger(cards: HTMLElement[]) {
   initScrollEnterExit(cards, {
     trigger: cards[0].parentElement!,
     stagger: 0.07,
-    start: 'top 90%',
   });
 }
 
@@ -150,15 +164,13 @@ export function runProjectsGridReveal(header: HTMLElement, cards: HTMLElement[])
   const headerChildren = Array.from(header.children);
 
   initScrollEnterExit(headerChildren as HTMLElement[], {
-    trigger: header.parentElement ?? header,
+    trigger: header,
     stagger: 0.1,
-    start: 'top 92%',
   });
 
   initScrollEnterExit(cards, {
     trigger: cards[0]?.parentElement ?? header,
     stagger: 0.08,
-    start: 'top 90%',
   });
 }
 

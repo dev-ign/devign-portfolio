@@ -21,7 +21,7 @@ jest.mock('@/animations/gatewayAnimations', () => ({
   initGatewayServicesTypography: jest.fn(() => () => undefined),
 }), { virtual: true });
 
-jest.mock('@/components/gateway/GatewayNav', () => () => <nav aria-label="Primary" />, { virtual: true });
+jest.mock('@/components/navigation/GlobalNavigation', () => () => <nav aria-label="Primary" />, { virtual: true });
 jest.mock('@/components/work-with-me/Services', () => () => <section id="services" />, { virtual: true });
 jest.mock('@/components/work-with-me/Process', () => () => <section id="process" />, { virtual: true });
 jest.mock('@/components/work-with-me/ProjectsShowcase', () => () => <section id="projects" />, { virtual: true });

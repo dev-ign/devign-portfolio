@@ -24,6 +24,7 @@ beforeEach(() => {
   mockSet.mockClear();
   mockTo.mockClear();
   mockCreate.mockClear();
+  Object.defineProperty(window, 'innerHeight', { value: 850, configurable: true });
 });
 
 test('touch reveals use one early one-shot trigger and never register a global scroll handler', () => {
@@ -56,10 +57,29 @@ test('desktop reveals use one bounded reversible trigger', () => {
 
   expect(triggers).toHaveLength(1);
   expect(mockCreate).toHaveBeenCalledTimes(1);
-  expect(mockCreate.mock.calls[0][0]).toMatchObject({
+  const config = mockCreate.mock.calls[0][0];
+  expect(config).toMatchObject({
     trigger: element,
     start: 'top 64%',
-    end: 'top top',
   });
-  expect(mockCreate.mock.calls[0][0].onUpdate).toBeUndefined();
+  expect(config.end()).toBe('clamp(bottom 10%)');
+  expect(config.onUpdate).toBeUndefined();
+});
+
+test('default reveal and exit bands adapt to short and tall viewport heights', () => {
+  window.matchMedia = jest.fn(() => ({ matches: false }));
+  const element = document.createElement('article');
+
+  Object.defineProperty(window, 'innerHeight', { value: 650, configurable: true });
+  initScrollEnterExit([element]);
+  let config = mockCreate.mock.calls[0][0];
+  expect(config.start()).toBe('clamp(top 88%)');
+  expect(config.end()).toBe('clamp(bottom 6%)');
+
+  mockCreate.mockClear();
+  Object.defineProperty(window, 'innerHeight', { value: 1100, configurable: true });
+  initScrollEnterExit([element]);
+  config = mockCreate.mock.calls[0][0];
+  expect(config.start()).toBe('clamp(top 80%)');
+  expect(config.end()).toBe('clamp(bottom 14%)');
 });

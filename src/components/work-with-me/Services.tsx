@@ -1,7 +1,10 @@
 import React, { useRef } from 'react';
 import { Icon } from '@iconify/react';
 import { useGSAPContext } from '@/hooks/useGSAPContext';
-import { initScrollEnterExit } from '@/animations/workWithMeAnimations';
+import {
+  runServicesIntroReveal,
+  runServicesStagger,
+} from '@/animations/workWithMeAnimations';
 
 const SERVICES = [
   {
@@ -52,43 +55,13 @@ const Services: React.FC = () => {
   useGSAPContext(
     () => {
       if (!sectionRef.current) return;
-      const title = sectionRef.current.querySelector<HTMLElement>('.services-title');
-      const copy = sectionRef.current.querySelector<HTMLElement>('.services-copy');
+      const intro = sectionRef.current.querySelector<HTMLElement>('.services-intro');
       const cards = Array.from(
         sectionRef.current.querySelectorAll<HTMLElement>('.services-card')
       );
 
-      if (title) {
-        initScrollEnterExit([title], {
-          trigger: title,
-          start: 'top 30%',
-          end: 'top 85%',
-          duration: 2,
-          y: 48,
-        });
-      }
-
-      if (copy) {
-        initScrollEnterExit([copy], {
-          trigger: copy,
-          start: 'top 30%',
-          end: '90% 85%',
-          duration: 3,
-          y: 36,
-        });
-      }
-
-      cards.forEach((card, index) => {
-        initScrollEnterExit([card], {
-          trigger: card,
-          start: 'top 62%',
-          end: 'top top',
-          duration: 1.3,
-          delay: index * 0.08,
-          stagger: 0,
-          y: 42,
-        });
-      });
+      if (intro) runServicesIntroReveal(intro);
+      runServicesStagger(cards);
     },
     { scope: sectionRef, dependencies: [] }
   );

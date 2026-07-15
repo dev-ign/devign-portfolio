@@ -1,4 +1,3 @@
-"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.sendInquiryEmails = exports.generateAutoReplyEmail = exports.generateLeadNotificationEmail = void 0;
 const PROJECT_TYPE_LABELS = {

@@ -12,8 +12,6 @@ interface ScrubOptions {
   mediaEndScale?: number;
   contentExitAt?: number;
   contentExitY?: number;
-  nextSectionStartY?: string;
-  nextSectionEndY?: string;
 }
 
 // Scroll-driven video scrub: maps the pinned hero scroll range to full video duration.
@@ -24,7 +22,6 @@ export function initVideoScrub(
   videoEl: HTMLVideoElement,
   mediaEl: HTMLElement,
   contentEl?: HTMLElement,
-  nextSectionEl?: HTMLElement,
   options: ScrubOptions = {}
 ): () => void {
   const proxy = { currentTime: 0 };
@@ -37,11 +34,11 @@ export function initVideoScrub(
     const pin = options.pin ?? true;
     const pinSpacing = options.pinSpacing ?? true;
     const mediaFadeStart = options.mediaFadeStart ?? 0.68;
-    const mediaFadeDuration = options.mediaFadeDuration ?? 0.36;
+    const mediaFadeDuration = options.mediaFadeDuration ?? 0.32;
     const mediaYPercent = options.mediaYPercent ?? -9;
     const mediaStartScale = options.mediaStartScale ?? 1.08;
     const mediaEndScale = options.mediaEndScale ?? 1.01;
-    const contentExitAt = options.contentExitAt ?? 0.96;
+    const contentExitAt = options.contentExitAt ?? 0.74;
     const contentExitY = options.contentExitY ?? -42;
 
     videoEl.pause();
@@ -64,14 +61,6 @@ export function initVideoScrub(
       });
     }
 
-    if (nextSectionEl) {
-      gsap.set(nextSectionEl, {
-        y: options.nextSectionStartY ?? '18vh',
-        force3D: true,
-        willChange: 'transform',
-      });
-    }
-
     timeline = gsap.timeline({
       defaults: { ease: 'none' },
       scrollTrigger: {
@@ -83,6 +72,7 @@ export function initVideoScrub(
         pinSpacing,
         anticipatePin: 1,
         invalidateOnRefresh: true,
+        refreshPriority: 10,
       },
     });
 
@@ -90,7 +80,7 @@ export function initVideoScrub(
 
     timeline
       .to(proxy, {
-        duration: 0.95,
+        duration: 1,
         currentTime: Math.max(videoEl.duration - 0.04, 0),
         onUpdate() {
           const nextTime = proxy.currentTime;
@@ -102,7 +92,7 @@ export function initVideoScrub(
       .to(mediaEl, {
         yPercent: mediaYPercent,
         scale: mediaEndScale,
-        duration: 0.95,
+        duration: 1,
       }, 0)
       .to(mediaEl, {
         autoAlpha: 0,
@@ -114,18 +104,10 @@ export function initVideoScrub(
       timeline.to(contentTargets, {
         autoAlpha: 0,
         y: contentExitY,
-        stagger: 0.08,
-        duration: 0.52,
+        stagger: 0.04,
+        duration: 0.18,
         ease: 'power2.inOut',
       }, contentExitAt);
-    }
-
-    if (nextSectionEl) {
-      timeline.to(nextSectionEl, {
-        y: options.nextSectionEndY ?? '-62vh',
-        duration: 0.9,
-        ease: 'power2.out',
-      }, 1.12);
     }
 
     ScrollTrigger.refresh();
@@ -171,7 +153,6 @@ export function initPosterScroll(
   heroEl: HTMLElement,
   mediaEl: HTMLElement,
   contentEl?: HTMLElement,
-  nextSectionEl?: HTMLElement,
   options: ScrubOptions = {}
 ): () => void {
   // Touch devices use the document's native flow. Moving the following section
@@ -196,15 +177,6 @@ export function initPosterScroll(
   if (contentEl) {
     // Keep hero copy readable over the dark canvas as the poster fades away.
     gsap.set(contentEl, { autoAlpha: 1, y: 0, yPercent: 0, force3D: true });
-  }
-
-  if (nextSectionEl) {
-    // Explicitly restore normal flow in case a prior responsive layout left
-    // transform styles behind during an orientation/pointer-mode change.
-    gsap.set(nextSectionEl, {
-      y: 0,
-      clearProps: 'transform,willChange',
-    });
   }
 
   const timeline = gsap.timeline({
