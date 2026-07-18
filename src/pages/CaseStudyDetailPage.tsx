@@ -49,7 +49,7 @@ const CaseStudyDetailPage: React.FC = () => {
 
   if (slug !== TEMPLATE_MANAGER_SLUG || !narrative) {
     return (
-      <main className="flex min-h-dvh flex-col items-center justify-center gap-5 bg-gateway px-6 text-center text-white">
+      <main id="main-content" tabIndex={-1} className="flex min-h-dvh flex-col items-center justify-center gap-5 bg-gateway px-6 text-center text-white">
         <p className="m-0 font-body text-[15px] text-white/60">Case study not found.</p>
         <Link
           to="/case-studies"
@@ -62,7 +62,7 @@ const CaseStudyDetailPage: React.FC = () => {
   }
 
   return (
-    <main className="template-manager-case-study-bg relative min-h-screen min-h-dvh overflow-x-clip text-white">
+    <main id="main-content" tabIndex={-1} className="template-manager-case-study-bg relative min-h-screen min-h-dvh overflow-x-clip text-white">
       <Link to="/case-studies" className={backButtonClassName}>
         ← Case Studies
       </Link>

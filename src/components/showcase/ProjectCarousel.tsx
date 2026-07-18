@@ -1,9 +1,12 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { Project, ProjectType } from '@/data/projects';
 import { filterProjectsByType, projectTypeTabs } from '@/data/projectFilters';
 import DonorDirectoryAnimation from '@/components/showcase/DonorDirectoryAnimation';
 import TemplateManagerAnimation from '@/components/showcase/TemplateManagerAnimation';
 import TalentSearchWorkflowAnimation from '@/components/showcase/TalentSearchWorkflowAnimation';
+import { usePrefersReducedMotion } from '@/hooks/useMediaQuery';
+import { trackEvent } from '@/utils/analytics';
 
 interface ProjectCarouselProps {
   projects: Project[];
@@ -20,6 +23,7 @@ const ProjectCarousel: React.FC<ProjectCarouselProps> = ({
   const [activeType, setActiveType] = useState<ProjectType>('code');
   const [activeIndex, setActiveIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
+  const reducedMotion = usePrefersReducedMotion();
   const filteredProjects = useMemo(
     () => filterProjectsByType(projects, activeType),
     [projects, activeType]
@@ -31,8 +35,8 @@ const ProjectCarousel: React.FC<ProjectCarouselProps> = ({
     if (!scroller) return;
     const card = scroller.querySelector<HTMLElement>(`[data-project-index="${index}"]`);
     if (!card) return;
-    scroller.scrollTo({ left: card.offsetLeft, behavior: 'smooth' });
-  }, []);
+    scroller.scrollTo({ left: card.offsetLeft, behavior: reducedMotion ? 'auto' : 'smooth' });
+  }, [reducedMotion]);
 
   const scrollToProject = useCallback((direction: 1 | -1) => {
     const scroller = scrollerRef.current;
@@ -44,29 +48,29 @@ const ProjectCarousel: React.FC<ProjectCarouselProps> = ({
     const nextLeft = scroller.scrollLeft + cardStep * direction;
 
     if (direction === 1 && nextLeft >= maxScroll) {
-      scroller.scrollTo({ left: 0, behavior: 'smooth' });
+      scroller.scrollTo({ left: 0, behavior: reducedMotion ? 'auto' : 'smooth' });
       return;
     }
 
     if (direction === -1 && nextLeft <= 0) {
-      scroller.scrollTo({ left: scroller.scrollWidth, behavior: 'smooth' });
+      scroller.scrollTo({ left: scroller.scrollWidth, behavior: reducedMotion ? 'auto' : 'smooth' });
       return;
     }
 
-    scroller.scrollBy({ left: cardStep * direction, behavior: 'smooth' });
-  }, [filteredProjects.length]);
+    scroller.scrollBy({ left: cardStep * direction, behavior: reducedMotion ? 'auto' : 'smooth' });
+  }, [filteredProjects.length, reducedMotion]);
 
   useEffect(() => {
-    scrollerRef.current?.scrollTo({ left: 0, behavior: 'smooth' });
+    scrollerRef.current?.scrollTo({ left: 0, behavior: reducedMotion ? 'auto' : 'smooth' });
     setActiveIndex(0);
     onActiveProjectChange?.(filteredProjects[0] || projects[0]);
-  }, [activeType, filteredProjects, onActiveProjectChange, projects]);
+  }, [activeType, filteredProjects, onActiveProjectChange, projects, reducedMotion]);
 
   useEffect(() => {
-    if (isPaused || filteredProjects.length <= 1) return;
+    if (reducedMotion || isPaused || filteredProjects.length <= 1) return;
     const timer = window.setInterval(() => scrollToProject(1), 5000);
     return () => window.clearInterval(timer);
-  }, [filteredProjects.length, isPaused, scrollToProject]);
+  }, [filteredProjects.length, isPaused, reducedMotion, scrollToProject]);
 
   const handleScroll = () => {
     const scroller = scrollerRef.current;
@@ -163,7 +167,17 @@ const ProjectCarousel: React.FC<ProjectCarouselProps> = ({
                     {project.category}
                   </p>
                   <h3 className="m-0 text-[clamp(15px,1.8vw,20px)] leading-[1.1] tracking-[-0.02em] text-white">
-                    {project.title}
+                    <Link
+                      to={project.id === 'gravyty-template-manager' ? `/case-studies/${project.id}` : `/projects/${project.id}`}
+                      aria-label={`View ${project.title} ${project.id === 'gravyty-template-manager' ? 'case study' : 'project'}`}
+                      onClick={() => trackEvent(
+                        project.id === 'gravyty-template-manager' ? 'case_study_view' : 'project_view',
+                        { project_id: project.id }
+                      )}
+                      className="text-white no-underline transition-colors duration-200 hover:text-[#D7B9FA]"
+                    >
+                      {project.title}
+                    </Link>
                   </h3>
                   <p className="m-0 text-[clamp(11px,1.1vw,13px)] leading-[1.5] text-white/55 line-clamp-2">
                     {project.description}

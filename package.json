@@ -26,7 +26,7 @@
   },
   "scripts": {
     "start": "craco start",
-    "build": "craco build",
+    "build": "craco build && node scripts/postbuild-seo.js",
     "lint": "eslint src api --ext .js,.jsx,.ts,.tsx",
     "typecheck": "tsc --noEmit",
     "test": "craco test",

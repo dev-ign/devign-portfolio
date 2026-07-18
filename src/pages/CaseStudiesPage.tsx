@@ -9,6 +9,7 @@ import DonorDirectoryAnimation from '@/components/showcase/DonorDirectoryAnimati
 import { useGSAPContext } from '@/hooks/useGSAPContext';
 import { useLenis } from '@/hooks/useLenis';
 import { projects } from '@/data/projects';
+import { trackEvent } from '@/utils/analytics';
 
 const featuredProjectIds = ['gravyty-template-manager', 'gravyty-donor-directory'];
 const featuredProjects = projects.filter((project) => featuredProjectIds.includes(project.id));
@@ -30,7 +31,11 @@ const CaseStudiesPage: React.FC = () => {
   const [inquiryOpen, setInquiryOpen] = useState(false);
   useLenis();
 
-  const openInquiry = useCallback(() => setInquiryOpen(true), []);
+  const openInquiry = useCallback(() => {
+    trackEvent('contact_cta_click', { location: 'case_studies' });
+    trackEvent('inquiry_open', { form: 'project_inquiry' });
+    setInquiryOpen(true);
+  }, []);
   const closeInquiry = useCallback(() => setInquiryOpen(false), []);
 
   useEffect(() => {
@@ -132,7 +137,7 @@ const CaseStudiesPage: React.FC = () => {
   );
 
   return (
-    <main className="relative min-h-dvh overflow-x-clip bg-gateway">
+    <main id="main-content" tabIndex={-1} className="relative min-h-dvh overflow-x-clip bg-gateway">
       <GlobalNavigation variant="case-studies" onOpenInquiry={openInquiry} />
 
       <div

@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Project } from '@/data/projects';
+import { trackEvent } from '@/utils/analytics';
 
 interface FeaturedCaseStudyCardProps {
   project: Project;
@@ -75,6 +76,7 @@ const FeaturedCaseStudyCard: React.FC<FeaturedCaseStudyCardProps> = ({
         <Link
           to={caseStudyPath ?? `/projects/${project.id}`}
           aria-label={`View ${project.title} case study`}
+          onClick={() => trackEvent('case_study_view', { project_id: project.id })}
           className={cardClassName}
         >
           {content}

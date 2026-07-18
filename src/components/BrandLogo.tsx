@@ -38,7 +38,7 @@ const BrandLogo: React.FC<BrandLogoProps> = ({
         }}
       />
       <span
-        aria-label="devignUX"
+        aria-label="DevignUX"
         style={{
           color: 'rgba(255, 255, 255, 0.8)',
           fontFamily: 'var(--font-disp)',
@@ -48,7 +48,7 @@ const BrandLogo: React.FC<BrandLogoProps> = ({
           lineHeight: 1,
         }}
       >
-        devignUX
+        DevignUX
       </span>
     </span>
   );

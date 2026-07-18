@@ -1,5 +1,6 @@
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { prefersReducedMotion } from '@/utils/deviceDetect';
 
 interface ScrubOptions {
   end?: string;
@@ -24,6 +25,11 @@ export function initVideoScrub(
   contentEl?: HTMLElement,
   options: ScrubOptions = {}
 ): () => void {
+  if (prefersReducedMotion()) {
+    gsap.set([mediaEl, contentEl].filter(Boolean), { clearProps: 'all', autoAlpha: 1 });
+    return () => undefined;
+  }
+
   const proxy = { currentTime: 0 };
   let timeline: gsap.core.Timeline | null = null;
 
@@ -155,6 +161,11 @@ export function initPosterScroll(
   contentEl?: HTMLElement,
   options: ScrubOptions = {}
 ): () => void {
+  if (prefersReducedMotion()) {
+    gsap.set([mediaEl, contentEl].filter(Boolean), { clearProps: 'all', autoAlpha: 1 });
+    return () => undefined;
+  }
+
   // Touch devices use the document's native flow. Moving the following section
   // with transforms makes its visual position diverge from its layout position,
   // which creates seams and stale ScrollTrigger measurements on mobile Safari.
@@ -211,6 +222,10 @@ export function initPosterScroll(
 
 export function runGatewayEntrance(contentEl: HTMLElement) {
   const targets = Array.from(contentEl.children);
+  if (prefersReducedMotion()) {
+    gsap.set(targets, { clearProps: 'all', autoAlpha: 1, y: 0 });
+    return gsap.timeline();
+  }
   const tl = gsap.timeline({ defaults: { ease: 'power3.out' } });
   gsap.set(targets, {
     autoAlpha: 0,
@@ -232,6 +247,11 @@ export function runGatewayEntrance(contentEl: HTMLElement) {
 }
 
 export function initPosterParallax(sectionEl: HTMLElement, mediaEl: HTMLElement): () => void {
+  if (prefersReducedMotion()) {
+    gsap.set(mediaEl, { clearProps: 'all', autoAlpha: 1 });
+    return () => undefined;
+  }
+
   gsap.set(mediaEl, {
     autoAlpha: 1,
     scale: 1.1,
@@ -268,6 +288,10 @@ export function initGatewayServicesTypography(containerEl: HTMLElement): () => v
   const words = Array.from(containerEl.querySelectorAll<HTMLElement>('.gateway-service-typography-word'));
 
   if (!track || words.length === 0) return () => undefined;
+  if (prefersReducedMotion()) {
+    gsap.set([track, ...words], { clearProps: 'all' });
+    return () => undefined;
+  }
 
   const fadeInDuration = 0.8;
   const visibleDuration = 4;
@@ -323,6 +347,7 @@ export function initGatewayServicesTypography(containerEl: HTMLElement): () => v
 // Returns a cleanup function. Uses gsap.quickTo for smooth orb interpolation —
 // the orb follows cursor lag rather than snapping, giving a fluid liquid feel.
 export function attachOrbHover(card: HTMLElement, orb: HTMLElement) {
+  if (prefersReducedMotion()) return () => undefined;
   const xTo = gsap.quickTo(orb, 'x', { duration: 0.8, ease: 'power3.out' });
   const yTo = gsap.quickTo(orb, 'y', { duration: 0.8, ease: 'power3.out' });
 

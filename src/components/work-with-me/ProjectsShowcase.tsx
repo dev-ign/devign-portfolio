@@ -25,6 +25,7 @@ const ProjectsShowcase: React.FC = () => {
     <section
       ref={sectionRef}
       id="projects"
+      aria-labelledby="projects-title"
       className="py-[clamp(84px,11vw,140px)] px-[clamp(16px,6vw,88px)] bg-gateway relative overflow-hidden"
     >
       <div className="absolute inset-x-0 top-0 h-px bg-white/6" />
@@ -34,7 +35,7 @@ const ProjectsShowcase: React.FC = () => {
         <div className="projects-eyebrow font-mono text-[10px] tracking-[0.14em] uppercase text-white/30 mb-4 will-change-[transform,opacity]">
           PROJECTS
         </div>
-        <h2 className="projects-title text-[clamp(38px,6.2vw,76px)] text-white leading-[1.04] tracking-[-0.04em] m-0 will-change-[transform,opacity]">
+        <h2 id="projects-title" className="projects-title text-[clamp(38px,6.2vw,76px)] text-white leading-[1.04] tracking-[-0.04em] m-0 will-change-[transform,opacity]">
           Built With{' '}
           <span
             style={{

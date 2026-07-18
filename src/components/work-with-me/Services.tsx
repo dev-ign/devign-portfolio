@@ -70,6 +70,7 @@ const Services: React.FC = () => {
     <section
       id="services"
       ref={sectionRef}
+      aria-labelledby="services-title"
       className="pt-[clamp(56px,9vw,104px)] pb-[clamp(80px,10vw,120px)] px-[clamp(16px,6vw,88px)] bg-gateway relative"
     >
       {/* Atmospheric top glow */}
@@ -79,7 +80,7 @@ const Services: React.FC = () => {
       <div
         className="services-intro relative z-1 mx-auto mb-[clamp(64px,8vw,104px)] max-w-[980px] text-center will-change-[transform,opacity]"
       >
-        <h2 className="services-title text-[clamp(38px,6.2vw,76px)] text-white leading-[1.04] tracking-[-0.04em] m-0 will-change-[transform,opacity]">
+        <h2 id="services-title" className="services-title text-[clamp(38px,6.2vw,76px)] text-white leading-[1.04] tracking-[-0.04em] m-0 will-change-[transform,opacity]">
           Services with{' '}
           <span
             style={{
@@ -111,12 +112,12 @@ const Services: React.FC = () => {
               <Icon icon={s.icon} style={{ width: 19, height: 19, color: 'rgba(255,255,255,0.75)' }} />
             </div>
             <div>
-              <div className="font-disp font-bold text-base text-white/88 mb-1.5">
+              <h3 className="font-disp font-bold text-base text-white/88 mb-1.5">
                 {s.name}
-              </div>
-              <div className="font-body text-[13px] text-white/42 leading-[1.65] font-light">
+              </h3>
+              <p className="m-0 font-body text-[13px] text-white/52 leading-[1.65] font-light">
                 {s.description}
-              </div>
+              </p>
             </div>
           </div>
         ))}

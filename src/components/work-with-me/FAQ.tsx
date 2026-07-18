@@ -17,8 +17,8 @@ const FAQS = [
     a: 'I can recommend and set up hosting (Vercel, Netlify, or traditional). Monthly maintenance packages are available for content updates, security patches, and feature additions.',
   },
   {
-    q: 'Do you work with businesses outside Tampa?',
-    a: 'Absolutely. I work remotely with businesses across the US. All communication, design reviews, and handoffs happen over video calls, Figma, and async tools.',
+    q: 'Do you work with businesses worldwide?',
+    a: 'Yes. DevignUX works remotely with businesses worldwide. Communication, design reviews, and handoffs happen through video calls, Figma, and thoughtful async collaboration.',
   },
   {
     q: 'What do I need to provide to get started?',
@@ -54,13 +54,14 @@ const FAQ: React.FC = () => {
     <section
       ref={sectionRef}
       id="faq"
+      aria-labelledby="faq-title"
       className="py-[clamp(80px,10vw,120px)] px-[clamp(16px,6vw,88px)] bg-gateway"
     >
       <div className="faq-reveal mb-[52px]">
         <div className="font-mono text-[10px] tracking-[0.14em] uppercase text-white/30 mb-3">
           FAQ
         </div>
-        <h2 className="text-[clamp(30px,5vw,52px)] text-white/88 tracking-[-0.03em] leading-[1.1] m-0">
+        <h2 id="faq-title" className="text-[clamp(30px,5vw,52px)] text-white/88 tracking-[-0.03em] leading-[1.1] m-0">
           Common questions.
         </h2>
       </div>
@@ -73,6 +74,8 @@ const FAQ: React.FC = () => {
           >
             <button
               onClick={() => setOpen(open === i ? null : i)}
+              aria-expanded={open === i}
+              aria-controls={`faq-answer-${i}`}
               className="w-full text-left bg-transparent border-none py-[clamp(18px,2.5vw,24px)] cursor-pointer flex justify-between items-center gap-4"
             >
               <span className="font-disp font-semibold text-[clamp(15px,1.8vw,18px)] text-white/88 leading-[1.3]">
@@ -91,6 +94,7 @@ const FAQ: React.FC = () => {
               {open === i && (
                 <motion.div
                   key="answer"
+                  id={`faq-answer-${i}`}
                   initial={{ height: 0, opacity: 0 }}
                   animate={{ height: 'auto', opacity: 1 }}
                   exit={{ height: 0, opacity: 0 }}

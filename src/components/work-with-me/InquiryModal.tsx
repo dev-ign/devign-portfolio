@@ -2,6 +2,7 @@ import React, { useEffect, useRef } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import { Icon } from '@iconify/react';
 import InquiryStepperForm from './InquiryStepperForm';
+import { usePrefersReducedMotion } from '@/hooks/useMediaQuery';
 
 interface InquiryModalProps {
   open: boolean;
@@ -14,6 +15,7 @@ const InquiryModal: React.FC<InquiryModalProps> = ({ open, onClose }) => {
   const panelRef = useRef<HTMLDivElement>(null);
   const closeButtonRef = useRef<HTMLButtonElement>(null);
   const previouslyFocusedElementRef = useRef<HTMLElement | null>(null);
+  const reducedMotion = usePrefersReducedMotion();
 
   useEffect(() => {
     if (!open) return;
@@ -26,6 +28,12 @@ const InquiryModal: React.FC<InquiryModalProps> = ({ open, onClose }) => {
     closeButtonRef.current?.focus();
 
     const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        event.preventDefault();
+        onClose();
+        return;
+      }
+
       if (event.key !== 'Tab') {
         return;
       }
@@ -84,7 +92,7 @@ const InquiryModal: React.FC<InquiryModalProps> = ({ open, onClose }) => {
         <motion.div
           className="fixed inset-0 z-[120] flex items-center justify-center p-0 sm:px-[clamp(12px,3vw,28px)] sm:py-[clamp(16px,4vh,40px)]"
           role="presentation"
-          initial={{ opacity: 0 }}
+          initial={reducedMotion ? false : { opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.24, ease }}
@@ -99,8 +107,9 @@ const InquiryModal: React.FC<InquiryModalProps> = ({ open, onClose }) => {
             role="dialog"
             aria-modal="true"
             aria-labelledby="inquiry-modal-title"
+            aria-describedby="inquiry-modal-description"
             className="relative z-[1] grid h-dvh max-h-dvh w-full max-w-none grid-rows-[auto_1fr] overflow-hidden rounded-none border-0 bg-[#0C0C0E]/96 text-white shadow-[0_28px_120px_rgba(0,0,0,0.58)] backdrop-blur-2xl sm:h-auto sm:max-h-[min(88dvh,820px)] sm:max-w-[720px] sm:rounded-[8px] sm:border sm:border-white/12 sm:bg-[#0C0C0E]/92"
-            initial={{ opacity: 0, y: 28, scale: 0.96 }}
+            initial={reducedMotion ? false : { opacity: 0, y: 28, scale: 0.96 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 18, scale: 0.98 }}
             transition={{ duration: 0.42, ease }}
@@ -116,6 +125,9 @@ const InquiryModal: React.FC<InquiryModalProps> = ({ open, onClose }) => {
                 >
                   Project inquiry
                 </h2>
+                <p id="inquiry-modal-description" className="sr-only">
+                  Share project details with DevignUX. Required fields are marked with an asterisk.
+                </p>
               </div>
               <button
                 ref={closeButtonRef}

@@ -2,12 +2,14 @@ import { useEffect, useRef, type RefObject } from 'react';
 import Lenis from 'lenis';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { usePrefersReducedMotion } from '@/hooks/useMediaQuery';
 
 export function useLenis(enabled = true): RefObject<Lenis | null> {
   const ref = useRef<Lenis | null>(null);
+  const reducedMotion = usePrefersReducedMotion();
 
   useEffect(() => {
-    if (!enabled) return;
+    if (!enabled || reducedMotion) return;
 
     const lenis = new Lenis();
     ref.current = lenis;
@@ -26,7 +28,7 @@ export function useLenis(enabled = true): RefObject<Lenis | null> {
       lenis.destroy();
       ref.current = null;
     };
-  }, [enabled]);
+  }, [enabled, reducedMotion]);
 
   return ref;
 }

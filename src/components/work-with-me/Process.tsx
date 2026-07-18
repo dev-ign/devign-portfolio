@@ -64,6 +64,7 @@ const Process: React.FC = () => {
     <section
       ref={sectionRef}
       id="process"
+      aria-labelledby="process-title"
       className="py-[clamp(80px,10vw,120px)] px-[clamp(16px,6vw,88px)] bg-gateway"
       style={{ overflow: isMobile ? undefined : 'hidden' }}
     >
@@ -71,7 +72,7 @@ const Process: React.FC = () => {
         <div className="process-eyebrow font-mono text-[10px] tracking-[0.14em] uppercase text-white/30 mb-3 will-change-[transform,opacity]">
           How It Works
         </div>
-        <h2 className="process-title text-[clamp(30px,5vw,52px)] text-white/88 tracking-[-0.03em] leading-[1.1] m-0 will-change-[transform,opacity]">
+        <h2 id="process-title" className="process-title text-[clamp(30px,5vw,52px)] text-white/88 tracking-[-0.03em] leading-[1.1] m-0 will-change-[transform,opacity]">
           A clear process,<br />no surprises.
         </h2>
       </div>
@@ -109,7 +110,7 @@ const Process: React.FC = () => {
 
 const StepContent: React.FC<{ step: (typeof STEPS)[number] }> = ({ step }) => (
   <>
-    <div className="font-mono text-[11px] tracking-[0.1em] text-black/30 mb-5">
+    <div className="font-mono text-[11px] tracking-[0.1em] text-white/30 mb-5">
       {step.number}
     </div>
     <h3 className="text-[clamp(20px,2.4vw,26px)] text-white/88 tracking-[-0.025em] leading-[1.2] m-0 mb-3">
