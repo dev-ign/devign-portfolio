@@ -4,7 +4,7 @@ import {
   footerNavigation,
   footerServices,
   siteConfig,
-  socialLinks,
+  // socialLinks,
 } from '@/config/site';
 import { trackEvent } from '@/utils/analytics';
 
@@ -96,7 +96,7 @@ const Footer: React.FC<FooterProps> = ({ onScrollTo }) => {
               </p>
             </address>
 
-            {socialLinks.length > 0 && (
+            {/* {socialLinks.length > 0 && (
               <nav aria-label="Social links" className="mt-6 flex flex-wrap gap-5">
                 {socialLinks.map(link => (
                   <a
@@ -112,7 +112,7 @@ const Footer: React.FC<FooterProps> = ({ onScrollTo }) => {
                   </a>
                 ))}
               </nav>
-            )}
+            )} */}
           </section>
         </div>
 
