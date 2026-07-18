@@ -7,6 +7,9 @@ const formidable_1 = __importDefault(require("formidable"));
 const cloudinary_1 = require("cloudinary");
 const resend_1 = require("resend");
 const inquiryEmails_1 = require("./lib/email/inquiryEmails");
+const RATE_LIMIT_WINDOW_MS = 15 * 60 * 1000;
+const RATE_LIMIT_MAX_REQUESTS = 8;
+const requestLog = new Map();
 class HttpError extends Error {
     constructor(statusCode, message) {
         super(message);
@@ -144,6 +147,16 @@ const validateInquiry = (inquiry) => {
         errors.push('Select a budget range.');
     if (!inquiry.timeline)
         errors.push('Select a timeline.');
+    if (inquiry.name.length > 120)
+        errors.push('Keep your name under 120 characters.');
+    if (inquiry.email.length > 254)
+        errors.push('Keep your email under 254 characters.');
+    if (inquiry.businessName.length > 160)
+        errors.push('Keep the business name under 160 characters.');
+    if (inquiry.website.length > 300)
+        errors.push('Keep the website address under 300 characters.');
+    if (inquiry.details.length > 5000)
+        errors.push('Keep project details under 5,000 characters.');
     return errors;
 };
 exports.validateInquiry = validateInquiry;
@@ -204,7 +217,7 @@ const uploadAsset = async (file) => {
     const result = await cloudinary_1.v2.uploader.upload(file.filepath, {
         folder: 'devign/inquiries',
         resource_type: getCloudinaryResourceType(file),
-        use_filename: true,
+        use_filename: false,
         unique_filename: true,
     });
     return {
@@ -231,16 +244,18 @@ const ensureServerConfig = () => {
         'RESEND_API_KEY',
         'RESEND_FROM_EMAIL',
         'LEAD_NOTIFICATION_EMAIL',
-        'NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME',
         'CLOUDINARY_API_KEY',
         'CLOUDINARY_API_SECRET',
     ].filter(key => !process.env[key]);
+    if (!process.env.CLOUDINARY_CLOUD_NAME && !process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME) {
+        missing.push('CLOUDINARY_CLOUD_NAME');
+    }
     if (missing.length) {
         console.error('Inquiry server configuration is missing required environment variables.', { keys: missing });
         throw new HttpError(500, 'Inquiry service is not configured correctly.');
     }
     cloudinary_1.v2.config({
-        cloud_name: process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME,
+        cloud_name: process.env.CLOUDINARY_CLOUD_NAME || process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME,
         api_key: process.env.CLOUDINARY_API_KEY,
         api_secret: process.env.CLOUDINARY_API_SECRET,
         secure: true,
@@ -249,12 +264,31 @@ const ensureServerConfig = () => {
 const sendJson = (res, statusCode, body) => {
     res.statusCode = statusCode;
     res.setHeader('Content-Type', 'application/json');
+    res.setHeader('Cache-Control', 'no-store');
     res.end(JSON.stringify(body));
+};
+const getClientIp = (req) => {
+    const forwarded = req.headers && req.headers['x-forwarded-for'];
+    const forwardedIp = Array.isArray(forwarded) ? forwarded[0] : forwarded;
+    return (forwardedIp && forwardedIp.split(',')[0].trim()) || (req.socket && req.socket.remoteAddress) || 'unknown';
+};
+const isRateLimited = (req) => {
+    const now = Date.now();
+    const ip = getClientIp(req);
+    const recentRequests = (requestLog.get(ip) || []).filter(timestamp => now - timestamp < RATE_LIMIT_WINDOW_MS);
+    recentRequests.push(now);
+    requestLog.set(ip, recentRequests);
+    return recentRequests.length > RATE_LIMIT_MAX_REQUESTS;
 };
 async function handler(req, res) {
     if (req.method !== 'POST') {
         res.setHeader('Allow', 'POST');
         sendJson(res, 405, { error: 'Method not allowed.' });
+        return;
+    }
+    if (isRateLimited(req)) {
+        res.setHeader('Retry-After', String(Math.ceil(RATE_LIMIT_WINDOW_MS / 1000)));
+        sendJson(res, 429, { error: 'Too many inquiry attempts. Please wait a few minutes and try again.' });
         return;
     }
     try {

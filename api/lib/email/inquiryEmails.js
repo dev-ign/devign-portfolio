@@ -45,6 +45,7 @@ const formatTimestamp = (date) => new Intl.DateTimeFormat('en-US', {
     timeZone: 'America/New_York',
     timeZoneName: 'short',
 }).format(date);
+const sanitizeHeaderValue = (value) => value.replace(/[\r\n]+/g, ' ').trim().slice(0, 120);
 const renderFieldRow = (label, value) => `
   <tr>
     <td style="padding: 14px 0; border-bottom: 1px solid #e5e7eb;">
@@ -70,7 +71,7 @@ const generateLeadNotificationEmail = (inquiry, assets, submittedAt = new Date()
     const notes = inquiry.details || '(no notes provided)';
     const replyHref = `mailto:${encodeURIComponent(inquiry.email)}?subject=${encodeURIComponent(`Re: New Project Inquiry — ${inquiry.name}`)}`;
     return {
-        subject: `New Project Inquiry — ${inquiry.name || 'New Lead'}`,
+        subject: `New Project Inquiry — ${sanitizeHeaderValue(inquiry.name) || 'New Lead'}`,
         text: [
             'New project inquiry',
             '',
@@ -99,9 +100,9 @@ const generateLeadNotificationEmail = (inquiry, assets, submittedAt = new Date()
                 <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="max-width: 640px; background: #ffffff; border-radius: 18px; overflow: hidden; border: 1px solid #e7e2ee;">
                   <tr>
                     <td style="padding: 30px 32px 24px; background: #0c0c0e;">
-                      <div style="color: #f6f0ff; font-size: 18px; font-weight: 800; letter-spacing: 0.04em;">Devign</div>
+                      <div style="color: #f6f0ff; font-size: 18px; font-weight: 800; letter-spacing: 0.04em;">DevignUX</div>
                       <h1 style="margin: 22px 0 0; color: #ffffff; font-size: 26px; line-height: 1.2; font-weight: 700;">New project inquiry</h1>
-                      <p style="margin: 10px 0 0; color: rgba(255,255,255,0.72); font-size: 14px; line-height: 1.6;">A new lead submitted the Devign UX contact form.</p>
+                      <p style="margin: 10px 0 0; color: rgba(255,255,255,0.72); font-size: 14px; line-height: 1.6;">A new lead submitted the DevignUX contact form.</p>
                     </td>
                   </tr>
                   <tr>
@@ -150,7 +151,7 @@ const generateAutoReplyEmail = (inquiry) => {
     return {
         subject: "We've received your project inquiry",
         text: [
-            'Thank you for contacting Devign.',
+            'Thank you for contacting DevignUX.',
             '',
             `Hi ${firstName},`,
             '',
@@ -161,7 +162,7 @@ const generateAutoReplyEmail = (inquiry) => {
             'Typical response time is within 24 business hours.',
             '',
             'Jonathan Ferreira',
-            'Founder, Devign UX',
+            'Founder, DevignUX',
             SITE_URL,
             '',
             'This email confirms that we successfully received your inquiry.',
@@ -179,20 +180,20 @@ const generateAutoReplyEmail = (inquiry) => {
                   <tr>
                     <td style="padding: 28px 0 20px;">
                       <a href="${SITE_URL}" style="display: inline-flex; align-items: center; text-decoration: none;">
-                        <img src="${LOGO_URL}" width="34" height="34" alt="Devign logo" style="display: inline-block; border: 0; border-radius: 8px; vertical-align: middle; margin-right: 10px;" />
-                        <span style="color: rgba(255,255,255,0.84); font-size: 18px; line-height: 1; font-weight: 800; letter-spacing: 0.04em; vertical-align: middle;">Devign UX</span>
+                        <img src="${LOGO_URL}" width="34" height="34" alt="DevignUX logo" style="display: inline-block; border: 0; border-radius: 8px; vertical-align: middle; margin-right: 10px;" />
+                        <span style="color: rgba(255,255,255,0.84); font-size: 18px; line-height: 1; font-weight: 800; letter-spacing: 0.04em; vertical-align: middle;">DevignUX</span>
                       </a>
                     </td>
                   </tr>
                   <tr>
                     <td style="background: #ffffff; color: #111827; border-radius: 20px; padding: 34px 32px; border: 1px solid rgba(255,255,255,0.14);">
-                      <h1 style="margin: 0 0 18px; color: #111827; font-size: 28px; line-height: 1.18; font-weight: 700;">Thank you for contacting Devign.</h1>
+                      <h1 style="margin: 0 0 18px; color: #111827; font-size: 28px; line-height: 1.18; font-weight: 700;">Thank you for contacting DevignUX.</h1>
                       <p style="margin: 0 0 18px; color: #374151; font-size: 16px; line-height: 1.7;">Hi ${escapeHtml(firstName)},</p>
                       <p style="margin: 0 0 18px; color: #374151; font-size: 16px; line-height: 1.7;">We've received your inquiry and are currently reviewing the details.</p>
                       <p style="margin: 0 0 18px; color: #374151; font-size: 16px; line-height: 1.7;">If your project appears to be a good fit, we'll reach out to schedule a discovery call and discuss goals, timeline, scope, and next steps.</p>
                       <p style="margin: 0 0 26px; color: #374151; font-size: 16px; line-height: 1.7;">Typical response time is within 24 business hours.</p>
                       <div style="height: 1px; background: #e5e7eb; margin: 0 0 24px;"></div>
-                      <p style="margin: 0; color: #111827; font-size: 15px; line-height: 1.65;">Jonathan Ferreira<br /><span style="color: #6b7280;">Founder, Devign UX</span><br /><a href="${SITE_URL}" style="color: #8f5fd7; text-decoration: underline;">${SITE_URL}</a></p>
+                      <p style="margin: 0; color: #111827; font-size: 15px; line-height: 1.65;">Jonathan Ferreira<br /><span style="color: #6b7280;">Founder, DevignUX</span><br /><a href="${SITE_URL}" style="color: #8f5fd7; text-decoration: underline;">${SITE_URL}</a></p>
                     </td>
                   </tr>
                   <tr>

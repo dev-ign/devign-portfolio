@@ -28,7 +28,9 @@ beforeEach(() => {
 });
 
 test('touch reveals use one early one-shot trigger and never register a global scroll handler', () => {
-  window.matchMedia = jest.fn(() => ({ matches: true }));
+  window.matchMedia = jest.fn((query) => ({
+    matches: query.includes('pointer: coarse') || query.includes('max-width'),
+  }));
   const element = document.createElement('article');
 
   const triggers = initScrollEnterExit([element], { start: 'top 20%' });

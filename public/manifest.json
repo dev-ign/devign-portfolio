@@ -1,6 +1,6 @@
 {
-  "short_name": "devignUX",
-  "name": "devignUX Portfolio",
+  "short_name": "DevignUX",
+  "name": "DevignUX Design and Development Studio",
   "icons": [
     {
       "src": "logo192.png",
@@ -13,8 +13,10 @@
       "sizes": "512x512"
     }
   ],
-  "start_url": ".",
+  "start_url": "/",
+  "scope": "/",
   "display": "standalone",
   "theme_color": "#0C0C0E",
-  "background_color": "#0C0C0E"
+  "background_color": "#0C0C0E",
+  "description": "Thoughtful design, modern development, and creative production for businesses worldwide."
 }

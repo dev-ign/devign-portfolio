@@ -4,6 +4,7 @@ import { motion } from 'motion/react';
 import { projects } from '@/data/projects';
 import CaseStudyContent from '@/components/panel/CaseStudyContent';
 import { useIsMobile } from '@/hooks/useMediaQuery';
+import { trackEvent } from '@/utils/analytics';
 
 const ProjectDetailPage: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -33,17 +34,17 @@ const ProjectDetailPage: React.FC = () => {
 
   if (!project) {
     return (
-      <div className="min-h-screen bg-editorial flex flex-col items-center justify-center gap-5 font-body">
+      <main id="main-content" tabIndex={-1} className="min-h-screen bg-editorial flex flex-col items-center justify-center gap-5 font-body">
         <p className="text-[#1A1A1A] opacity-50 text-[15px]">Project not found.</p>
         <button onClick={() => navigate('/projects')} className={backBtnCn}>
           ← Back to projects
         </button>
-      </div>
+      </main>
     );
   }
 
   return (
-    <div className="min-h-screen bg-editorial">
+    <main id="main-content" tabIndex={-1} className="min-h-screen bg-editorial">
       {/* Hero image */}
       <div className="relative overflow-hidden bg-gateway h-[52vh] min-h-[300px] max-h-[520px]">
 
@@ -131,6 +132,11 @@ const ProjectDetailPage: React.FC = () => {
               href={project.liveUrl}
               target="_blank"
               rel="noopener noreferrer"
+              aria-label={`Visit ${project.title} live site (opens in a new tab)`}
+              onClick={() => trackEvent('outbound_click', {
+                destination: 'project_site',
+                project_id: project.id,
+              })}
               className="inline-flex items-center py-2.5 px-5 bg-[#1A1A1A] text-editorial rounded-full font-body text-[13px] font-medium no-underline transition-opacity duration-200 hover:opacity-75"
             >
               Live site →
@@ -138,7 +144,7 @@ const ProjectDetailPage: React.FC = () => {
           )}
         </div>
       </motion.div>
-    </div>
+    </main>
   );
 };
 

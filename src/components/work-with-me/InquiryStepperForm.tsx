@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Icon } from '@iconify/react';
 import {
@@ -13,6 +13,8 @@ import {
   type ProjectTypeId,
 } from './inquiryFormEmail';
 import { submitInquiry } from './inquiryFormSubmission';
+import { trackEvent, trackGenerateLeadOnce } from '@/utils/analytics';
+import { usePrefersReducedMotion } from '@/hooks/useMediaQuery';
 
 interface InquiryStepperFormProps {
   onSubmitted?: () => void;
@@ -57,6 +59,8 @@ const stepH3Cn = 'font-disp font-bold text-[clamp(20px,2.5vw,26px)] text-white/8
 const ease = [0.16, 1, 0.3, 1] as [number, number, number, number];
 
 const InquiryStepperForm: React.FC<InquiryStepperFormProps> = ({ onSubmitted }) => {
+  const reducedMotion = usePrefersReducedMotion();
+  const inquiryStartedRef = useRef(false);
   const [step, setStep] = useState(1);
   const [dir, setDir] = useState(1);
   const [submitting, setSubmitting] = useState(false);
@@ -75,6 +79,10 @@ const InquiryStepperForm: React.FC<InquiryStepperFormProps> = ({ onSubmitted }) 
   });
 
   const set = (field: keyof InquiryFormData) => (val: string) => {
+    if (!inquiryStartedRef.current) {
+      inquiryStartedRef.current = true;
+      trackEvent('inquiry_start', { form: 'project_inquiry' });
+    }
     setSubmitError('');
     setFormData(prev => ({ ...prev, [field]: val }));
     if (field === 'budget') setBudgetTouched(true);
@@ -140,7 +148,18 @@ const InquiryStepperForm: React.FC<InquiryStepperFormProps> = ({ onSubmitted }) 
 
   const goNext = () => {
     if (!canAdvance()) {
-      if (step === 1) setContactErrors(validateContactStep(formData));
+      if (step === 1) {
+        const errors = validateContactStep(formData);
+        setContactErrors(errors);
+        window.requestAnimationFrame(() => {
+          const firstInvalidId = errors.name
+            ? 'inquiry-name'
+            : errors.email
+              ? 'inquiry-email'
+              : 'inquiry-website';
+          document.getElementById(firstInvalidId)?.focus();
+        });
+      }
       if (step === 2) setProjectTypesTouched(true);
       if (step === 3) setBudgetTouched(true);
       if (step === 4) setTimelineTouched(true);
@@ -196,6 +215,7 @@ const InquiryStepperForm: React.FC<InquiryStepperFormProps> = ({ onSubmitted }) 
       }
 
       setSubmitted(true);
+      trackGenerateLeadOnce();
       onSubmitted?.();
     } catch (err) {
       console.error('InquiryForm submit error:', err);
@@ -208,6 +228,7 @@ const InquiryStepperForm: React.FC<InquiryStepperFormProps> = ({ onSubmitted }) 
   const PillButton = ({ label, selected, onClick }: { label: string; selected: boolean; onClick: () => void }) => (
     <button
       type="button"
+      aria-pressed={selected}
       onClick={onClick}
       className={`font-body text-[14px] py-3 px-5 rounded-full cursor-pointer transition-all duration-200 ${
         selected
@@ -276,6 +297,9 @@ const InquiryStepperForm: React.FC<InquiryStepperFormProps> = ({ onSubmitted }) 
                 onBlur={() => setContactErrors(validateContactStep(formData))}
                 onChange={e => set('name')(e.target.value)}
                 placeholder="Your name"
+                autoComplete="name"
+                required
+                maxLength={120}
                 aria-invalid={Boolean(contactErrors.name)}
                 aria-describedby={contactErrors.name ? 'inquiry-name-error' : undefined}
               />
@@ -291,6 +315,9 @@ const InquiryStepperForm: React.FC<InquiryStepperFormProps> = ({ onSubmitted }) 
                 onBlur={() => setContactErrors(validateContactStep(formData))}
                 onChange={e => set('email')(e.target.value)}
                 placeholder="your@email.com"
+                autoComplete="email"
+                required
+                maxLength={254}
                 aria-invalid={Boolean(contactErrors.email)}
                 aria-describedby={contactErrors.email ? 'inquiry-email-error' : undefined}
               />
@@ -298,7 +325,7 @@ const InquiryStepperForm: React.FC<InquiryStepperFormProps> = ({ onSubmitted }) 
             </div>
             <div>
               <label htmlFor="inquiry-business-name" className={labelCn}>Business name (optional)</label>
-              <input id="inquiry-business-name" className={inputCn} value={formData.businessName} onChange={e => set('businessName')(e.target.value)} placeholder="Your business" />
+              <input id="inquiry-business-name" className={inputCn} value={formData.businessName} onChange={e => set('businessName')(e.target.value)} placeholder="Your business" autoComplete="organization" maxLength={160} />
             </div>
             <div>
               <label htmlFor="inquiry-website" className={labelCn}>Current website or Instagram (optional)</label>
@@ -309,6 +336,8 @@ const InquiryStepperForm: React.FC<InquiryStepperFormProps> = ({ onSubmitted }) 
                 onBlur={() => setContactErrors(validateContactStep(formData))}
                 onChange={e => set('website')(e.target.value)}
                 placeholder="yoursite.com or @handle"
+                inputMode="url"
+                maxLength={300}
                 aria-invalid={Boolean(contactErrors.website)}
                 aria-describedby={contactErrors.website ? 'inquiry-website-error' : undefined}
               />
@@ -323,12 +352,19 @@ const InquiryStepperForm: React.FC<InquiryStepperFormProps> = ({ onSubmitted }) 
               <div className="font-mono text-[10px] tracking-[0.14em] uppercase text-white/30 mb-3">
                 What can I help with?
               </div>
-              <h3 className={`${stepH3Cn} mb-2`}>Pick your project type</h3>
+              <h3 id="project-type-heading" className={`${stepH3Cn} mb-2`}>
+                Pick your project type <span className="sr-only">(required)</span>
+              </h3>
               <p className="font-body font-light text-[14px] text-white/48 leading-[1.65] m-0">
                 Choose one or more — this helps me tailor the right approach. You can always refine later.
               </p>
             </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div
+              className="grid grid-cols-1 sm:grid-cols-2 gap-3"
+              role="group"
+              aria-labelledby="project-type-heading"
+              aria-describedby={projectTypesTouched && formData.projectTypes.length === 0 ? 'project-type-error' : undefined}
+            >
               {PROJECT_TYPES.map(type => (
                 <TypeCard
                   key={type.id}
@@ -339,7 +375,7 @@ const InquiryStepperForm: React.FC<InquiryStepperFormProps> = ({ onSubmitted }) 
               ))}
             </div>
             {projectTypesTouched && formData.projectTypes.length === 0 && (
-              <p className="mt-3.5 font-body text-[12px] text-[#FF8A8A]">
+              <p id="project-type-error" role="alert" className="mt-3.5 font-body text-[12px] text-[#FF8A8A]">
                 Select at least one project type to continue.
               </p>
             )}
@@ -348,28 +384,42 @@ const InquiryStepperForm: React.FC<InquiryStepperFormProps> = ({ onSubmitted }) 
       case 3:
         return (
           <div>
-            <h3 className={`${stepH3Cn} mb-7`}>Do you have a budget range in mind?</h3>
-            <div className="flex flex-wrap gap-2.5">
+            <h3 id="budget-heading" className={`${stepH3Cn} mb-7`}>
+              Do you have a budget range in mind? <span className="sr-only">(required)</span>
+            </h3>
+            <div
+              className="flex flex-wrap gap-2.5"
+              role="group"
+              aria-labelledby="budget-heading"
+              aria-describedby={budgetTouched && !formData.budget ? 'budget-error' : undefined}
+            >
               {BUDGETS.map(b => (
                 <PillButton key={b} label={b} selected={formData.budget === b} onClick={() => set('budget')(b)} />
               ))}
             </div>
             {budgetTouched && !formData.budget && (
-              <p className={errorCn}>Select a budget range to continue.</p>
+              <p id="budget-error" role="alert" className={errorCn}>Select a budget range to continue.</p>
             )}
           </div>
         );
       case 4:
         return (
           <div>
-            <h3 className={`${stepH3Cn} mb-7`}>When are you looking to get started?</h3>
-            <div className="flex flex-wrap gap-2.5">
+            <h3 id="timeline-heading" className={`${stepH3Cn} mb-7`}>
+              When are you looking to get started? <span className="sr-only">(required)</span>
+            </h3>
+            <div
+              className="flex flex-wrap gap-2.5"
+              role="group"
+              aria-labelledby="timeline-heading"
+              aria-describedby={timelineTouched && !formData.timeline ? 'timeline-error' : undefined}
+            >
               {TIMELINES.map(t => (
                 <PillButton key={t} label={t} selected={formData.timeline === t} onClick={() => set('timeline')(t)} />
               ))}
             </div>
             {timelineTouched && !formData.timeline && (
-              <p className={errorCn}>Select a timeline to continue.</p>
+              <p id="timeline-error" role="alert" className={errorCn}>Select a timeline to continue.</p>
             )}
           </div>
         );
@@ -384,6 +434,7 @@ const InquiryStepperForm: React.FC<InquiryStepperFormProps> = ({ onSubmitted }) 
                 value={formData.details}
                 onChange={e => set('details')(e.target.value)}
                 rows={5}
+                maxLength={5000}
                 placeholder="What does your business do? What's not working about your current online presence? What would a win look like?"
                 className={`${inputCn} resize-y min-h-[120px]`}
               />
@@ -475,14 +526,17 @@ const InquiryStepperForm: React.FC<InquiryStepperFormProps> = ({ onSubmitted }) 
   if (submitted) {
     return (
       <motion.div
-        initial={{ opacity: 0, scale: 0.96 }}
+        initial={reducedMotion ? false : { opacity: 0, scale: 0.96 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.6, ease }}
         className="inquiry-reveal text-center max-w-[480px]"
+        role="status"
+        aria-live="polite"
+        tabIndex={-1}
       >
         <motion.div
-          animate={{ scale: [1, 1.18, 1] }}
-          transition={{ duration: 2.4, repeat: Infinity, ease: 'easeInOut' }}
+          animate={reducedMotion ? undefined : { scale: [1, 1.18, 1] }}
+          transition={reducedMotion ? undefined : { duration: 2.4, repeat: Infinity, ease: 'easeInOut' }}
           className="text-[28px] mb-7"
           style={{ color: 'var(--accent-active)' }}
         >
@@ -502,7 +556,14 @@ const InquiryStepperForm: React.FC<InquiryStepperFormProps> = ({ onSubmitted }) 
   }
 
   return (
-    <>
+    <form
+      noValidate
+      aria-label="Project inquiry form"
+      onSubmit={event => {
+        event.preventDefault();
+        void handleSubmit();
+      }}
+    >
       <input
         type="text"
         name="companyWebsite"
@@ -514,10 +575,11 @@ const InquiryStepperForm: React.FC<InquiryStepperFormProps> = ({ onSubmitted }) 
         aria-hidden="true"
       />
       {/* Step indicator dots */}
-      <div className="flex gap-1.5 mb-10">
+      <div className="flex gap-1.5 mb-10" role="status" aria-label={`Step ${step} of ${TOTAL_STEPS}`}>
         {Array.from({ length: TOTAL_STEPS }).map((_, i) => (
           <motion.div
             key={i}
+            aria-hidden="true"
             animate={{
               width: i + 1 === step ? 28 : 8,
               background: i + 1 <= step ? '#fff' : 'rgba(255,255,255,0.12)',
@@ -535,7 +597,7 @@ const InquiryStepperForm: React.FC<InquiryStepperFormProps> = ({ onSubmitted }) 
             key={step}
             custom={dir}
             variants={stepVariants}
-            initial="enter"
+            initial={reducedMotion ? false : 'enter'}
             animate="center"
             exit="exit"
             transition={{ duration: 0.28, ease }}
@@ -574,9 +636,9 @@ const InquiryStepperForm: React.FC<InquiryStepperFormProps> = ({ onSubmitted }) 
           </button>
         ) : (
           <button
-            type="button"
-            onClick={handleSubmit}
+            type="submit"
             disabled={submitting}
+            aria-describedby={submitError ? 'inquiry-submit-error' : undefined}
             className="font-mono text-[11px] tracking-[0.1em] uppercase bg-white text-gateway border-none rounded-full py-[13px] px-7 cursor-pointer transition-opacity duration-200"
             style={{ opacity: submitting ? 0.6 : 1 }}
           >
@@ -593,6 +655,7 @@ const InquiryStepperForm: React.FC<InquiryStepperFormProps> = ({ onSubmitted }) 
             transition={{ duration: 0.24, ease }}
             className="fixed bottom-5 left-4 right-4 z-[80] mx-auto max-w-[440px] rounded-[8px] border border-white/12 bg-[#100D16]/70 px-4 py-3 shadow-[0_22px_80px_rgba(0,0,0,0.42)] backdrop-blur-xl"
             role="alert"
+            id="inquiry-submit-error"
           >
             <div className="flex items-start gap-3">
               <span className="mt-0.5 grid h-7 w-7 shrink-0 place-items-center rounded-full border border-[#FFB3B3]/20 bg-[#FF8A8A]/10 text-[#FFB3B3]">
@@ -618,7 +681,10 @@ const InquiryStepperForm: React.FC<InquiryStepperFormProps> = ({ onSubmitted }) 
           </motion.div>
         )}
       </AnimatePresence>
-    </>
+      <span className="sr-only" role="status" aria-live="polite">
+        {submitting ? 'Sending your inquiry.' : ''}
+      </span>
+    </form>
   );
 };
 

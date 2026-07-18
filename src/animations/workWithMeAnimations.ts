@@ -1,5 +1,6 @@
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { prefersReducedMotion } from '@/utils/deviceDetect';
 
 const revealDefaults = {
   autoAlpha: 1,
@@ -45,6 +46,10 @@ export function initScrollEnterExit(
 ) {
   const targets = elements.filter(Boolean);
   if (!targets.length) return undefined;
+  if (prefersReducedMotion()) {
+    gsap.set(targets, { clearProps: 'all', autoAlpha: 1, y: 0 });
+    return [];
+  }
   const trigger = options.trigger ?? targets[0];
   const y = options.y ?? hiddenState.y;
   const exitY = options.exitY ?? Math.max(20, y * 0.72);
@@ -130,6 +135,10 @@ export function initScrollEnterExit(
 
 // Hero: headline lines + sub + CTA stagger up on load
 export function runHeroReveal(elements: HTMLElement[]) {
+  if (prefersReducedMotion()) {
+    gsap.set(elements, { clearProps: 'all', autoAlpha: 1, y: 0 });
+    return;
+  }
   gsap.from(elements, {
     autoAlpha: 0,
     y: 56,
@@ -176,6 +185,10 @@ export function runProjectsGridReveal(header: HTMLElement, cards: HTMLElement[])
 
 // Why Work With Us: each ruled row scrubs from near-invisible to full opacity
 export function initWhyScrub(statements: HTMLElement[]) {
+  if (prefersReducedMotion()) {
+    gsap.set(statements, { clearProps: 'all', autoAlpha: 1 });
+    return;
+  }
   statements.forEach((el) => {
     gsap.fromTo(
       el,
@@ -196,6 +209,10 @@ export function initWhyScrub(statements: HTMLElement[]) {
 
 // Generic stagger fade-up used for pricing tiers + business outcome rows
 export function runFadeStagger(elements: HTMLElement[], triggerEl: HTMLElement) {
+  if (prefersReducedMotion()) {
+    gsap.set(elements, { clearProps: 'all', autoAlpha: 1, y: 0 });
+    return;
+  }
   gsap.from(elements, {
     autoAlpha: 0,
     y: 20,

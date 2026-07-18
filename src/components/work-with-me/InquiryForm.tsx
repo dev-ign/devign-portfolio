@@ -37,6 +37,7 @@ const InquiryForm: React.FC<InquiryFormProps> = ({ onOpenInquiry }) => {
       <section
         id="inquiry"
         ref={sectionRef}
+        aria-labelledby="inquiry-title"
         className="relative min-h-[clamp(620px,92dvh,860px)] overflow-hidden bg-gateway"
       >
         <div
@@ -47,6 +48,8 @@ const InquiryForm: React.FC<InquiryFormProps> = ({ onOpenInquiry }) => {
             src="/inquiry-bg-poster.jpg"
             alt=""
             aria-hidden="true"
+            width="1280"
+            height="714"
             className="h-full w-full object-cover opacity-90"
             loading="lazy"
           />
@@ -66,7 +69,7 @@ const InquiryForm: React.FC<InquiryFormProps> = ({ onOpenInquiry }) => {
               Start a Project
             </div>
             <div className="hero-reveal-item">
-              <h2 className="m-0 text-[clamp(40px,7vw,88px)] leading-[0.98] tracking-[-0.04em] text-white/94">
+              <h2 id="inquiry-title" className="m-0 text-[clamp(40px,7vw,88px)] leading-[0.98] tracking-[-0.04em] text-white/94">
                 Let's start something.
               </h2>
             </div>

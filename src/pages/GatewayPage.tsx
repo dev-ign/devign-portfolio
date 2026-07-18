@@ -16,19 +16,28 @@ import BusinessOutcomes from '@/components/work-with-me/BusinessOutcomes';
 import InquiryForm from '@/components/work-with-me/InquiryForm';
 import InquiryModal from '@/components/work-with-me/InquiryModal';
 import FAQ from '@/components/work-with-me/FAQ';
+import Footer from '@/components/Footer';
+import { usePrefersReducedMotion } from '@/hooks/useMediaQuery';
+import { trackEvent } from '@/utils/analytics';
 
 const GatewayPage: React.FC = () => {
   const isTouch = isTouchDevice();
+  const reducedMotion = usePrefersReducedMotion();
+  const useStaticHeroMedia = isTouch || reducedMotion;
 
-  const heroRef    = useRef<HTMLDivElement>(null);
+  const heroRef    = useRef<HTMLElement>(null);
   const mediaRef   = useRef<HTMLDivElement>(null);
   const videoRef   = useRef<HTMLVideoElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
-  const typographyRef = useRef<HTMLElement>(null);
-  const lenisRef   = useLenis(!isTouch);
+  const typographyRef = useRef<HTMLDivElement>(null);
+  const lenisRef   = useLenis(!isTouch && !reducedMotion);
   const [inquiryOpen, setInquiryOpen] = useState(false);
 
-  const openInquiry = useCallback(() => setInquiryOpen(true), []);
+  const openInquiry = useCallback(() => {
+    trackEvent('contact_cta_click', { location: 'homepage' });
+    trackEvent('inquiry_open', { form: 'project_inquiry' });
+    setInquiryOpen(true);
+  }, []);
   const closeInquiry = useCallback(() => setInquiryOpen(false), []);
 
   useEffect(() => {
@@ -38,19 +47,24 @@ const GatewayPage: React.FC = () => {
 
   // Entrance animation — headline + subheadline + CTA stagger in
   useGSAPContext(() => {
-    if (contentRef.current) {
+    if (contentRef.current && !reducedMotion) {
       runGatewayEntrance(contentRef.current);
+    } else if (contentRef.current) {
+      Array.from(contentRef.current.children).forEach(child => {
+        (child as HTMLElement).style.opacity = '1';
+        (child as HTMLElement).style.transform = 'none';
+      });
     }
-  }, []);
+  }, [reducedMotion]);
 
   useGSAPContext(() => {
-    if (!typographyRef.current) return;
+    if (!typographyRef.current || reducedMotion) return;
     return initGatewayServicesTypography(typographyRef.current);
-  }, []);
+  }, [reducedMotion]);
 
   // Scroll animation — video scrub on desktop, poster parallax on touch
   useGSAPContext(() => {
-    if (!heroRef.current || !mediaRef.current || !contentRef.current) return;
+    if (reducedMotion || !heroRef.current || !mediaRef.current || !contentRef.current) return;
     if (isTouch) {
       return initPosterScroll(
         heroRef.current,
@@ -65,14 +79,14 @@ const GatewayPage: React.FC = () => {
       mediaRef.current,
       contentRef.current
     );
-  }, []);
+  }, [reducedMotion]);
 
   const scrollToSection = (id: string) => {
     if (id === 'top') {
       if (lenisRef.current) {
         lenisRef.current.scrollTo(0);
       } else {
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+        window.scrollTo({ top: 0, behavior: reducedMotion ? 'auto' : 'smooth' });
       }
       return;
     }
@@ -93,30 +107,35 @@ const GatewayPage: React.FC = () => {
     if (lenisRef.current) {
       lenisRef.current.scrollTo(targetY);
     } else {
-      window.scrollTo({ top: targetY, behavior: 'smooth' });
+      window.scrollTo({ top: targetY, behavior: reducedMotion ? 'auto' : 'smooth' });
     }
   };
 
   return (
-    <div>
+    <div id="top">
       <GlobalNavigation onScrollTo={scrollToSection} onOpenInquiry={openInquiry} />
 
-      {/* ── Hero ── */}
-      <div
-        ref={heroRef}
-        className={`${isTouch ? 'min-h-svh' : 'min-h-dvh'} relative overflow-hidden bg-gateway`}
-      >
+      <main id="main-content" tabIndex={-1}>
+        {/* ── Hero ── */}
+        <section
+          ref={heroRef}
+          aria-labelledby="home-heading"
+          className={`${isTouch ? 'min-h-svh' : 'min-h-dvh'} relative overflow-hidden bg-gateway`}
+        >
 
         {/* Media — video (desktop) or poster image (touch/tablet) */}
         <div
           ref={mediaRef}
           className="absolute inset-[-5%] z-0 will-change-[transform,opacity] [backface-visibility:hidden] [transform:translate3d(0,0,0)]"
         >
-          {isTouch ? (
+          {useStaticHeroMedia ? (
             <img
               src="/gateway-hero-poster.jpg"
               alt=""
               aria-hidden="true"
+              width="1844"
+              height="1124"
+              fetchPriority="high"
               className="w-full h-full object-cover"
             />
           ) : (
@@ -125,6 +144,8 @@ const GatewayPage: React.FC = () => {
               muted
               playsInline
               preload="auto"
+              poster="/gateway-hero-poster.jpg"
+              aria-hidden="true"
               className="w-full h-full object-cover"
             >
               <source src="/gateway-parallax.mp4" type="video/mp4" />
@@ -138,7 +159,7 @@ const GatewayPage: React.FC = () => {
           <div ref={contentRef} className="flex flex-col items-center gap-10 will-change-[transform,opacity] backface-hidden translate-z-0">
             {/* Headline */}
             <div className="hero-reveal-item max-w-[820px]">
-              <h1 className="text-[clamp(30px,4.8vw,58px)] leading-[1.4] tracking-[-0.01em] text-white">
+              <h1 id="home-heading" className="text-[clamp(30px,4.8vw,58px)] leading-[1.4] tracking-[-0.01em] text-white">
                 Crafting{' '}
                 <span className="hero-digital-sheen">Digital Experiences</span>
                 {' '}for Modern Brands.
@@ -163,26 +184,30 @@ const GatewayPage: React.FC = () => {
                 <span>Work With Us</span>
               </button>
 
-              <button
-                onClick={() => scrollToSection('projects')}
+              <a
+                href="#projects"
+                onClick={event => {
+                  event.preventDefault();
+                  scrollToSection('projects');
+                }}
                 className="font-body font-medium text-[clamp(14px,1.4vw,16px)] text-white/82 bg-transparent border border-white/22 rounded-full py-3.5 px-7 cursor-pointer tracking-[0.01em] [backdrop-filter:blur(8px)] [-webkit-backdrop-filter:blur(8px)] transition-[border-color,color,transform] duration-200 ease-linear hover:border-white/45 hover:text-white hover:-translate-y-0.5"
               >
                 View Projects
-              </button>
+              </a>
             </div>
           </div>
         </div>
 
         {/* Bottom feather — hero dissolves into dark sections */}
         <div className="absolute bottom-0 left-0 right-0 h-[48dvh] sm:h-[35vh] pointer-events-none z-2 [background:linear-gradient(to_bottom,transparent_0%,rgba(12,12,14,0.14)_48%,#0C0C0E_100%)]" />
-      </div>
+        </section>
 
       {/* ── Content sections ── */}
       <div
         className="relative z-3 bg-gateway"
         data-gateway-sections
       >
-        <section
+        <div
           ref={typographyRef}
           className="gateway-services-typography h-[clamp(170px,24vw,320px)] bg-gateway relative overflow-hidden"
           aria-hidden="true"
@@ -196,7 +221,7 @@ const GatewayPage: React.FC = () => {
               ))}
             </div>
           </div>
-        </section>
+        </div>
         <Services />
         <Process />
         <ProjectsShowcase />
@@ -204,6 +229,9 @@ const GatewayPage: React.FC = () => {
         <InquiryForm onOpenInquiry={openInquiry} />
         <FAQ />
       </div>
+      </main>
+
+      <Footer onScrollTo={scrollToSection} />
 
       <InquiryModal open={inquiryOpen} onClose={closeInquiry} />
     </div>

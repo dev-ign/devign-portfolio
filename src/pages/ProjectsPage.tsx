@@ -41,7 +41,7 @@ const ProjectsPage: React.FC = () => {
         </Link>
       </motion.header>
 
-      <main className="relative z-10 mx-auto flex min-h-[calc(100vh-112px)] max-w-[1320px] flex-col justify-center pt-[clamp(54px,8vh,92px)] pb-[92px]">
+      <main id="main-content" tabIndex={-1} className="relative z-10 mx-auto flex min-h-[calc(100vh-112px)] max-w-[1320px] flex-col justify-center pt-[clamp(54px,8vh,92px)] pb-[92px]">
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}

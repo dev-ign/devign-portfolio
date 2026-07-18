@@ -10,11 +10,17 @@ import ProjectDetailPage from '@/pages/ProjectDetailPage';
 import ProjectsPage from '@/pages/ProjectsPage';
 import StoryPage from '@/pages/StoryPage';
 import WorkWithMePage from '@/pages/WorkWithMePage';
+import Analytics from '@/components/Analytics';
+import PageMetadata from '@/components/PageMetadata';
+import SkipLink from '@/components/SkipLink';
 
 const App: React.FC = () => (
   <ThemeProvider>
     <AudienceProvider>
       <BrowserRouter>
+        <SkipLink />
+        <PageMetadata />
+        <Analytics />
         <Routes>
           <Route path={APP_ROUTE_PATHS[0]} element={<GatewayPage />} />
           <Route path={APP_ROUTE_PATHS[1]} element={<StoryPage />} />

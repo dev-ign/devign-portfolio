@@ -151,7 +151,7 @@ const TalentSearchWorkflowAnimation: React.FC<Props> = ({ className }) => {
           </span>
         </nav>
 
-        <main className="talent-workflow-app">
+        <div className="talent-workflow-app">
           <section className="talent-workflow-heading">
             <h4>Talent Search</h4>
             <p>Search through a large list of talent and curate your talent packages</p>
@@ -230,7 +230,7 @@ const TalentSearchWorkflowAnimation: React.FC<Props> = ({ className }) => {
               </button>
             </aside>
           </div>
-        </main>
+        </div>
       </div>
     </div>
   );

@@ -157,10 +157,10 @@ describe('inquiry api helpers', () => {
     });
 
     expect(email.subject).toBe("We've received your project inquiry");
-    expect(email.text).toContain('Thank you for contacting Devign.');
+    expect(email.text).toContain('Thank you for contacting DevignUX.');
     expect(email.text).toContain('Typical response time is within 24 business hours.');
     expect(email.text).toContain('Jonathan Ferreira');
-    expect(email.text).toContain('Founder, Devign UX');
+    expect(email.text).toContain('Founder, DevignUX');
     expect(email.html).toContain("Thanks for reaching out. We'll review your project and get back to you shortly.");
     expect(email.html).toContain('https://devignux.com');
     expect(email.html).toContain('No further action is required.');

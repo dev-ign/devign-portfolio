@@ -30,14 +30,16 @@ const BusinessOutcomes: React.FC = () => {
   return (
     <section
       ref={sectionRef}
+      aria-labelledby="business-outcomes-title"
       className="py-[clamp(80px,10vw,120px)] px-[clamp(16px,6vw,88px)] bg-gateway"
     >
-      <p
+      <h2
+        id="business-outcomes-title"
         className="business-reveal font-disp font-bold text-[clamp(22px,3.5vw,38px)] text-white/55 tracking-[-0.025em] leading-[1.25]"
         style={{ margin: '0 0 clamp(48px, 7vw, 80px)' }}
       >
         Built for businesses that need more than "just a website."
-      </p>
+      </h2>
 
       <div>
         {OUTCOMES.map((o) => (

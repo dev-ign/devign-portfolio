@@ -51,7 +51,7 @@ const StoryPage: React.FC = () => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-editorial relative overflow-x-hidden">
+    <main id="main-content" tabIndex={-1} className="min-h-screen bg-editorial relative overflow-x-hidden">
       <ProjectOrb show={bodyDone} />
 
       {/* Top-right nav link */}
@@ -162,7 +162,7 @@ const StoryPage: React.FC = () => {
       </div>
 
       <ControlBar show={bodyDone} />
-    </div>
+    </main>
   );
 };
 

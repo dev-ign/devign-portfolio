@@ -74,7 +74,7 @@ const GlobalNavigation: React.FC<GlobalNavigationProps> = ({
       <header className="pointer-events-none fixed inset-x-0 top-7 z-80 flex justify-center px-4">
         <div className="relative flex w-full max-w-300 items-center justify-center">
           <nav
-            aria-label="Primary"
+            aria-label="Primary navigation"
             className={`pointer-events-auto flex max-w-[calc(100vw-32px)] items-center gap-2 rounded-[100px] py-2 pl-5 pr-2 transition-[background,border-color,box-shadow,backdrop-filter] duration-500 min-[840px]:pl-7 min-[1000px]:gap-4 ${
               isGlass
                 ? 'nav-floating border'
