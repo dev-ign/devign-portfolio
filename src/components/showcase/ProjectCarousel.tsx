@@ -168,10 +168,16 @@ const ProjectCarousel: React.FC<ProjectCarouselProps> = ({
                   </p>
                   <h3 className="m-0 text-[clamp(15px,1.8vw,20px)] leading-[1.1] tracking-[-0.02em] text-white">
                     <Link
-                      to={project.id === 'gravyty-template-manager' ? `/case-studies/${project.id}` : `/projects/${project.id}`}
-                      aria-label={`View ${project.title} ${project.id === 'gravyty-template-manager' ? 'case study' : 'project'}`}
+                      to={
+                        project.id === 'gravyty-template-manager'
+                          ? `/case-studies/${project.id}`
+                          : project.id === 'gravyty-donor-directory'
+                            ? '/case-studies/donor-directory'
+                            : `/projects/${project.id}`
+                      }
+                      aria-label={`View ${project.title} ${['gravyty-template-manager', 'gravyty-donor-directory'].includes(project.id) ? 'case study' : 'project'}`}
                       onClick={() => trackEvent(
-                        project.id === 'gravyty-template-manager' ? 'case_study_view' : 'project_view',
+                        ['gravyty-template-manager', 'gravyty-donor-directory'].includes(project.id) ? 'case_study_view' : 'project_view',
                         { project_id: project.id }
                       )}
                       className="text-white no-underline transition-colors duration-200 hover:text-[#D7B9FA]"

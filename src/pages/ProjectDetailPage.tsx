@@ -32,6 +32,10 @@ const ProjectDetailPage: React.FC = () => {
     return <Navigate to="/case-studies/gravyty-template-manager" replace />;
   }
 
+  if (slug === 'gravyty-donor-directory') {
+    return <Navigate to="/case-studies/donor-directory" replace />;
+  }
+
   if (!project) {
     return (
       <main id="main-content" tabIndex={-1} className="min-h-screen bg-editorial flex flex-col items-center justify-center gap-5 font-body">

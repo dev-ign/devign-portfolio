@@ -201,9 +201,8 @@ const CaseStudiesPage: React.FC = () => {
                 caseStudyPath={
                   project.id === 'gravyty-template-manager'
                     ? `/case-studies/${project.id}`
-                    : undefined
+                    : '/case-studies/donor-directory'
                 }
-                comingSoon={project.id === 'gravyty-donor-directory'}
               >
                 {project.id === 'gravyty-template-manager' ? (
                   <TemplateManagerAnimation className="block h-auto w-full" />

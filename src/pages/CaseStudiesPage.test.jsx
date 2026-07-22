@@ -83,12 +83,10 @@ test('renders the case-studies navigation and opens the inquiry modal', () => {
   expect(
     screen.getByRole('link', { name: /view template manager case study/i })
   ).toHaveAttribute('href', '/case-studies/gravyty-template-manager');
-  expect(screen.queryByRole('link', { name: /donor directory/i })).not.toBeInTheDocument();
-  expect(screen.getByLabelText(/donor directory case study coming soon/i)).toHaveAttribute(
-    'aria-disabled',
-    'true'
-  );
-  expect(screen.getByText(/^coming soon$/i)).toBeInTheDocument();
+  expect(
+    screen.getByRole('link', { name: /view donor directory case study/i })
+  ).toHaveAttribute('href', '/case-studies/donor-directory');
+  expect(screen.queryByText(/^coming soon$/i)).not.toBeInTheDocument();
 
   fireEvent.click(screen.getByRole('button', { name: /^lets work$/i }));
 
