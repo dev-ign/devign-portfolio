@@ -1,0 +1,101 @@
+{
+  "capturedAt": "2026-07-22T22:27:38.567Z",
+  "baseUrl": "http://127.0.0.1:3000/case-studies/donor-directory",
+  "normalInitial": {
+    "viewport": {
+      "width": 1440,
+      "height": 900
+    },
+    "breakpoint": "desktop",
+    "reducedMotion": "false",
+    "triggerCount": 42,
+    "horizontalOverflow": 0,
+    "hiddenInViewport": 0
+  },
+  "normalFinal": {
+    "viewport": {
+      "width": 1440,
+      "height": 900
+    },
+    "breakpoint": "desktop",
+    "reducedMotion": "false",
+    "triggerCount": 42,
+    "horizontalOverflow": 0,
+    "hiddenInViewport": 0
+  },
+  "mobileInitial": {
+    "viewport": {
+      "width": 390,
+      "height": 667
+    },
+    "breakpoint": "mobile",
+    "reducedMotion": "false",
+    "triggerCount": 42,
+    "horizontalOverflow": 0,
+    "hiddenInViewport": 0
+  },
+  "reducedInitial": {
+    "viewport": {
+      "width": 1440,
+      "height": 900
+    },
+    "breakpoint": "desktop",
+    "reducedMotion": "true",
+    "triggerCount": 0,
+    "horizontalOverflow": 0,
+    "hiddenInViewport": 0
+  },
+  "reducedFinal": {
+    "viewport": {
+      "width": 1440,
+      "height": 900
+    },
+    "breakpoint": "desktop",
+    "reducedMotion": "true",
+    "triggerCount": 0,
+    "horizontalOverflow": 0,
+    "hiddenInViewport": 0
+  },
+  "reducedMobile": {
+    "viewport": {
+      "width": 390,
+      "height": 667
+    },
+    "breakpoint": "mobile",
+    "reducedMotion": "true",
+    "triggerCount": 0,
+    "horizontalOverflow": 0,
+    "hiddenInViewport": 0
+  },
+  "hashOffsets": {
+    "opportunity": 104,
+    "design-principles": 104,
+    "experience": 104,
+    "donor-context": 104,
+    "building-reusable-components": 104,
+    "designing-for-engineering": 104,
+    "accessibility-and-polish": 104,
+    "impact": 104
+  },
+  "interactionChecks": {
+    "animationAdvancedWhenVisible": true,
+    "animationPausedOffscreen": true,
+    "pauseControlWorks": true,
+    "replayReturnsToResting": true,
+    "bulkSelectionPersists": true,
+    "selectedBeforeLeaving": 3,
+    "selectedAfterReturning": 3,
+    "replayStage": "RESTING DIRECTORY"
+  },
+  "browserErrors": [],
+  "directHashOffsets": {
+    "opportunity": 104,
+    "design-principles": 104,
+    "experience": 104,
+    "donor-context": 104,
+    "building-reusable-components": 104,
+    "designing-for-engineering": 104,
+    "accessibility-and-polish": 104,
+    "impact": 104
+  }
+}

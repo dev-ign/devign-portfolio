@@ -1,0 +1,266 @@
+{
+  "capturedAt": "2026-07-22T23:26:03.819Z",
+  "baseUrl": "http://127.0.0.1:4173/case-studies/donor-directory",
+  "viewportMatrix": [
+    {
+      "viewport": {
+        "width": 375,
+        "height": 812
+      },
+      "breakpoint": "mobile",
+      "reducedMotion": "false",
+      "triggerCount": 27,
+      "revealElementCount": 28,
+      "visualCount": 11,
+      "nestedRevealCount": 0,
+      "vocabulary": [
+        "hero",
+        "intro",
+        "visual",
+        "card-group",
+        "text"
+      ],
+      "horizontalOverflow": 0,
+      "hiddenInViewport": 0,
+      "compileOverlayVisible": false,
+      "pageHeight": 22324
+    },
+    {
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "breakpoint": "mobile",
+      "reducedMotion": "false",
+      "triggerCount": 27,
+      "revealElementCount": 28,
+      "visualCount": 11,
+      "nestedRevealCount": 0,
+      "vocabulary": [
+        "hero",
+        "intro",
+        "visual",
+        "card-group",
+        "text"
+      ],
+      "horizontalOverflow": 0,
+      "hiddenInViewport": 0,
+      "compileOverlayVisible": false,
+      "pageHeight": 22092
+    },
+    {
+      "viewport": {
+        "width": 430,
+        "height": 932
+      },
+      "breakpoint": "mobile",
+      "reducedMotion": "false",
+      "triggerCount": 27,
+      "revealElementCount": 28,
+      "visualCount": 11,
+      "nestedRevealCount": 0,
+      "vocabulary": [
+        "hero",
+        "intro",
+        "visual",
+        "card-group",
+        "text"
+      ],
+      "horizontalOverflow": 0,
+      "hiddenInViewport": 0,
+      "compileOverlayVisible": false,
+      "pageHeight": 21683
+    },
+    {
+      "viewport": {
+        "width": 768,
+        "height": 1024
+      },
+      "breakpoint": "tablet",
+      "reducedMotion": "false",
+      "triggerCount": 27,
+      "revealElementCount": 28,
+      "visualCount": 11,
+      "nestedRevealCount": 0,
+      "vocabulary": [
+        "hero",
+        "intro",
+        "visual",
+        "card-group",
+        "text"
+      ],
+      "horizontalOverflow": 0,
+      "hiddenInViewport": 0,
+      "compileOverlayVisible": false,
+      "pageHeight": 18455
+    },
+    {
+      "viewport": {
+        "width": 834,
+        "height": 1112
+      },
+      "breakpoint": "tablet",
+      "reducedMotion": "false",
+      "triggerCount": 27,
+      "revealElementCount": 28,
+      "visualCount": 11,
+      "nestedRevealCount": 0,
+      "vocabulary": [
+        "hero",
+        "intro",
+        "visual",
+        "card-group",
+        "text"
+      ],
+      "horizontalOverflow": 0,
+      "hiddenInViewport": 0,
+      "compileOverlayVisible": false,
+      "pageHeight": 18737
+    },
+    {
+      "viewport": {
+        "width": 1024,
+        "height": 768
+      },
+      "breakpoint": "desktop",
+      "reducedMotion": "false",
+      "triggerCount": 27,
+      "revealElementCount": 28,
+      "visualCount": 11,
+      "nestedRevealCount": 0,
+      "vocabulary": [
+        "hero",
+        "intro",
+        "visual",
+        "card-group",
+        "text"
+      ],
+      "horizontalOverflow": 0,
+      "hiddenInViewport": 0,
+      "compileOverlayVisible": false,
+      "pageHeight": 17302
+    },
+    {
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "breakpoint": "desktop",
+      "reducedMotion": "false",
+      "triggerCount": 27,
+      "revealElementCount": 28,
+      "visualCount": 11,
+      "nestedRevealCount": 0,
+      "vocabulary": [
+        "hero",
+        "intro",
+        "visual",
+        "card-group",
+        "text"
+      ],
+      "horizontalOverflow": 0,
+      "hiddenInViewport": 0,
+      "compileOverlayVisible": false,
+      "pageHeight": 21717
+    }
+  ],
+  "reducedMatrix": [
+    {
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "breakpoint": "mobile",
+      "reducedMotion": "true",
+      "triggerCount": 0,
+      "revealElementCount": 28,
+      "visualCount": 11,
+      "nestedRevealCount": 0,
+      "vocabulary": [
+        "hero",
+        "intro",
+        "visual",
+        "card-group",
+        "text"
+      ],
+      "horizontalOverflow": 0,
+      "hiddenInViewport": 0,
+      "compileOverlayVisible": false,
+      "pageHeight": 22092
+    },
+    {
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "breakpoint": "desktop",
+      "reducedMotion": "true",
+      "triggerCount": 0,
+      "revealElementCount": 28,
+      "visualCount": 11,
+      "nestedRevealCount": 0,
+      "vocabulary": [
+        "hero",
+        "intro",
+        "visual",
+        "card-group",
+        "text"
+      ],
+      "horizontalOverflow": 0,
+      "hiddenInViewport": 0,
+      "compileOverlayVisible": false,
+      "pageHeight": 21717
+    }
+  ],
+  "directHashOffsets": {
+    "opportunity": 104,
+    "design-principles": 104,
+    "experience": 104,
+    "donor-context": 104,
+    "building-reusable-components": 104,
+    "designing-for-engineering": 104,
+    "accessibility-and-polish": 104,
+    "impact": 104
+  },
+  "interactionChecks": {
+    "pauseControlWorks": true,
+    "replayReturnsToResting": true,
+    "replayStage": "RESTING DIRECTORY",
+    "bulkSelectionPersists": true,
+    "selectedBeforeLeaving": 3,
+    "selectedAfterReturning": 3
+  },
+  "fastScroll": {
+    "minimumEditorialOpacity": 1,
+    "hiddenEditorialFrames": 0,
+    "settled": {
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "breakpoint": "desktop",
+      "reducedMotion": "false",
+      "triggerCount": 27,
+      "revealElementCount": 28,
+      "visualCount": 11,
+      "nestedRevealCount": 0,
+      "vocabulary": [
+        "hero",
+        "intro",
+        "visual",
+        "card-group",
+        "text"
+      ],
+      "horizontalOverflow": 0,
+      "hiddenInViewport": 0,
+      "compileOverlayVisible": false,
+      "pageHeight": 21717
+    }
+  },
+  "comparisonTargets": {
+    "sectionIntro": 0.5995302817408849,
+    "cardGroup": 0.9049151839729849,
+    "majorVisual": 0.6289682439157299
+  },
+  "errors": []
+}

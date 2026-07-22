@@ -1,0 +1,38 @@
+{
+  "capturedAt": "2026-07-22T23:26:04.459Z",
+  "engine": "Playwright WebKit",
+  "desktop": {
+    "viewport": {
+      "width": 1440,
+      "height": 900
+    },
+    "breakpoint": "desktop",
+    "reducedMotion": "false",
+    "triggerCount": 27,
+    "horizontalOverflow": 0,
+    "hiddenAtEnd": 0
+  },
+  "mobile": {
+    "viewport": {
+      "width": 390,
+      "height": 844
+    },
+    "breakpoint": "mobile",
+    "reducedMotion": "false",
+    "triggerCount": 27,
+    "horizontalOverflow": 0,
+    "hiddenAtEnd": 0
+  },
+  "reducedDesktop": {
+    "viewport": {
+      "width": 1440,
+      "height": 900
+    },
+    "breakpoint": "desktop",
+    "reducedMotion": "true",
+    "triggerCount": 0,
+    "horizontalOverflow": 0,
+    "hiddenAtEnd": 0
+  },
+  "errors": []
+}

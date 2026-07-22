@@ -1,0 +1,19 @@
+{
+  "baseline": "Phase 8",
+  "current": "Phase 8B",
+  "route": "/case-studies/donor-directory",
+  "preset": "desktop",
+  "scores": {
+    "performance": { "before": 94, "after": 94 },
+    "accessibility": { "before": 100, "after": 100 },
+    "bestPractices": { "before": 100, "after": 100 },
+    "seo": { "before": 69, "after": 69 }
+  },
+  "metricsMs": {
+    "firstContentfulPaint": { "before": 702.53, "after": 746.45 },
+    "largestContentfulPaint": { "before": 1548.63, "after": 1563.25 },
+    "totalBlockingTime": { "before": 57, "after": 3 },
+    "speedIndex": { "before": 1017.54, "after": 952.75 }
+  },
+  "cumulativeLayoutShift": { "before": 0.000539, "after": 0.000571 }
+}
