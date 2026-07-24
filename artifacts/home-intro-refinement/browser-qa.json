@@ -1,0 +1,63 @@
+{
+  "capturedAt": "2026-07-24T16:19:12.319Z",
+  "baseUrl": "http://localhost:3000/",
+  "results": [
+    {
+      "name": "desktop",
+      "reducedMotion": "no-preference",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "horizontalOverflow": 0,
+      "pinSpacerCount": 1,
+      "capabilityCount": 8,
+      "displayedCapabilityCount": 8,
+      "compileOverlayVisible": false,
+      "blankFrames": []
+    },
+    {
+      "name": "mobile",
+      "reducedMotion": "no-preference",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "horizontalOverflow": 0,
+      "pinSpacerCount": 1,
+      "capabilityCount": 8,
+      "displayedCapabilityCount": 6,
+      "compileOverlayVisible": false,
+      "blankFrames": []
+    },
+    {
+      "name": "desktop-reduced",
+      "reducedMotion": "reduce",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "horizontalOverflow": 0,
+      "pinSpacerCount": 0,
+      "capabilityCount": 8,
+      "displayedCapabilityCount": 8,
+      "compileOverlayVisible": false,
+      "blankFrames": []
+    },
+    {
+      "name": "mobile-reduced",
+      "reducedMotion": "reduce",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "horizontalOverflow": 0,
+      "pinSpacerCount": 0,
+      "capabilityCount": 8,
+      "displayedCapabilityCount": 8,
+      "compileOverlayVisible": false,
+      "blankFrames": []
+    }
+  ],
+  "errors": []
+}
