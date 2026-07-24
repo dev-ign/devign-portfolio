@@ -106,7 +106,7 @@ const GatewayPage: React.FC = () => {
   };
 
   return (
-    <div id="top">
+    <div id="top" className="home-page">
       <GlobalNavigation onScrollTo={scrollToSection} onOpenInquiry={openInquiry} />
 
       <main id="main-content" tabIndex={-1}>
@@ -158,7 +158,7 @@ const GatewayPage: React.FC = () => {
             <div ref={contentRef} className="gateway-hero-content">
               {/* Headline */}
               <div className="hero-reveal-item max-w-[820px]">
-                <h1 id="home-heading" className="text-[clamp(30px,4.8vw,58px)] leading-[1.4] tracking-[-0.01em] text-white">
+                <h1 id="home-heading" className="home-display text-[clamp(30px,4.8vw,58px)] leading-[1.4] tracking-[-0.01em] text-white">
                   Crafting{' '}
                   <span className="hero-digital-sheen">Digital Experiences</span>
                   {' '}for Modern Brands.

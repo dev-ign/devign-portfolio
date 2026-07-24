@@ -61,7 +61,7 @@ const FAQ: React.FC = () => {
         <div className="font-mono text-[10px] tracking-[0.14em] uppercase text-white/30 mb-3">
           FAQ
         </div>
-        <h2 id="faq-title" className="text-[clamp(30px,5vw,52px)] text-white/88 tracking-[-0.03em] leading-[1.1] m-0">
+        <h2 id="faq-title" className="home-display text-[clamp(30px,5vw,52px)] text-white/88 tracking-[-0.03em] leading-[1.1] m-0">
           Common questions.
         </h2>
       </div>

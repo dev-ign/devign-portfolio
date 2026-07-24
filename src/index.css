@@ -101,6 +101,31 @@
   --muted: rgba(255, 255, 255, 0.32);
 }
 
+/* Home-only typography evaluation. Shared page tokens remain unchanged. */
+.home-page {
+  --font-body: 'Instrument Sans', sans-serif;
+  --font-mono: 'Instrument Sans', sans-serif;
+  font-family: var(--font-body);
+}
+
+.home-page .home-display {
+  font-family: 'Cabinet Grotesk', 'Instrument Sans', sans-serif;
+}
+
+.home-page .home-metric {
+  font-family: 'Geist', 'Instrument Sans', sans-serif;
+}
+
+.home-page .font-light,
+.home-page .hero-subheadline,
+.home-page .gateway-capability-summary > span {
+  font-weight: 400;
+}
+
+.home-page .primary-hero-cta {
+  font-weight: 600;
+}
+
 /* ── Audience accent ── */
 body[data-mode='ux'],
 body:not([data-mode]) {
