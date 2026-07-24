@@ -34,3 +34,7 @@ GEMINI.md
 .cursor/
 .continue/
 .windsurf/
+
+# walkthrough
+scripts/record-home-intro-walkthroughs.mjs
+scripts/verify-home-intro.mjs
