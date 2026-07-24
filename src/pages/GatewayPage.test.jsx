@@ -43,6 +43,9 @@ jest.mock('@/components/work-with-me/InquiryModal', () => ({ open, onClose }) =>
 test('opens the inquiry modal from the hero Work With Us button', () => {
   render(<GatewayPage />);
 
+  expect(screen.getByRole('heading', { name: /crafting digital experiences for modern brands/i }))
+    .toHaveClass('home-display');
+
   fireEvent.click(screen.getByRole('button', { name: /^work with us$/i }));
 
   expect(screen.getByRole('dialog', { name: /project inquiry/i })).toBeInTheDocument();

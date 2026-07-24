@@ -35,7 +35,7 @@ const BusinessOutcomes: React.FC = () => {
     >
       <h2
         id="business-outcomes-title"
-        className="business-reveal font-disp font-bold text-[clamp(22px,3.5vw,38px)] text-white/55 tracking-[-0.025em] leading-[1.25]"
+        className="home-display business-reveal font-disp font-bold text-[clamp(22px,3.5vw,38px)] text-white/55 tracking-[-0.025em] leading-[1.25]"
         style={{ margin: '0 0 clamp(48px, 7vw, 80px)' }}
       >
         Built for businesses that need more than "just a website."

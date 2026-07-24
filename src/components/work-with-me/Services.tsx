@@ -80,7 +80,7 @@ const Services: React.FC = () => {
       <div
         className="services-intro relative z-1 mx-auto mb-[clamp(64px,8vw,104px)] max-w-[980px] text-center will-change-[transform,opacity]"
       >
-        <h2 id="services-title" className="services-title text-[clamp(38px,6.2vw,76px)] text-white leading-[1.04] tracking-[-0.04em] m-0 will-change-[transform,opacity]">
+        <h2 id="services-title" className="home-display services-title text-[clamp(38px,6.2vw,76px)] text-white leading-[1.04] tracking-[-0.04em] m-0 will-change-[transform,opacity]">
           Services with{' '}
           <span
             style={{

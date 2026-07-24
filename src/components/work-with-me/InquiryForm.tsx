@@ -69,7 +69,7 @@ const InquiryForm: React.FC<InquiryFormProps> = ({ onOpenInquiry }) => {
               Start a Project
             </div>
             <div className="hero-reveal-item">
-              <h2 id="inquiry-title" className="m-0 text-[clamp(40px,7vw,88px)] leading-[0.98] tracking-[-0.04em] text-white/94">
+              <h2 id="inquiry-title" className="home-display m-0 text-[clamp(40px,7vw,88px)] leading-[0.98] tracking-[-0.04em] text-white/94">
                 Let's start something.
               </h2>
             </div>
