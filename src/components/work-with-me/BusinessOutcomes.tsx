@@ -3,9 +3,9 @@ import { useGSAPContext } from '@/hooks/useGSAPContext';
 import { initScrollEnterExit } from '@/animations/workWithMeAnimations';
 
 const OUTCOMES = [
-  { label: 'More trust', description: 'A sharper first impression for new customers.' },
-  { label: 'More leads', description: 'Clearer paths to contact, book, buy, or inquire.' },
-  { label: 'Less friction', description: 'Fast, mobile-first experiences that feel easy to use.' },
+  { label: 'Stronger presence', description: 'A distinctive, credible experience that earns customer confidence.' },
+  { label: 'Clearer conversion', description: 'Intentional paths from first impression to meaningful action.' },
+  { label: 'Better experiences', description: 'Fast, accessible journeys that make choosing your business easier.' },
 ];
 
 const BusinessOutcomes: React.FC = () => {
@@ -38,7 +38,7 @@ const BusinessOutcomes: React.FC = () => {
         className="home-display business-reveal font-disp font-bold text-[clamp(22px,3.5vw,38px)] text-white/55 tracking-[-0.025em] leading-[1.25]"
         style={{ margin: '0 0 clamp(48px, 7vw, 80px)' }}
       >
-        Built for businesses that need more than "just a website."
+        The work matters when it moves the business forward.
       </h2>
 
       <div>

@@ -350,13 +350,13 @@ const InquiryStepperForm: React.FC<InquiryStepperFormProps> = ({ onSubmitted }) 
           <div>
             <div className="mb-6">
               <div className="font-mono text-[10px] tracking-[0.14em] uppercase text-white/30 mb-3">
-                What can I help with?
+                What can we help with?
               </div>
               <h3 id="project-type-heading" className={`${stepH3Cn} mb-2`}>
                 Pick your project type <span className="sr-only">(required)</span>
               </h3>
               <p className="font-body font-light text-[14px] text-white/48 leading-[1.65] m-0">
-                Choose one or more — this helps me tailor the right approach. You can always refine later.
+                Choose one or more — this helps us tailor the right approach. You can always refine later.
               </p>
             </div>
             <div
@@ -426,7 +426,7 @@ const InquiryStepperForm: React.FC<InquiryStepperFormProps> = ({ onSubmitted }) 
       case 5:
         return (
           <div className="flex flex-col gap-4">
-            <h3 className={`${stepH3Cn} mb-2`}>Tell me about your project.</h3>
+            <h3 className={`${stepH3Cn} mb-2`}>Tell us about your project.</h3>
             <div>
               <label htmlFor="inquiry-details" className={labelCn}>Project details — A few sentences are helpful.</label>
               <textarea
@@ -450,7 +450,7 @@ const InquiryStepperForm: React.FC<InquiryStepperFormProps> = ({ onSubmitted }) 
               </div>
               <h3 className={`${stepH3Cn} mb-2`}>Upload anything helpful.</h3>
               <p className="font-body font-light text-[14px] text-white/48 leading-[1.65] m-0">
-                Add images, PDFs, brand files, sketches, decks, or any other assets that would help me understand the project.
+                Add images, PDFs, brand files, sketches, decks, or any other assets that would help us understand the project.
               </p>
             </div>
 
@@ -546,7 +546,7 @@ const InquiryStepperForm: React.FC<InquiryStepperFormProps> = ({ onSubmitted }) 
           Thank you! Your inquiry has been received.
         </h3>
         <p className="font-body font-light text-[15px] text-white/50 leading-[1.75] m-0">
-          I've received your project details and will review everything shortly. If I believe we're a good fit, I'll reach out within 1–2 business days to discuss next steps.
+          We've received your project details and will review everything shortly. If we believe we're a good fit, we'll reach out within 1–2 business days to discuss next steps.
         </p>
         <p className="mt-4 font-body font-light text-[15px] text-white/42 leading-[1.75]">
           In the meantime, feel free to gather any additional materials, references, or inspiration you'd like to share.

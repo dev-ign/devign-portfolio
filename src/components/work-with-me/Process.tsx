@@ -22,7 +22,7 @@ const STEPS = [
   {
     number: '04',
     title: 'Launch',
-    body: 'We deploy together, test live, and I stay reachable for 30 days post-launch.',
+    body: 'We deploy together, test live, and stay reachable for 30 days post-launch.',
   },
 ];
 
@@ -75,6 +75,10 @@ const Process: React.FC = () => {
         <h2 id="process-title" className="home-display process-title text-[clamp(30px,5vw,52px)] text-white/88 tracking-[-0.03em] leading-[1.1] m-0 will-change-[transform,opacity]">
           A clear process,<br />no surprises.
         </h2>
+        <p className="mt-5 max-w-[620px] font-body text-[clamp(14px,1.45vw,17px)] font-light leading-[1.7] text-white/48 will-change-[transform,opacity]">
+          Clear checkpoints, open feedback, and shared decisions keep every engagement moving
+          with confidence.
+        </p>
       </div>
 
       <div

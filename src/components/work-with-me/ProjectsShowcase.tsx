@@ -51,7 +51,7 @@ const ProjectsShowcase: React.FC = () => {
           </span>
         </h2>
         <p className="projects-copy mx-auto mt-6 max-w-[680px] font-body text-[clamp(14px,1.45vw,18px)] leading-[1.72] text-white/52 font-light will-change-[transform,opacity]">
-          A mix of web apps, marketing sites, design systems, brand assets, and video work.
+          Selected work shaped by real constraints, customer needs, and outcomes that mattered.
         </p>
       </div>
 

@@ -27,7 +27,7 @@ describe('InquiryForm section modal experience', () => {
     expect(screen.getByRole('heading', { name: /let's start something\./i })).toBeInTheDocument();
     expect(
       screen.getByText(
-        /whether you're launching something new, refining an existing product, or reimagining your digital presence/i
+        /bring us the challenge, the ambition, or the idea that's still taking shape/i
       )
     ).toBeInTheDocument();
     expect(screen.getByAltText('')).toHaveAttribute('src', '/inquiry-bg-poster.jpg');

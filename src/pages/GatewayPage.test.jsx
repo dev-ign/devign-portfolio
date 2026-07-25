@@ -45,6 +45,9 @@ test('opens the inquiry modal from the hero Work With Us button', () => {
 
   expect(screen.getByRole('heading', { name: /crafting digital experiences for modern brands/i }))
     .toHaveClass('home-display');
+  expect(screen.getByText(/every decision starts with understanding your business/i)).toBeInTheDocument();
+  expect(screen.getAllByText(/^(Websites|Apps|Marketing|Motion|Branding)\.$/)).toHaveLength(5);
+  expect(screen.getByText('Strategy, design, and technology working as one.')).toBeInTheDocument();
 
   fireEvent.click(screen.getByRole('button', { name: /^work with us$/i }));
 

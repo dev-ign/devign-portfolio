@@ -75,7 +75,8 @@ const InquiryForm: React.FC<InquiryFormProps> = ({ onOpenInquiry }) => {
             </div>
             <div className="hero-reveal-item max-w-[680px] px-2 sm:px-0">
               <p className="m-0 font-body text-[clamp(15px,1.7vw,19px)] font-light leading-[1.75] text-white/62">
-                Whether you're launching something new, refining an existing product, or reimagining your digital presence, every great experience starts with a conversation. Tell us where you're headed, and we'll help map the path forward.
+                Bring us the challenge, the ambition, or the idea that's still taking shape.
+                We'll help define the next move together.
               </p>
             </div>
             <div className="hero-reveal-item mt-3">
