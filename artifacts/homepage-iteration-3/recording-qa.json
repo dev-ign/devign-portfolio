@@ -1,0 +1,40 @@
+{
+  "capturedAt": "2026-07-25T15:03:23.490Z",
+  "baseUrl": "http://localhost:3000/",
+  "desktop": {
+    "viewport": {
+      "width": 1440,
+      "height": 900
+    },
+    "scrollY": 11474,
+    "maximumScroll": 11474,
+    "horizontalOverflow": false,
+    "storyHeadings": [
+      "Services with Deliberate Craft",
+      "Built With Intention",
+      "A clear process,no surprises.",
+      "The work matters when it moves the business forward.",
+      "Let's start something.",
+      "Common questions."
+    ],
+    "runtimeErrors": []
+  },
+  "mobile": {
+    "viewport": {
+      "width": 390,
+      "height": 844
+    },
+    "scrollY": 11256,
+    "maximumScroll": 11256,
+    "horizontalOverflow": false,
+    "storyHeadings": [
+      "Services with Deliberate Craft",
+      "Built With Intention",
+      "A clear process,no surprises.",
+      "The work matters when it moves the business forward.",
+      "Let's start something.",
+      "Common questions."
+    ],
+    "runtimeErrors": []
+  }
+}

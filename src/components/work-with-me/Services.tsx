@@ -10,22 +10,22 @@ const SERVICES = [
   {
     icon: 'solar:rocket-2-bold',
     name: 'Landing Pages',
-    description: 'Fast, conversion-focused pages that turn visitors into leads.',
+    description: 'Focused pages that connect a clear offer to a clear next step.',
   },
   {
     icon: 'solar:buildings-bold',
     name: 'Business Websites',
-    description: 'Professional multi-page marketing sites that build trust and credibility.',
+    description: 'Credible, high-performing sites shaped around your audience and goals.',
   },
   {
     icon: 'solar:refresh-circle-bold',
     name: 'Website Redesigns',
-    description: 'Modernize outdated experiences with current UX standards.',
+    description: 'Sharper experiences that remove friction and strengthen your digital presence.',
   },
   {
     icon: 'solar:cart-large-bold',
     name: 'E-Commerce',
-    description: 'Online stores and checkout experiences optimized for mobile.',
+    description: 'Mobile-first shopping and checkout journeys designed to support conversion.',
   },
   {
     icon: 'solar:code-bold',
@@ -35,7 +35,7 @@ const SERVICES = [
   {
     icon: 'solar:settings-bold',
     name: 'Ongoing Support',
-    description: 'Monthly maintenance, updates, and feature additions.',
+    description: 'Maintenance, improvements, and new features as your business evolves.',
   },
   {
     icon: 'solar:videocamera-record-bold',
@@ -49,7 +49,11 @@ const SERVICES = [
   },
 ];
 
-const Services: React.FC = () => {
+type ServicesProps = {
+  revealIntroOnScroll?: boolean;
+};
+
+const Services: React.FC<ServicesProps> = ({ revealIntroOnScroll = true }) => {
   const sectionRef = useRef<HTMLElement>(null);
 
   useGSAPContext(
@@ -60,10 +64,10 @@ const Services: React.FC = () => {
         sectionRef.current.querySelectorAll<HTMLElement>('.services-card')
       );
 
-      if (intro) runServicesIntroReveal(intro);
+      if (intro && revealIntroOnScroll) runServicesIntroReveal(intro);
       runServicesStagger(cards);
     },
-    { scope: sectionRef, dependencies: [] }
+    { scope: sectionRef, dependencies: [revealIntroOnScroll] }
   );
 
   return (
@@ -97,7 +101,8 @@ const Services: React.FC = () => {
           Craft
         </h2>
         <p className="services-copy mx-auto mt-6 max-w-[760px] font-body text-[clamp(15px,1.55vw,19px)] leading-[1.75] text-white/58 font-light will-change-[transform,opacity]">
-          Every engagement is treated like a small mission — scoped tightly, designed end-to-end, and shipped with the same care a film director gives a single frame. No bloat, no handoff loss.
+          We bring strategy, design, development, and creative production together to turn a
+          clear direction into thoughtful, effective execution.
         </p>
       </div>
 

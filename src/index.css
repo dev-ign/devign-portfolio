@@ -1472,10 +1472,6 @@ body[data-page='donor-directory-visual-demo']::after { opacity: 0.035; }
     padding-inline: 1rem;
   }
 
-  .gateway-capability-word[data-mobile-hidden='true'] {
-    display: none;
-  }
-
   .gateway-capability-word--xlarge > span {
     font-size: clamp(5rem, 27vw, 9rem);
   }
@@ -1486,10 +1482,6 @@ body[data-page='donor-directory-visual-demo']::after { opacity: 0.035; }
 
   .gateway-capability-word--medium > span {
     font-size: clamp(3.6rem, 17vw, 6rem);
-  }
-
-  .gateway-capability-word[data-capability='commerce'] > span {
-    font-size: clamp(3.75rem, 17vw, 6.2rem);
   }
 
   .gateway-capability-summary strong {
@@ -1546,10 +1538,6 @@ body[data-page='donor-directory-visual-demo']::after { opacity: 0.035; }
     visibility: visible;
     transform: none;
     filter: none;
-  }
-
-  .gateway-capability-word[data-mobile-hidden='true'] {
-    display: block;
   }
 
   .gateway-capability-word > span,

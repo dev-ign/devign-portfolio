@@ -10,11 +10,11 @@ const FAQS = [
   },
   {
     q: 'Can I edit the website after launch?',
-    a: "Yes. I can build with a CMS (like Sanity or Contentful) so you can update text, images, and content without touching code. We'll discuss what level of control you need upfront.",
+    a: "Yes. We can build with a CMS (like Sanity or Contentful) so you can update text, images, and content without touching code. We'll discuss what level of control you need upfront.",
   },
   {
     q: 'Do you offer hosting or maintenance?',
-    a: 'I can recommend and set up hosting (Vercel, Netlify, or traditional). Monthly maintenance packages are available for content updates, security patches, and feature additions.',
+    a: 'We can recommend and set up hosting (Vercel, Netlify, or traditional). Monthly maintenance packages are available for content updates, security patches, and feature additions.',
   },
   {
     q: 'Do you work with businesses worldwide?',
@@ -22,11 +22,11 @@ const FAQS = [
   },
   {
     q: 'What do I need to provide to get started?',
-    a: "A brief description of your business, what you're looking to build, your timeline, and any branding you already have (logo, colors, fonts). I'll handle the rest.",
+    a: "A brief description of your business, what you're looking to build, your timeline, and any branding you already have (logo, colors, fonts). We'll guide the rest.",
   },
   {
     q: 'Do you offer SEO?',
-    a: 'Every site I build is SEO-conscious: semantic HTML, fast load times, proper meta tags, and accessible structure. Dedicated SEO campaigns and ongoing content strategy are available as add-ons.',
+    a: 'Every site we build is SEO-conscious: semantic HTML, fast load times, proper meta tags, and accessible structure. Dedicated SEO campaigns and ongoing content strategy are available as add-ons.',
   },
 ];
 

@@ -18,14 +18,11 @@ import { usePrefersReducedMotion } from '@/hooks/useMediaQuery';
 import { trackEvent } from '@/utils/analytics';
 
 const CAPABILITIES = [
-  { label: 'Websites.', size: 'large', direction: 'from-left', tracking: 'normal', mobileHidden: false },
-  { label: 'Products.', size: 'large', direction: 'from-right', tracking: 'normal', mobileHidden: false },
-  { label: 'Apps.', size: 'xlarge', direction: 'diagonal-up-right', tracking: 'tight', mobileHidden: false },
-  { label: 'Motion.', size: 'xlarge', direction: 'from-right', tracking: 'tight', mobileHidden: false },
-  { label: 'Content.', size: 'large', direction: 'from-left', tracking: 'normal', mobileHidden: false },
-  { label: 'Brands.', size: 'xlarge', direction: 'diagonal-up-left', tracking: 'tight', mobileHidden: true },
-  { label: 'Commerce.', size: 'large', direction: 'from-right', tracking: 'normal', mobileHidden: false },
-  { label: 'Campaigns.', size: 'medium', direction: 'from-left', tracking: 'relaxed', mobileHidden: true },
+  { label: 'Websites.', size: 'large', direction: 'from-left', tracking: 'normal' },
+  { label: 'Apps.', size: 'xlarge', direction: 'diagonal-up-right', tracking: 'tight' },
+  { label: 'Marketing.', size: 'medium', direction: 'from-right', tracking: 'relaxed' },
+  { label: 'Motion.', size: 'xlarge', direction: 'from-left', tracking: 'tight' },
+  { label: 'Branding.', size: 'large', direction: 'diagonal-up-left', tracking: 'normal' },
 ] as const;
 
 const GatewayPage: React.FC = () => {
@@ -168,8 +165,8 @@ const GatewayPage: React.FC = () => {
               {/* Subheadline */}
               <div className="hero-reveal-item max-w-186 px-4 sm:px-0">
                 <p className="hero-subheadline">
-                  Helping brands navigate the digital landscape through thoughtful design,
-                  modern development, creative production, and ongoing partnership.
+                  Every decision begins with understanding your business, your customers, and what's next.
+                  We design and build digital experiences that reflect your brand and move your business forward.
                 </p>
               </div>
 
@@ -202,8 +199,8 @@ const GatewayPage: React.FC = () => {
             className="gateway-capability-stage"
           >
             <p className="sr-only">
-              DevignUX creates websites, digital products, apps, motion, content, brands,
-              commerce experiences, and campaigns—everything digital.
+              DevignUX creates websites, apps, marketing experiences, motion, and branding—
+              everything digital, with strategy, design, and technology working as one.
             </p>
 
             <div className="gateway-capability-visuals" aria-hidden="true">
@@ -214,7 +211,6 @@ const GatewayPage: React.FC = () => {
                   data-direction={capability.direction}
                   data-tracking={capability.tracking}
                   data-capability={capability.label.replace('.', '').toLowerCase()}
-                  data-mobile-hidden={capability.mobileHidden ? 'true' : undefined}
                 >
                   <span>{capability.label}</span>
                 </div>
@@ -222,7 +218,7 @@ const GatewayPage: React.FC = () => {
 
               <div className="gateway-capability-summary">
                 <strong>Everything Digital.</strong>
-                <span>Designed, built, and brought to life.</span>
+                <span>Strategy, design, and technology working as one.</span>
               </div>
             </div>
           </div>
@@ -236,10 +232,10 @@ const GatewayPage: React.FC = () => {
           data-gateway-sections
         >
           <div ref={servicesSurfaceRef} className="gateway-services-surface">
-            <Services />
+            <Services revealIntroOnScroll={false} />
           </div>
-          <Process />
           <ProjectsShowcase />
+          <Process />
           <BusinessOutcomes />
           <InquiryForm onOpenInquiry={openInquiry} />
           <FAQ />

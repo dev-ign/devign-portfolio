@@ -5,7 +5,12 @@ function mockCreateTimeline(config = {}) {
   const timeline = {
     config,
     steps: [],
+    labels: {},
     scrollTrigger: { kill: jest.fn() },
+    addLabel: jest.fn(function addLabel(name, position) {
+      this.labels[name] = position;
+      return this;
+    }),
     fromTo: jest.fn(function fromTo(target, fromVars, toVars, position) {
       this.steps.push({ type: 'fromTo', target, fromVars, toVars, position });
       return this;
@@ -37,6 +42,7 @@ const {
   initGatewayIntroExperience,
   initGatewayServicesTypography,
   initPosterScroll,
+  getGatewayIntroScrollDistance,
 } = require('./gatewayAnimations');
 
 beforeEach(() => {
@@ -63,12 +69,14 @@ test('gateway intro uses one pinned timeline for hero, capability words, and the
       </div>
       <div class="gateway-capability-stage">
         <div class="gateway-capability-word" data-direction="from-left">Websites.</div>
-        <div class="gateway-capability-word" data-direction="from-right">Products.</div>
         <div class="gateway-capability-word" data-direction="diagonal-up-right">Apps.</div>
-        <div class="gateway-capability-summary"><strong>Everything Digital.</strong><span>Built.</span></div>
+        <div class="gateway-capability-word" data-direction="from-right">Marketing.</div>
+        <div class="gateway-capability-word" data-direction="from-left">Motion.</div>
+        <div class="gateway-capability-word" data-direction="diagonal-up-left">Branding.</div>
+        <div class="gateway-capability-summary"><strong>Everything Digital.</strong><span>Strategy, design, and technology—working as one.</span></div>
       </div>
     </section>
-    <div class="gateway-sections"><div class="gateway-services-surface"><section id="services">Services</section></div></div>
+    <div class="gateway-sections"><div class="gateway-services-surface"><section id="services"><div class="services-intro">Services intro</div></section></div></div>
   `;
 
   const intro = document.querySelector('.gateway-intro-experience');
@@ -76,6 +84,7 @@ test('gateway intro uses one pinned timeline for hero, capability words, and the
   const content = document.querySelector('.gateway-hero-content');
   const stage = document.querySelector('.gateway-capability-stage');
   const servicesSurface = document.querySelector('.gateway-services-surface');
+  const servicesIntro = document.querySelector('.services-intro');
   const cleanup = initGatewayIntroExperience(intro, media, content, stage, servicesSurface);
 
   expect(mockTimelineInstances).toHaveLength(1);
@@ -86,49 +95,85 @@ test('gateway intro uses one pinned timeline for hero, capability words, and the
     pinSpacing: true,
     scrub: 0.75,
   });
-  expect(timeline.config.scrollTrigger.end()).toBe('+=300%');
+  expect(timeline.config.scrollTrigger.end()).toBe(
+    `+=${getGatewayIntroScrollDistance(5, false)}`
+  );
 
   const wordEntrances = timeline.steps.filter(
     (step) => step.type === 'fromTo' && step.target.classList?.contains('gateway-capability-word')
   );
-  expect(wordEntrances).toHaveLength(3);
-  expect(wordEntrances[0].position).toBe(0.72);
-  expect(wordEntrances[1].position - wordEntrances[0].position).toBeCloseTo(0.56);
+  expect(wordEntrances).toHaveLength(5);
+  expect(wordEntrances.map((step) => step.position)).toEqual([
+    'capability-1',
+    'capability-2',
+    'capability-3',
+    'capability-4',
+    'capability-5',
+  ]);
+  expect(timeline.labels['capability-1']).toBe(1.36);
+  expect(timeline.labels['capability-2'] - timeline.labels['capability-1']).toBeCloseTo(1.56);
   expect(timeline.steps.some((step) => step.target.textContent === 'Everything Digital.')).toBe(true);
   expect(timeline.steps.some((step) => step.target === servicesSurface)).toBe(true);
 
   const conclusionSteps = timeline.steps.filter(
     (step) => step.type === 'to' && step.target.textContent === 'Everything Digital.'
   );
-  const cinematicScaleSteps = conclusionSteps.filter((step) => step.vars.scale > 1);
-  const cinematicScale = cinematicScaleSteps.find((step) => step.vars.scale === 4.2);
-  const atmosphericExit = conclusionSteps.find(
-    (step) => step.vars.autoAlpha === 0 && step.vars.filter === 'blur(1.1px)'
+  const restrainedSummaryExit = conclusionSteps.find(
+    (step) => step.vars.autoAlpha === 0 && step.vars.scale === 1.05
   );
   const supportExit = timeline.steps.find(
-    (step) => step.target.textContent === 'Built.' && step.vars.autoAlpha === 0
+    (step) => step.target.textContent === 'Strategy, design, and technology—working as one.'
+      && step.vars.autoAlpha === 0
   );
-  const servicesRise = timeline.steps.find((step) => step.target === servicesSurface);
-  expect(cinematicScaleSteps).toHaveLength(1);
-  expect(cinematicScale).toBeDefined();
-  expect(cinematicScale.vars.ease).toBe('power1.in');
-  expect(cinematicScale.vars.autoAlpha).toBeUndefined();
-  expect(cinematicScale.vars.filter).toBeUndefined();
-  expect(atmosphericExit).toBeDefined();
-  expect(atmosphericExit.vars.ease).toBe('power2.out');
-  expect(atmosphericExit.position).toBeGreaterThan(cinematicScale.position);
-  expect(atmosphericExit.position + atmosphericExit.vars.duration).toBeCloseTo(
-    cinematicScale.position + cinematicScale.vars.duration
+  const servicesSteps = timeline.steps.filter((step) => step.target === servicesSurface);
+  const servicesPreview = servicesSteps.find((step) => step.vars.yPercent === 0);
+  const brandingExit = timeline.steps.find(
+    (step) => step.type === 'to'
+      && step.target.textContent === 'Branding.'
+      && step.vars.xPercent === 0
   );
-  expect(supportExit.position - cinematicScale.position).toBeCloseTo(0.24);
-  expect(servicesRise.position).toBeGreaterThan(cinematicScale.position);
-  expect(servicesRise.position).toBeLessThan(
-    cinematicScale.position + cinematicScale.vars.duration
+  const servicesIntroReveal = timeline.steps.find((step) => step.target === servicesIntro);
+
+  expect(restrainedSummaryExit).toBeDefined();
+  expect(restrainedSummaryExit.vars.yPercent).toBe(-9);
+  expect(restrainedSummaryExit.vars.filter).toBe('blur(1px)');
+  expect(restrainedSummaryExit.vars.ease).toBe('power2.inOut');
+  expect(supportExit.position).toBe(restrainedSummaryExit.position);
+  expect(brandingExit).toMatchObject({
+    vars: {
+      xPercent: 0,
+      yPercent: -5,
+      scale: 1.015,
+      duration: 0.72,
+      ease: 'power2.inOut',
+    },
+  });
+  expect(servicesPreview.position).toBe('services-preview');
+  expect(servicesPreview.vars.duration).toBe(0.88);
+  expect(servicesSteps).toHaveLength(1);
+  expect(timeline.labels['services-preview']).toBeLessThan(timeline.labels['everything-digital']);
+  expect(servicesIntroReveal).toMatchObject({
+    vars: {
+      autoAlpha: 1,
+      y: 0,
+      duration: 0.88,
+      ease: 'power2.out',
+    },
+  });
+  expect(servicesIntroReveal.position).toBeGreaterThan(
+    timeline.labels['everything-digital']
   );
 
   cleanup();
   expect(timeline.kill).toHaveBeenCalled();
   expect(timeline.scrollTrigger.kill).toHaveBeenCalled();
+});
+
+test('gateway intro scroll distance reserves a viewport-sized beat for each capability', () => {
+  expect(getGatewayIntroScrollDistance(5, false, 1000)).toBe(7350);
+  expect(getGatewayIntroScrollDistance(6, false, 1000)).toBe(8250);
+  expect(getGatewayIntroScrollDistance(5, true, 1000)).toBe(5950);
+  expect(getGatewayIntroScrollDistance(6, true, 1000)).toBe(6670);
 });
 
 test('service typography uses one continuous looping timeline without repeat delays', () => {

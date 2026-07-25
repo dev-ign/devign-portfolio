@@ -233,6 +233,73 @@ interface CapabilityMotion {
   exitY: number;
 }
 
+interface GatewayIntroPacing {
+  wordStart: number;
+  approachDuration: number;
+  readableHold: number;
+  exitDuration: number;
+  finalExitDuration: number;
+  beatGap: number;
+  bridgeOverlap: number;
+  servicesPreviewDuration: number;
+  summaryHold: number;
+  summaryExitDuration: number;
+  servicesRiseDuration: number;
+  heroScrollScreens: number;
+  wordScrollScreens: number;
+  handoffScrollScreens: number;
+}
+
+const getGatewayIntroPacing = (mobile: boolean): GatewayIntroPacing => mobile
+  ? {
+      wordStart: 1.34,
+      approachDuration: 0.38,
+      readableHold: 0.68,
+      exitDuration: 0.4,
+      finalExitDuration: 0.68,
+      beatGap: 0.14,
+      bridgeOverlap: 0.14,
+      servicesPreviewDuration: 0.82,
+      summaryHold: 0.86,
+      summaryExitDuration: 0.82,
+      servicesRiseDuration: 1.36,
+      heroScrollScreens: 1,
+      wordScrollScreens: 0.72,
+      handoffScrollScreens: 1.35,
+    }
+  : {
+      wordStart: 1.36,
+      approachDuration: 0.4,
+      readableHold: 0.62,
+      exitDuration: 0.42,
+      finalExitDuration: 0.72,
+      beatGap: 0.12,
+      bridgeOverlap: 0.16,
+      servicesPreviewDuration: 0.88,
+      summaryHold: 0.92,
+      summaryExitDuration: 0.94,
+      servicesRiseDuration: 1.6,
+      heroScrollScreens: 1.25,
+      wordScrollScreens: 0.9,
+      handoffScrollScreens: 1.6,
+    };
+
+// Scroll length is intentionally expressed in viewport-sized beats instead of a
+// fixed percentage. This keeps one capability close to one deliberate gesture,
+// and automatically preserves the pacing if the list changes again.
+export const getGatewayIntroScrollDistance = (
+  wordCount: number,
+  mobile: boolean,
+  viewportHeight = typeof window === 'undefined' ? 900 : window.innerHeight
+): number => {
+  const pacing = getGatewayIntroPacing(mobile);
+  const screens = pacing.heroScrollScreens
+    + Math.max(1, wordCount) * pacing.wordScrollScreens
+    + pacing.handoffScrollScreens;
+
+  return Math.round(viewportHeight * screens);
+};
+
 const getCapabilityMotion = (direction: CapabilityDirection): CapabilityMotion => {
   switch (direction) {
     case 'from-right':
@@ -263,6 +330,7 @@ export function initGatewayIntroExperience(
   const summary = capabilityStageEl.querySelector<HTMLElement>('.gateway-capability-summary');
   const summaryTitle = summary?.querySelector<HTMLElement>('strong');
   const summarySupport = summary?.querySelector<HTMLElement>('span');
+  const servicesIntro = servicesSurfaceEl.querySelector<HTMLElement>('.services-intro');
   const sectionsEl = servicesSurfaceEl.closest<HTMLElement>('.gateway-sections');
   const allWords = Array.from(
     capabilityStageEl.querySelectorAll<HTMLElement>('.gateway-capability-word')
@@ -285,30 +353,33 @@ export function initGatewayIntroExperience(
     if (timeline || disposed) return;
 
     const mobile = window.matchMedia('(max-width: 767px)').matches;
-    const words = allWords.filter(
-      word => !(mobile && word.dataset.mobileHidden === 'true')
-    );
+    const words = allWords;
     const contentTargets = Array.from(contentEl.children) as HTMLElement[];
     const headline = contentTargets[0];
     const earlyExitTargets = contentTargets.slice(1);
     const entranceBlur = mobile ? 4 : 5;
     const exitBlur = mobile ? 5 : 6;
-    const wordStart = 0.72;
-    const wordStep = mobile ? 0.68 : 0.56;
-    const approachDuration = mobile ? 0.4 : 0.38;
-    const readableHold = mobile ? 0.12 : 0;
-    const exitDuration = mobile ? 0.42 : 0.4;
-    const summaryStart = wordStart
-      + Math.max(0, words.length - 1) * wordStep
-      + approachDuration
-      + readableHold
-      + exitDuration;
-    const scaleStart = summaryStart + 1.06;
-    const scaleDuration = mobile ? 2.25 : 2.45;
-    const servicesStart = scaleStart + (mobile ? 0.72 : 0.82);
-    const serviceRiseDuration = mobile ? 1.8 : 2;
-    const titleAtmosphereStart = scaleStart + (mobile ? 1.45 : 1.38);
-    const titleAtmosphereDuration = scaleDuration - (titleAtmosphereStart - scaleStart);
+    const pacing = getGatewayIntroPacing(mobile);
+    const {
+      wordStart,
+      approachDuration,
+      readableHold,
+      exitDuration,
+      finalExitDuration,
+      beatGap,
+      bridgeOverlap,
+      servicesPreviewDuration,
+      summaryHold,
+      summaryExitDuration,
+      servicesRiseDuration,
+    } = pacing;
+    const wordStep = approachDuration + readableHold + exitDuration + beatGap;
+    const finalWordStart = wordStart + Math.max(0, words.length - 1) * wordStep;
+    const finalWordExitStart = finalWordStart + approachDuration + readableHold;
+    const summaryStart = finalWordExitStart + finalExitDuration - bridgeOverlap;
+    const servicesPreviewStart = finalWordExitStart - 0.06;
+    const summaryExitStart = summaryStart + summaryHold;
+    const mediaMotionDuration = summaryExitStart;
     const videoDuration = videoEl && Number.isFinite(videoEl.duration)
       ? Math.max(videoEl.duration - 0.04, 0)
       : 0;
@@ -348,8 +419,8 @@ export function initGatewayIntroExperience(
     gsap.set(summaryTitle, {
       autoAlpha: 0,
       yPercent: 0,
-      scale: 0.96,
-      filter: 'blur(5px)',
+      scale: 0.975,
+      filter: 'blur(4px)',
       transformOrigin: '50% 55%',
       force3D: true,
       willChange: 'transform, opacity, filter',
@@ -357,17 +428,25 @@ export function initGatewayIntroExperience(
     gsap.set(summarySupport, { autoAlpha: 0, y: 10 });
     gsap.set(servicesSurfaceEl, {
       autoAlpha: 1,
-      yPercent: mobile ? 28 : 35,
+      yPercent: mobile ? 32 : 38,
       force3D: true,
       willChange: 'transform',
     });
+    if (servicesIntro) {
+      gsap.set(servicesIntro, {
+        autoAlpha: 0,
+        y: mobile ? 14 : 18,
+        force3D: true,
+        willChange: 'transform, opacity',
+      });
+    }
 
     timeline = gsap.timeline({
       defaults: { ease: 'none' },
       scrollTrigger: {
         trigger: introEl,
         start: 'top top',
-        end: () => mobile ? '+=230%' : '+=300%',
+        end: () => `+=${getGatewayIntroScrollDistance(words.length, mobile)}`,
         scrub: mobile ? 0.38 : 0.75,
         pin: true,
         pinSpacing: true,
@@ -381,7 +460,7 @@ export function initGatewayIntroExperience(
     if (videoEl && videoDuration > 0) {
       timeline.to(proxy, {
         currentTime: videoDuration,
-        duration: scaleStart,
+        duration: mediaMotionDuration,
         onUpdate() {
           const nextTime = proxy.currentTime;
           if (Math.abs(videoEl.currentTime - nextTime) > 0.015) {
@@ -395,7 +474,7 @@ export function initGatewayIntroExperience(
       .to(mediaEl, {
         yPercent: mobile ? -4 : -8,
         scale: 1.01,
-        duration: scaleStart,
+        duration: mediaMotionDuration,
       }, 0)
       .fromTo(earlyExitTargets, {
         autoAlpha: 1,
@@ -453,6 +532,11 @@ export function initGatewayIntroExperience(
       const direction = (word.dataset.direction ?? 'from-left') as CapabilityDirection;
       const motion = getCapabilityMotion(direction);
       const start = wordStart + index * wordStep;
+      const label = `capability-${index + 1}`;
+      const isFinalWord = index === words.length - 1;
+      const currentExitDuration = isFinalWord ? finalExitDuration : exitDuration;
+
+      timeline!.addLabel(label, start);
 
       timeline!
         .fromTo(
@@ -473,23 +557,32 @@ export function initGatewayIntroExperience(
             duration: approachDuration,
             ease: 'power2.out',
           },
-          start
+          label
         )
         .to(word, {
-          xPercent: mobile ? Math.sign(motion.exitX) * 38 : motion.exitX,
-          yPercent: mobile ? Math.sign(motion.exitY) * 4 : motion.exitY,
-          scale: mobile ? 1.025 : 1.035,
-          filter: `blur(${exitBlur}px)`,
-          duration: exitDuration,
-          ease: 'power3.in',
-        }, start + approachDuration + readableHold)
+          xPercent: isFinalWord ? 0 : mobile ? Math.sign(motion.exitX) * 38 : motion.exitX,
+          yPercent: isFinalWord ? (mobile ? -4 : -5) : mobile ? Math.sign(motion.exitY) * 4 : motion.exitY,
+          scale: isFinalWord ? (mobile ? 1.012 : 1.015) : mobile ? 1.025 : 1.035,
+          filter: `blur(${isFinalWord ? 1.5 : exitBlur}px)`,
+          duration: currentExitDuration,
+          ease: isFinalWord ? 'power2.inOut' : 'power3.in',
+        }, `${label}+=${approachDuration + readableHold}`)
         .to(word, {
           autoAlpha: 0,
-          duration: 0.28,
-          ease: 'power1.in',
-        }, start + approachDuration + readableHold);
+          duration: isFinalWord ? currentExitDuration * 0.9 : Math.min(0.32, exitDuration),
+          ease: isFinalWord ? 'power2.inOut' : 'power1.in',
+        }, `${label}+=${approachDuration + readableHold}`);
     });
 
+    timeline
+      .addLabel('services-preview', servicesPreviewStart)
+      .to(servicesSurfaceEl, {
+        yPercent: 0,
+        duration: servicesPreviewDuration,
+        ease: 'power2.out',
+      }, 'services-preview');
+
+    timeline.addLabel('everything-digital', summaryStart);
     timeline
       .to(summaryTitle, {
         autoAlpha: 1,
@@ -498,7 +591,7 @@ export function initGatewayIntroExperience(
         filter: 'blur(0px)',
         duration: 0.56,
         ease: 'power2.out',
-      }, summaryStart)
+      }, 'everything-digital')
       .to(summarySupport, {
         autoAlpha: 0.68,
         y: 0,
@@ -508,26 +601,37 @@ export function initGatewayIntroExperience(
       .to(summarySupport, {
         autoAlpha: 0,
         y: -8,
-        duration: 0.36,
-        ease: 'power1.in',
-      }, scaleStart + 0.24)
+        duration: summaryExitDuration * 0.72,
+        ease: 'power2.inOut',
+      }, summaryExitStart)
       .to(summaryTitle, {
-        yPercent: mobile ? -16 : -22,
-        scale: mobile ? 2.9 : 4.2,
-        duration: scaleDuration,
-        ease: 'power1.in',
-      }, scaleStart)
-      .to(summaryTitle, {
+        yPercent: mobile ? -7 : -9,
+        scale: mobile ? 1.035 : 1.05,
         autoAlpha: 0,
-        filter: 'blur(1.1px)',
-        duration: titleAtmosphereDuration,
+        filter: 'blur(1px)',
+        duration: summaryExitDuration,
+        ease: 'power2.inOut',
+      }, summaryExitStart)
+      .to(atmosphere, {
+        autoAlpha: 0.32,
+        duration: servicesRiseDuration,
+        ease: 'power1.inOut',
+      }, summaryExitStart)
+      .to(mediaEl, {
+        autoAlpha: 0,
+        duration: servicesRiseDuration * 0.85,
+        ease: 'power1.inOut',
+      }, summaryExitStart);
+
+    if (servicesIntro) {
+      timeline.to(servicesIntro, {
+        autoAlpha: 1,
+        y: 0,
+        duration: mobile ? 0.76 : 0.88,
         ease: 'power2.out',
-      }, titleAtmosphereStart)
-      .to(servicesSurfaceEl, {
-        yPercent: 0,
-        duration: serviceRiseDuration,
-        ease: 'none',
-      }, servicesStart);
+        clearProps: 'willChange',
+      }, summaryExitStart + (mobile ? 0.12 : 0.08));
+    }
 
     const refresh = () => {
       if (!disposed) ScrollTrigger.refresh();
@@ -554,7 +658,7 @@ export function initGatewayIntroExperience(
     timeline?.scrollTrigger?.kill();
     timeline?.kill();
     gsap.set(
-      [mediaEl, contentEl, shade, atmosphere, ...allWords, summary, summaryTitle, summarySupport, sectionsEl, servicesSurfaceEl],
+      [mediaEl, contentEl, shade, atmosphere, ...allWords, summary, summaryTitle, summarySupport, servicesIntro, sectionsEl, servicesSurfaceEl].filter(Boolean),
       { clearProps: 'all' }
     );
   };
