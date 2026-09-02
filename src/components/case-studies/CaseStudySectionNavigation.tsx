@@ -36,13 +36,13 @@ const toneClasses: Record<
   },
   'donor-directory': {
     pinnedMenu:
-      'border-[#C996EE]/48 bg-[#24132F]/82 shadow-[0_14px_38px_rgba(18,7,28,0.38),inset_0_1px_0_rgba(255,255,255,0.1)] backdrop-blur-[16px]',
+      'border-[#C996EE]/32 bg-[#24132F]/70 shadow-[0_10px_28px_rgba(18,7,28,0.26),inset_0_1px_0_rgba(255,255,255,0.07)] backdrop-blur-[14px]',
     idleMenu:
-      'border-[#C996EE]/24 bg-black/10 shadow-[2px_2px_6.5px_rgba(0,0,0,0.14)]',
-    menuLine: 'bg-[#C996EE]',
+      'border-[#C996EE]/20 bg-black/[0.07] shadow-[2px_2px_6.5px_rgba(0,0,0,0.1)]',
+    menuLine: 'bg-[#C996EE]/78',
     popover: 'bg-[#21112D]/90',
-    activeItem: 'border-[#C996EE]/40 bg-[#C996EE]/16 text-white',
-    activeDot: 'bg-[#D9B2F5] shadow-[0_0_10px_rgba(217,178,245,0.8)]',
+    activeItem: 'border-[#C996EE]/30 bg-[#C996EE]/11 text-white/92',
+    activeDot: 'bg-[#D9B2F5]/80',
   },
 };
 
@@ -67,6 +67,7 @@ const CaseStudySectionNavigation: React.FC<CaseStudySectionNavigationProps> = ({
   const slotRef = useRef<HTMLDivElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
   const colors = toneClasses[tone];
+  const isDonorTone = tone === 'donor-directory';
 
   useEffect(() => {
     let frameId = 0;
@@ -154,14 +155,18 @@ const CaseStudySectionNavigation: React.FC<CaseStudySectionNavigationProps> = ({
         <nav
           aria-label="Case study sections"
           data-pinned={isPinned ? 'true' : 'false'}
-          className={`case-study-section-menu flex items-center gap-1.5 rounded-[100px] border px-3 py-2 backdrop-blur-[8px] transition-[background-color,border-color,box-shadow,backdrop-filter] duration-500 sm:gap-4 sm:px-8 sm:py-3 ${
+          className={`case-study-section-menu flex items-center gap-1.5 rounded-[100px] border backdrop-blur-[8px] transition-[background-color,border-color,box-shadow,backdrop-filter] duration-500 ${
+            isDonorTone ? 'px-2.5 py-1 sm:gap-3 sm:px-5 sm:py-1.5' : 'px-3 py-2 sm:gap-4 sm:px-8 sm:py-3'
+          } ${
             isPinned ? colors.pinnedMenu : colors.idleMenu
           }`}
         >
           <span
             aria-live="polite"
             data-testid="active-section-label"
-            className="whitespace-nowrap font-body text-[13px] font-bold leading-8 text-white sm:text-[14px]"
+            className={`whitespace-nowrap font-body font-bold leading-8 text-white ${
+              isDonorTone ? 'text-[12px] text-white/82 sm:text-[13px]' : 'text-[13px] sm:text-[14px]'
+            }`}
           >
             {activeLabel}
           </span>

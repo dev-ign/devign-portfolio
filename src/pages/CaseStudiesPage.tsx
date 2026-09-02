@@ -183,15 +183,6 @@ const CaseStudiesPage: React.FC = () => {
         </header>
 
         <div ref={cardsRef} className="relative z-10 mt-[clamp(64px,10vh,112px)]">
-          <div
-            id="selected-work-label"
-            className="mb-[clamp(24px,3.5vw,40px)] flex items-center justify-center gap-3 font-mono text-[10px] uppercase tracking-[0.18em] text-white/32 md:justify-start"
-          >
-            <span className="h-px w-8 bg-[#BE97ED]/45" aria-hidden="true" />
-            Selected work
-            <span className="h-px w-8 bg-[#BE97ED]/45" aria-hidden="true" />
-          </div>
-
           <div className="grid grid-cols-1 items-stretch gap-[clamp(18px,2vw,28px)] md:grid-cols-2 min-[1100px]:grid-cols-3">
             {featuredProjects.map((project) => (
               <FeaturedCaseStudyCard

@@ -203,7 +203,7 @@ const EditorPanel: React.FC<{ mobile?: boolean }> = ({ mobile = false }) => (
   <div
     className={
       mobile
-        ? 'template-manager-float template-manager-float--mobile-editor absolute inset-x-5 bottom-[5%] md:hidden'
+        ? 'template-manager-float template-manager-float--mobile-editor absolute inset-x-5 bottom-[5%] hidden sm:block md:hidden'
         : 'template-manager-float template-manager-float--editor absolute bottom-[3%] right-[clamp(24px,3.5vw,56px)] hidden w-[clamp(320px,29vw,420px)] md:block'
     }
     style={floatingStyle(mobile ? '-1deg' : '-2deg', '-8px', mobile ? '8.2s' : '9s', '-3.1s')}
@@ -259,7 +259,7 @@ const EditorPanel: React.FC<{ mobile?: boolean }> = ({ mobile = false }) => (
 
 const MobileTemplateStrip: React.FC = () => (
   <div
-    className="template-manager-float template-manager-float--mobile-list absolute inset-x-5 top-[13%] md:hidden"
+    className="template-manager-float template-manager-float--mobile-list absolute inset-x-5 top-[27%] opacity-70 md:hidden"
     style={floatingStyle('1deg', '-7px', '7.6s', '-1.8s')}
   >
     <div className="template-manager-panel rounded-[14px] p-3">

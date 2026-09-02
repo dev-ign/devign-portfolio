@@ -37,6 +37,11 @@ const StorySection: React.FC<StorySectionProps> = ({
       </p>
       <div className="mt-8 max-w-[650px] space-y-4 font-body text-[clamp(14px,1.12vw,17px)] font-normal leading-[1.72] text-white/67">
         {children ?? section.paragraphs.map((paragraph) => <p key={paragraph} className="m-0">{paragraph}</p>)}
+        {!children && section.principle && (
+          <p className="m-0 border-l border-[#C5A8EE]/45 pl-4 font-medium leading-[1.6] text-white/82">
+            {section.principle}
+          </p>
+        )}
       </div>
     </div>
   );
@@ -57,9 +62,9 @@ const StorySection: React.FC<StorySectionProps> = ({
       aria-labelledby={`${section.id}-title`}
       data-case-study-section={section.id}
       data-testid="case-study-section"
-      className="relative flex min-h-screen min-h-[100svh] scroll-mt-[152px] items-center overflow-hidden border-t border-white/[0.055] px-6 py-20 sm:scroll-mt-24 sm:px-10 lg:px-14 lg:py-16 xl:px-20"
+      className="relative flex scroll-mt-[152px] items-center overflow-hidden border-t border-white/[0.055] px-6 py-16 sm:scroll-mt-24 sm:px-10 sm:py-20 lg:px-14 lg:py-[clamp(72px,6vw,96px)] xl:px-20"
     >
-      <div className="relative mx-auto grid w-full max-w-[1480px] items-center gap-12 lg:grid-cols-[minmax(0,0.92fr)_minmax(520px,1.08fr)] lg:gap-[clamp(48px,7vw,112px)]">
+      <div className="relative mx-auto grid w-full max-w-[1480px] items-center gap-12 lg:grid-cols-[minmax(0,0.88fr)_minmax(560px,1.12fr)] lg:gap-[clamp(44px,5.5vw,88px)]">
         {copy}
         {visualColumn}
       </div>
@@ -71,7 +76,7 @@ const VisualStage: React.FC<{ children: React.ReactNode; className?: string }> =
   children,
   className = '',
 }) => (
-  <div className={`template-story-stage relative w-full max-w-[680px] rounded-[28px] p-4 sm:p-7 ${className}`}>
+  <div className={`template-story-stage relative w-full max-w-[760px] rounded-[28px] p-4 sm:p-7 ${className}`}>
     <div aria-hidden="true" className="absolute inset-x-[14%] bottom-[-8%] h-[28%] rounded-full bg-[#0E143F]/45 blur-[42px]" />
     <div className="relative">{children}</div>
   </div>
@@ -114,6 +119,59 @@ const OldEmailClientVisual: React.FC = () => (
             </div>
             <div className="mt-7 inline-flex rounded border border-slate-200 bg-slate-50 px-3 py-2 font-body text-[9px] text-slate-400">Waiting for support · 2 days</div>
           </div>
+        </div>
+      </div>
+    </div>
+  </VisualStage>
+);
+
+const RolePermissionModelVisual: React.FC = () => (
+  <VisualStage>
+    <div className="template-manager-panel overflow-hidden rounded-[22px] p-5 sm:p-7">
+      <div className="border-b border-white/8 pb-5">
+        <div>
+          <p className="m-0 font-body text-[14px] font-semibold text-white/84">Content permission model</p>
+          <p className="m-0 mt-1 font-body text-[10px] text-white/38">Governance and ownership in one workflow</p>
+        </div>
+      </div>
+
+      <div className="mx-auto mt-6 max-w-[520px]">
+        <div className="rounded-[16px] border border-[#B994EB]/24 bg-[#B06EF3]/[0.08] p-5">
+          <div className="flex items-center gap-4">
+            <span className="grid h-11 w-11 shrink-0 place-items-center rounded-[13px] bg-[#B06EF3]/20 font-body text-[12px] font-semibold text-[#E1CAF9]">M</span>
+            <div>
+              <p className="m-0 font-body text-[14px] font-semibold text-white/84">Manager</p>
+              <p className="m-0 mt-1 font-body text-[10px] leading-[1.5] text-white/44">Creates approved content · controls access · maintains standards</p>
+            </div>
+          </div>
+        </div>
+
+        <div className="flex min-h-[72px] items-center justify-center gap-3" aria-label="Managers assign and share templates with fundraisers">
+          <span className="h-8 w-px bg-gradient-to-b from-[#C5A8EE]/20 to-[#C5A8EE]/70" />
+          <span className="font-body text-[10px] font-medium text-[#D6BCF4]/76">Assigns and shares</span>
+          <span className="text-[15px] text-[#C5A8EE]/80">↓</span>
+        </div>
+
+        <div className="rounded-[16px] border border-[#69D9C1]/22 bg-[#68E0C1]/[0.07] p-5">
+          <div className="flex items-center gap-4">
+            <span className="grid h-11 w-11 shrink-0 place-items-center rounded-[13px] bg-[#68E0C1]/16 font-body text-[12px] font-semibold text-[#A7E9DA]">F</span>
+            <div>
+              <p className="m-0 font-body text-[14px] font-semibold text-white/84">Fundraiser</p>
+              <p className="m-0 mt-1 font-body text-[10px] leading-[1.5] text-white/44">Accesses assigned content · owns personal templates · works independently</p>
+            </div>
+          </div>
+        </div>
+
+        <div className="flex min-h-[72px] items-center justify-center gap-3" aria-label="Fundraisers personalize and use templates">
+          <span className="h-8 w-px bg-gradient-to-b from-[#76D7C4]/20 to-[#76D7C4]/65" />
+          <span className="font-body text-[10px] font-medium text-[#A6E4D6]/76">Personalizes and uses</span>
+          <span className="text-[15px] text-[#86DCCA]/80">↓</span>
+        </div>
+
+        <div className="grid grid-cols-3 gap-2">
+          {['Personal library', 'Assigned content', 'Email workflow'].map((label) => (
+            <span key={label} className="rounded-[10px] border border-white/8 bg-white/[0.025] px-2 py-3 text-center font-body text-[9px] leading-[1.35] text-white/48">{label}</span>
+          ))}
         </div>
       </div>
     </div>
@@ -173,6 +231,18 @@ const WorkflowTemplateListVisual: React.FC = () => {
 
   return (
     <VisualStage>
+      <div className="mb-4 grid gap-2 sm:grid-cols-[0.9fr_1.1fr]">
+        <div className="rounded-[14px] border border-white/8 bg-black/10 p-4">
+          <p className="m-0 font-body text-[10px] font-semibold text-white/56">Separate libraries</p>
+          <div className="mt-3 grid grid-cols-3 gap-1.5">
+            {['Personal', 'Shared', 'Assigned'].map((label) => <span key={label} className="rounded-[7px] border border-white/8 bg-white/[0.025] px-1 py-2.5 text-center font-body text-[8px] text-white/38">{label}</span>)}
+          </div>
+        </div>
+        <div className="rounded-[14px] border border-[#B994EB]/25 bg-[#B06EF3]/[0.08] p-4">
+          <p className="m-0 font-body text-[10px] font-semibold text-[#DCC3F7]">Unified library</p>
+          <p className="m-0 mt-3 font-body text-[10px] leading-[1.5] text-white/58">Ownership communicated through labels, filters, permissions, and categories.</p>
+        </div>
+      </div>
       <div className="template-manager-panel overflow-hidden rounded-[20px]">
         <div className="flex items-center border-b border-white/8 px-4 py-4 sm:px-6">
           <div key={`${activeRole}-heading`} className="min-w-0">
@@ -234,6 +304,88 @@ const WorkflowTemplateListVisual: React.FC = () => {
   );
 };
 
+const StructuredEditorDecisionVisual: React.FC = () => (
+  <VisualStage>
+    <div className="template-manager-panel overflow-hidden rounded-[22px] p-5 sm:p-7">
+      <div className="grid gap-3 sm:grid-cols-2">
+        <div className="rounded-[14px] border border-[#E8AD5E]/18 bg-[#D99336]/[0.055] p-4">
+          <p className="m-0 font-body text-[10px] font-semibold text-[#E8C38F]/70">Raw HTML</p>
+          <div className="mt-4 space-y-2 font-mono text-[8px] leading-[1.5] text-white/26">
+            <p className="m-0">&lt;table role=&quot;presentation&quot;&gt;</p>
+            <p className="m-0 pl-3">&lt;td style=&quot;padding: 24px&quot;&gt;</p>
+            <p className="m-0 pl-6 text-[#E8AD5E]/60">High risk · low confidence</p>
+            <p className="m-0 pl-3">&lt;/td&gt;</p>
+          </div>
+        </div>
+        <div className="rounded-[14px] border border-[#69D9C1]/22 bg-[#68E0C1]/[0.065] p-4">
+          <p className="m-0 font-body text-[10px] font-semibold text-[#A8E8DA]/78">Structured editor</p>
+          <div className="mt-4 flex gap-1.5">
+            {['B', 'I', '≡', '↗'].map((control) => <span key={control} className="grid h-7 w-7 place-items-center rounded-[6px] border border-white/8 bg-white/5 font-mono text-[9px] text-white/54">{control}</span>)}
+          </div>
+          <p className="m-0 mt-4 font-body text-[10px] leading-[1.5] text-white/56">Familiar controls inside safe structural boundaries.</p>
+        </div>
+      </div>
+      <div className="mt-4 grid grid-cols-2 gap-2 sm:grid-cols-4">
+        {['Familiarity', 'Formatting control', 'Feasibility', 'Email integrity'].map((label) => (
+          <span key={label} className="rounded-[9px] border border-white/8 bg-white/[0.025] px-2 py-3 text-center font-body text-[8px] text-white/44">{label}</span>
+        ))}
+      </div>
+    </div>
+  </VisualStage>
+);
+
+const DesignDecisionsSection: React.FC<{
+  section: TemplateManagerCaseStudyNarrative['decisions'];
+}> = ({ section }) => {
+  const visuals = [WorkflowTemplateListVisual, StructuredEditorDecisionVisual];
+
+  return (
+    <section
+      id={section.id}
+      aria-labelledby={`${section.id}-title`}
+      data-case-study-section={section.id}
+      data-testid="case-study-section"
+      className="relative scroll-mt-[152px] overflow-hidden border-t border-white/[0.055] px-6 py-16 sm:scroll-mt-24 sm:px-10 sm:py-20 lg:px-14 lg:py-[clamp(76px,6.5vw,100px)] xl:px-20"
+    >
+      <div className="relative mx-auto w-full max-w-[1480px]">
+        <div className="max-w-[820px]">
+          <h2 id={`${section.id}-title`} className="m-0 font-disp text-[clamp(42px,5.4vw,78px)] font-extrabold leading-[0.96] tracking-[-0.05em] text-white">{section.title}</h2>
+          <p className="mb-0 mt-5 font-body text-[clamp(18px,1.65vw,24px)] font-medium tracking-[-0.025em] text-white/76">{section.subtitle}</p>
+        </div>
+
+        <div className="mt-12 space-y-16 sm:mt-14 lg:space-y-20">
+          {section.items.map((item, index) => {
+            const DecisionVisual = visuals[index];
+            return (
+              <article key={item.title} className="grid items-center gap-10 lg:grid-cols-[minmax(0,0.82fr)_minmax(560px,1.18fr)] lg:gap-[clamp(44px,6vw,96px)]">
+                <div className={index % 2 === 1 ? 'lg:order-2' : ''}>
+                  <h3 className="m-0 font-disp text-[clamp(28px,3.2vw,46px)] font-bold leading-[1.05] tracking-[-0.04em] text-white/92">{item.title}</h3>
+                  <div className="mt-7 space-y-5">
+                    <div>
+                      <h4 className="m-0 font-body text-[15px] font-semibold tracking-[-0.015em] text-white/82">{item.initialHeading}</h4>
+                      <p className="m-0 mt-2 font-body text-[14px] leading-[1.65] text-white/62">{item.explored}</p>
+                    </div>
+                    <div>
+                      <h4 className="m-0 font-body text-[15px] font-semibold tracking-[-0.015em] text-white/82">{item.problemHeading}</h4>
+                      <p className="m-0 mt-2 font-body text-[14px] leading-[1.65] text-white/62">{item.problem}</p>
+                    </div>
+                    <div>
+                      <h4 className="m-0 font-body text-[15px] font-semibold tracking-[-0.015em] text-white/82">{item.finalHeading}</h4>
+                      <p className="m-0 mt-2 font-body text-[14px] leading-[1.65] text-white/62">{item.final}</p>
+                    </div>
+                  </div>
+                  <p className="mb-0 mt-7 border-l border-[#C5A8EE]/45 pl-4 font-body text-[14px] font-medium leading-[1.6] text-white/82">{item.principle}</p>
+                </div>
+                <div className={index % 2 === 1 ? 'lg:order-1' : ''}><DecisionVisual /></div>
+              </article>
+            );
+          })}
+        </div>
+      </div>
+    </section>
+  );
+};
+
 const accordionCategories = [
   { name: 'Annual Giving', count: 12, items: ['Year-end appeal', 'Giving Tuesday', 'Spring campaign'] },
   { name: 'Donor Stewardship', count: 8, items: ['Welcome series', 'Thank-you note', 'Impact follow-up'] },
@@ -256,8 +408,8 @@ const CategoryAccordionVisual: React.FC = () => {
       <div className="template-manager-panel overflow-hidden rounded-[20px] p-4 sm:p-6">
         <div className="mb-5 flex items-center">
           <div>
-            <p className="m-0 font-body text-[12px] font-semibold text-white/80">Template categories</p>
-            <p className="m-0 mt-1 font-body text-[8px] text-white/31">Browse your organization library</p>
+            <p className="m-0 font-body text-[14px] font-semibold text-white/80">Template categories</p>
+            <p className="m-0 mt-1 font-body text-[9px] text-white/36">Browse your organization library</p>
           </div>
           <button type="button" tabIndex={-1} className="ml-auto rounded-full border border-white/10 bg-white/5 px-3 py-2 font-body text-[8px] text-white/48">+ Category</button>
         </div>
@@ -268,7 +420,7 @@ const CategoryAccordionVisual: React.FC = () => {
               <div key={category.name} className={`overflow-hidden rounded-[12px] border transition-colors duration-500 ${isOpen ? 'border-[#B796EF]/28 bg-[#A97AE8]/[0.08]' : 'border-white/8 bg-white/[0.025]'}`}>
                 <div className="flex min-h-[54px] items-center px-4">
                   <span className={`mr-3 grid h-6 w-6 place-items-center rounded-[7px] transition duration-500 ${isOpen ? 'rotate-180 bg-[#B06EF3]/20 text-[#D9BDF7]' : 'bg-white/5 text-white/34'}`}>⌄</span>
-                  <span className="font-body text-[10px] font-medium text-white/68">{category.name}</span>
+                  <span className="font-body text-[11px] font-medium text-white/68">{category.name}</span>
                   <span className="ml-auto font-mono text-[8px] text-white/28">{category.count}</span>
                 </div>
                 <div className={`grid transition-[grid-template-rows,opacity] duration-500 ease-out ${isOpen ? 'grid-rows-[1fr] opacity-100' : 'grid-rows-[0fr] opacity-0'}`}>
@@ -277,7 +429,7 @@ const CategoryAccordionVisual: React.FC = () => {
                       {category.items.map((item, itemIndex) => (
                         <div key={item} className={`flex items-center rounded-[8px] px-3 py-2.5 ${itemIndex === 0 ? 'bg-white/[0.055]' : ''}`}>
                           <span className="mr-3 h-1.5 w-1.5 rounded-full bg-[#B799ED]/70" />
-                          <span className="font-body text-[8px] text-white/48">{item}</span>
+                          <span className="font-body text-[10px] text-white/52">{item}</span>
                           <span className="ml-auto text-[10px] text-white/20">···</span>
                         </div>
                       ))}
@@ -297,7 +449,7 @@ const EditorExperienceVisual: React.FC = () => (
   <img
     src={editorToolbarImage}
     alt="TinyMCE formatting toolbar examples"
-    className="h-auto w-full max-w-[680px] object-contain drop-shadow-[0_34px_70px_rgba(5,8,35,0.42)]"
+    className="h-auto w-full max-w-[760px] object-contain drop-shadow-[0_34px_70px_rgba(5,8,35,0.42)]"
   />
 );
 
@@ -732,16 +884,17 @@ const DefaultConflictVisual: React.FC = () => {
 const TechnicalImplementationSection: React.FC<{
   section: TemplateManagerCaseStudyNarrative['implementation'];
 }> = ({ section }) => (
-  <section id={section.id} aria-labelledby={`${section.id}-title`} data-case-study-section={section.id} data-testid="case-study-section" className="template-technical-section relative flex min-h-screen min-h-[100svh] scroll-mt-[152px] items-center overflow-hidden border-t border-white/[0.055] px-6 py-20 sm:scroll-mt-24 sm:px-10">
+  <section id={section.id} aria-labelledby={`${section.id}-title`} data-case-study-section={section.id} data-testid="case-study-section" className="template-technical-section relative flex scroll-mt-[152px] items-center overflow-hidden border-t border-white/[0.055] px-6 py-16 sm:scroll-mt-24 sm:px-10 sm:py-20 lg:py-[clamp(76px,6.5vw,100px)]">
     <div aria-hidden="true" className="template-technical-orbit absolute left-1/2 top-1/2 h-[min(78vw,980px)] w-[min(78vw,980px)] -translate-x-1/2 -translate-y-1/2 rounded-full" />
     <div className="relative mx-auto w-full max-w-[1240px] text-center">
-      <h2 id={`${section.id}-title`} className="mx-auto m-0 max-w-[980px] font-disp text-[clamp(44px,7vw,104px)] font-extrabold leading-[0.92] tracking-[-0.055em] text-white">{section.title}</h2>
+      <h2 id={`${section.id}-title`} className="mx-auto m-0 max-w-[980px] font-disp text-[clamp(42px,5.8vw,82px)] font-extrabold leading-[0.94] tracking-[-0.05em] text-white">{section.title}</h2>
       <p className="m-0 mt-5 font-body text-[clamp(18px,1.7vw,25px)] font-medium tracking-[-0.025em] text-white/74">{section.subtitle}</p>
-      {section.paragraphs.map((paragraph) => <p key={paragraph} className="mx-auto mb-0 mt-5 max-w-[620px] font-body text-[15px] leading-[1.7] text-white/48">{paragraph}</p>)}
-      <div className="mx-auto mt-12 grid max-w-[1100px] grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 lg:grid-cols-5">
-        {section.responsibilities.map((responsibility, index) => (
-          <div key={responsibility} className="template-technical-pill flex min-h-[74px] items-center justify-center rounded-[18px] px-3 py-4" style={{ animationDelay: `${index * -0.47}s` }}>
-            <span className="font-body text-[11px] font-medium leading-[1.35] text-white/68 sm:text-[12px]">{responsibility}</span>
+      {section.paragraphs.map((paragraph) => <p key={paragraph} className="mx-auto mb-0 mt-6 max-w-[760px] font-body text-[15px] leading-[1.72] text-white/58">{paragraph}</p>)}
+      <div className="mx-auto mt-10 grid max-w-[980px] grid-cols-2 gap-px overflow-hidden rounded-[18px] border border-white/9 bg-white/9 text-left sm:grid-cols-3">
+        {section.responsibilities.map((responsibility) => (
+          <div key={responsibility} className="flex min-h-[62px] items-center bg-[#171A38]/90 px-4 py-3.5">
+            <span className="mr-3 h-1.5 w-1.5 shrink-0 rounded-full bg-[#BCA0E7]/70" />
+            <span className="font-body text-[11px] font-medium leading-[1.35] text-white/62 sm:text-[12px]">{responsibility}</span>
           </div>
         ))}
       </div>
@@ -751,106 +904,58 @@ const TechnicalImplementationSection: React.FC<{
 
 const ImpactSection: React.FC<{ section: TemplateManagerCaseStudyNarrative['impact'] }> = ({ section }) => {
   const sectionRef = useRef<HTMLElement>(null);
-  const metricRefs = useRef<Array<HTMLParagraphElement | null>>([]);
+  const usersMetricRef = useRef<HTMLParagraphElement>(null);
 
   useGSAPContext(() => {
-    const sectionElement = sectionRef.current;
-    const metricElements = metricRefs.current.filter(
-      (element): element is HTMLParagraphElement => Boolean(element)
-    );
-    if (!sectionElement || metricElements.length < 3) return undefined;
-
-    const zeroMetric = metricElements[0];
-    const oneMetric = metricElements[1];
-    const hundredsMetric = metricElements[2];
-    const oneCounter = { value: 0 };
-    const hundredsCounter = { value: 0 };
-
-    const resetMetrics = () => {
-      zeroMetric.textContent = '0';
-      oneMetric.textContent = '0';
-      hundredsMetric.textContent = '0s';
-      sectionElement.dataset.counterState = 'idle';
-      gsap.set(metricElements, { scale: 1, color: 'rgba(255,255,255,1)' });
-    };
-
-    const showFinalMetrics = () => {
-      zeroMetric.textContent = '0';
-      oneMetric.textContent = '1';
-      hundredsMetric.textContent = '100s';
-      sectionElement.dataset.counterState = 'complete';
-    };
+    const usersMetric = usersMetricRef.current;
+    if (!usersMetric) return undefined;
 
     if (window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) {
-      showFinalMetrics();
+      usersMetric.textContent = '100';
       return undefined;
     }
 
-    resetMetrics();
-    const timeline = gsap.timeline({
-      paused: true,
-      defaults: { ease: 'power2.out' },
-      scrollTrigger: {
-        trigger: sectionElement,
-        start: 'top 72%',
-        end: 'bottom 22%',
-        toggleActions: 'restart none restart reset',
-        onLeaveBack: resetMetrics,
-      },
-      onStart: () => {
-        oneCounter.value = 0;
-        hundredsCounter.value = 0;
-        sectionElement.dataset.counterState = 'counting';
+    const counter = { value: 0 };
+    usersMetric.textContent = '0';
+    gsap.to(counter, {
+      value: 100,
+      duration: 1.15,
+      ease: 'power1.out',
+      onUpdate: () => {
+        usersMetric.textContent = String(Math.round(counter.value));
       },
       onComplete: () => {
-        sectionElement.dataset.counterState = 'complete';
+        usersMetric.textContent = '100';
+      },
+      scrollTrigger: {
+        trigger: usersMetric,
+        start: 'top 82%',
+        once: true,
       },
     });
-
-    timeline
-      .to(zeroMetric, { scale: 1.04, duration: 0.22, yoyo: true, repeat: 1 })
-      .to(oneCounter, {
-        value: 1,
-        duration: 0.8,
-        ease: 'power2.inOut',
-        onUpdate: () => {
-          oneMetric.textContent = String(Math.round(oneCounter.value));
-        },
-      }, '+=0.12')
-      .fromTo(oneMetric, { scale: 0.92 }, { scale: 1, duration: 0.35 }, '<')
-      .to(hundredsCounter, {
-        value: 100,
-        duration: 1.55,
-        ease: 'power3.out',
-        onUpdate: () => {
-          hundredsMetric.textContent = `${Math.round(hundredsCounter.value)}s`;
-        },
-      }, '+=0.18')
-      .fromTo(hundredsMetric, { scale: 0.92 }, { scale: 1, duration: 0.5 }, '<');
 
     return undefined;
   }, { scope: sectionRef });
 
   return (
-  <section ref={sectionRef} id={section.id} aria-labelledby={`${section.id}-title`} data-case-study-section={section.id} data-counter-state="idle" data-testid="case-study-section" className="relative flex min-h-screen min-h-[100svh] scroll-mt-[152px] items-center overflow-hidden border-t border-white/[0.055] px-6 py-20 sm:scroll-mt-24 sm:px-10">
+  <section ref={sectionRef} id={section.id} aria-labelledby={`${section.id}-title`} data-case-study-section={section.id} data-testid="case-study-section" className="relative flex scroll-mt-[152px] items-center overflow-hidden border-t border-white/[0.055] px-6 py-16 sm:scroll-mt-24 sm:px-10 sm:py-20 lg:py-[clamp(76px,6.5vw,100px)]">
     <div aria-hidden="true" className="absolute left-1/2 top-[24%] h-[380px] w-[min(90vw,920px)] -translate-x-1/2 rounded-full bg-[#9F78D7]/15 blur-[100px]" />
     <div className="relative mx-auto w-full max-w-[1300px] text-center">
-      <h2 id={`${section.id}-title`} className="m-0 font-disp text-[clamp(48px,7vw,96px)] font-extrabold leading-none tracking-[-0.05em] text-white">{section.title}</h2>
-      <div className="mx-auto mt-10 grid max-w-[960px] grid-cols-3 gap-4 sm:mt-14">
+      <h2 id={`${section.id}-title`} className="m-0 font-disp text-[clamp(48px,6vw,86px)] font-extrabold leading-none tracking-[-0.05em] text-white">{section.title}</h2>
+      <div className="mx-auto mt-10 grid max-w-[1080px] gap-4 sm:mt-14 sm:grid-cols-3">
         {section.metrics.map((metric, index) => (
-          <div key={metric.label} className="border-l border-white/10 px-2 first:border-l-0 sm:px-6">
-            <p ref={(element) => { metricRefs.current[index] = element; }} data-impact-metric={index} className="m-0 font-disp text-[clamp(42px,7vw,96px)] font-extrabold leading-none tracking-[-0.06em] text-white">{index === 2 ? '0s' : '0'}</p>
-            <p className="mx-auto mb-0 mt-3 max-w-[150px] font-body text-[9px] uppercase leading-[1.4] tracking-[0.12em] text-white/38 sm:text-[11px]">{metric.label}</p>
+          <div key={metric.label} className="border-t border-white/10 px-3 pt-5 sm:border-l sm:border-t-0 sm:px-6 sm:pt-0 sm:first:border-l-0">
+            <p ref={index === 1 ? usersMetricRef : undefined} data-impact-metric={index} className={`m-0 font-disp font-extrabold leading-none tracking-[-0.055em] text-white ${metric.value.length > 5 ? 'text-[clamp(31px,4vw,58px)]' : 'text-[clamp(48px,6vw,82px)]'}`}>{metric.value}</p>
+            <p className="mx-auto mb-0 mt-4 max-w-[230px] font-body text-[12px] font-medium leading-[1.5] text-white/58 sm:text-[13px]">{metric.label}</p>
           </div>
         ))}
       </div>
-      <h3 className="m-0 mt-12 font-disp text-[clamp(25px,3vw,40px)] font-bold tracking-[-0.035em] text-white/92 sm:mt-16">{section.outcomeTitle}</h3>
+      <h3 className="m-0 mt-12 font-disp text-[clamp(25px,3vw,40px)] font-bold tracking-[-0.035em] text-white/92 sm:mt-14">{section.outcomeTitle}</h3>
       <div className="mt-7 grid gap-3 text-left md:grid-cols-3 md:gap-4">
-        {section.outcomes.map((outcome, index) => (
+        {section.outcomes.map((outcome) => (
           <article key={outcome.title} className="template-outcome-card relative overflow-hidden rounded-[20px] p-5 sm:p-6">
-            <span className="font-mono text-[8px] text-white/26">0{index + 1}</span>
-            <h4 className="mb-0 mt-5 font-disp text-[21px] font-bold tracking-[-0.025em] text-white/86">{outcome.title}</h4>
-            <p className="mb-0 mt-3 font-body text-[13px] leading-[1.65] text-white/48">{outcome.description}</p>
+            <h4 className="m-0 font-disp text-[21px] font-bold tracking-[-0.025em] text-white/86">{outcome.title}</h4>
+            <p className="mb-0 mt-3 font-body text-[13px] leading-[1.65] text-white/56">{outcome.description}</p>
           </article>
         ))}
       </div>
@@ -860,18 +965,20 @@ const ImpactSection: React.FC<{ section: TemplateManagerCaseStudyNarrative['impa
 };
 
 const ReflectionSection: React.FC<{ section: TemplateManagerCaseStudyNarrative['reflection'] }> = ({ section }) => (
-  <section id={section.id} aria-labelledby={`${section.id}-title`} data-case-study-section={section.id} data-testid="case-study-section" className="template-reflection-section relative flex min-h-screen min-h-[100svh] scroll-mt-[152px] items-center overflow-hidden border-t border-white/[0.055] px-6 py-20 sm:scroll-mt-24 sm:px-10">
-    <div aria-hidden="true" className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 whitespace-nowrap font-disp text-[clamp(110px,20vw,330px)] font-extrabold leading-none tracking-[-0.075em] text-white/[0.028]">Reflection</div>
+  <section id={section.id} aria-labelledby={`${section.id}-title`} data-case-study-section={section.id} data-testid="case-study-section" className="template-reflection-section relative flex scroll-mt-[152px] items-center overflow-hidden border-t border-white/[0.055] px-6 py-20 sm:scroll-mt-24 sm:px-10 sm:py-24 lg:py-[clamp(84px,7vw,112px)]">
+    <div aria-hidden="true" className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 whitespace-nowrap font-disp text-[clamp(96px,17vw,260px)] font-extrabold leading-none tracking-[-0.065em] text-white/[0.025]">Reflection</div>
     <div className="relative mx-auto max-w-[1120px] text-center">
-      <h2 id={`${section.id}-title`} className="m-0 font-disp text-[clamp(64px,12vw,178px)] font-extrabold leading-[0.82] tracking-[-0.07em] text-white">{section.title}</h2>
-      <p className="mx-auto mb-0 mt-10 max-w-[900px] font-body text-[clamp(18px,2.05vw,30px)] font-normal leading-[1.52] tracking-[-0.025em] text-white/68">{section.body}</p>
+      <h2 id={`${section.id}-title`} className="m-0 font-disp text-[clamp(54px,9vw,126px)] font-extrabold leading-[0.9] tracking-[-0.06em] text-white">{section.title}</h2>
+      <div className="mx-auto mt-8 max-w-[900px] space-y-5">
+        {section.body.map((paragraph, index) => <p key={paragraph} className={`m-0 font-body font-normal tracking-[-0.025em] ${index === 0 ? 'text-[clamp(18px,1.8vw,26px)] leading-[1.55] text-white/66' : 'text-[clamp(17px,1.55vw,22px)] font-medium leading-[1.55] text-white/84'}`}>{paragraph}</p>)}
+      </div>
       <LinkToCaseStudies />
     </div>
   </section>
 );
 
 const LinkToCaseStudies: React.FC = () => (
-  <Link to="/case-studies" className="mt-12 inline-flex rounded-full border border-white/13 bg-white/[0.055] px-5 py-3 font-body text-[11px] font-medium text-white/62 no-underline backdrop-blur-md transition hover:border-white/25 hover:text-white">Back to case studies ↗</Link>
+  <Link to="/case-studies" className="mt-10 inline-flex rounded-full border border-white/13 bg-white/[0.055] px-5 py-3 font-body text-[11px] font-medium text-white/62 no-underline backdrop-blur-md transition hover:border-white/25 hover:text-white">Back to case studies ↗</Link>
 );
 
 interface TemplateManagerStoryProps {
@@ -880,14 +987,21 @@ interface TemplateManagerStoryProps {
 
 const TemplateManagerStory: React.FC<TemplateManagerStoryProps> = ({ narrative }) => (
   <>
-    <StorySection section={narrative.opportunity} visual={<OldEmailClientVisual />} />
+    <StorySection section={narrative.opportunity} visual={<OldEmailClientVisual />}>
+      {narrative.opportunity.paragraphs.map((paragraph) => <p key={paragraph} className="m-0">{paragraph}</p>)}
+      <div className="pt-2">
+        <h3 className="m-0 font-body text-[15px] font-semibold tracking-[-0.015em] text-white/84">Design challenge</h3>
+        <p className="mb-0 mt-3 border-l border-[#C5A8EE]/45 pl-4 font-body text-[15px] font-medium leading-[1.65] text-white/82">{narrative.opportunity.designChallenge}</p>
+      </div>
+    </StorySection>
 
-    <StorySection section={narrative.workflow} visual={<WorkflowTemplateListVisual />} visualSide="left">
+    <StorySection section={narrative.workflow} visual={<RolePermissionModelVisual />} visualSide="left">
+      <p className="m-0 font-disp text-[clamp(21px,2vw,28px)] font-bold leading-[1.2] tracking-[-0.03em] text-white/90">{narrative.workflow.tension}</p>
       {narrative.workflow.paragraphs.map((paragraph) => <p key={paragraph} className="m-0">{paragraph}</p>)}
       <div className="grid gap-4 pt-1 sm:grid-cols-2">
         {narrative.workflow.roles.map((role) => (
           <div key={role.title} className="rounded-[16px] border border-white/9 bg-white/[0.035] p-4">
-            <p className="m-0 font-body text-[11px] font-semibold uppercase tracking-[0.1em] text-white/84">{role.title}</p>
+            <h3 className="m-0 font-body text-[14px] font-semibold tracking-[-0.015em] text-white/84">{role.title}</h3>
             <ul className="mb-0 mt-3 space-y-2 p-0">
               {role.responsibilities.map((responsibility) => <li key={responsibility} className="flex list-none gap-2 text-[13px] leading-[1.45] text-white/54"><span className="mt-[7px] h-1 w-1 shrink-0 rounded-full bg-[#C5A8EE]" />{responsibility}</li>)}
             </ul>
@@ -897,14 +1011,21 @@ const TemplateManagerStory: React.FC<TemplateManagerStoryProps> = ({ narrative }
       <p className="m-0 border-l border-[#C5A8EE]/40 pl-4 text-white/78">{narrative.workflow.conclusion}</p>
     </StorySection>
 
+    <DesignDecisionsSection section={narrative.decisions} />
     <StorySection section={narrative.organization} visual={<CategoryAccordionVisual />} />
     <StorySection section={narrative.editing} visual={<EditorExperienceVisual />} visualSide="left" />
     <StorySection section={narrative.sharing} visual={<ShareFundraisersVisual />} />
     <StorySection section={narrative.discovery} visual={<TemplateFiltersVisual />} visualSide="left">
       {narrative.discovery.paragraphs.map((paragraph) => <p key={paragraph} className="m-0">{paragraph}</p>)}
-      <ul className="grid gap-x-6 gap-y-2 p-0 sm:grid-cols-2">
-        {narrative.discovery.filters.map((filter) => <li key={filter} className="flex list-none gap-2 text-[13px] leading-[1.5] text-white/58"><span className="mt-[7px] h-1 w-1 shrink-0 rounded-full bg-[#C5A8EE]" />{filter}</li>)}
-      </ul>
+      <div className="grid grid-cols-2 gap-3 pt-1">
+        {narrative.discovery.navigationPaths.map((path) => (
+          <div key={path.label} className="rounded-[14px] border border-white/9 bg-white/[0.03] p-4">
+            <h3 className="m-0 font-body text-[13px] font-semibold text-white/68">{path.label}</h3>
+            <p className="m-0 mt-2 font-body text-[13px] font-medium text-white/72">→ {path.value}</p>
+          </div>
+        ))}
+      </div>
+      <p className="m-0 font-body text-[12px] leading-[1.65] text-white/45">Supported by {narrative.discovery.filters.join(', ').replace(/, ([^,]*)$/, ', and $1').toLowerCase()}.</p>
     </StorySection>
     <StorySection section={narrative.errors} visual={<DefaultConflictVisual />} />
     <TechnicalImplementationSection section={narrative.implementation} />

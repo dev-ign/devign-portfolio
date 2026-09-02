@@ -21,22 +21,44 @@ export interface CaseStudyNarrativeSection {
   title: string;
   subtitle: string;
   paragraphs: string[];
+  principle?: string;
 }
 
 export interface TemplateManagerCaseStudyNarrative {
   hero: {
     title: string;
     subtitle: string;
+    summary: Array<{ label: string; value: string }>;
+    confidentiality: string;
   };
-  opportunity: CaseStudyNarrativeSection;
+  opportunity: CaseStudyNarrativeSection & { designChallenge: string };
   workflow: CaseStudyNarrativeSection & {
+    tension: string;
     roles: Array<{ title: string; responsibilities: string[] }>;
     conclusion: string;
+  };
+  decisions: {
+    id: string;
+    title: string;
+    subtitle: string;
+    items: Array<{
+      title: string;
+      initialHeading: string;
+      explored: string;
+      problemHeading: string;
+      problem: string;
+      finalHeading: string;
+      final: string;
+      principle: string;
+    }>;
   };
   organization: CaseStudyNarrativeSection;
   editing: CaseStudyNarrativeSection;
   sharing: CaseStudyNarrativeSection;
-  discovery: CaseStudyNarrativeSection & { filters: string[] };
+  discovery: CaseStudyNarrativeSection & {
+    filters: string[];
+    navigationPaths: Array<{ label: string; value: string }>;
+  };
   errors: CaseStudyNarrativeSection;
   implementation: CaseStudyNarrativeSection & { responsibilities: string[] };
   impact: {
@@ -49,7 +71,7 @@ export interface TemplateManagerCaseStudyNarrative {
   reflection: {
     id: string;
     title: string;
-    body: string;
+    body: string[];
   };
 }
 
@@ -100,25 +122,43 @@ export const projects: Project[] = [
         hero: {
           title: 'Templates Manager',
           subtitle:
-            'Empowering fundraising teams to create, organize, and share email templates through a self-service templating platform.',
+            'Turning a support-dependent content workflow into a scalable self-service system for fundraising teams.',
+          summary: [
+            { label: 'Role', value: 'Lead Product Designer & Frontend Engineer' },
+            {
+              label: 'Responsibilities',
+              value: 'Product discovery, UX strategy, interaction design, prototyping, UI design, usability testing, frontend implementation',
+            },
+            { label: 'Team', value: 'Product Manager, 4 Engineers, sole Product Designer' },
+            { label: 'Platform', value: 'B2B SaaS / React / Material UI / Django REST Framework' },
+            { label: 'Users', value: 'Fundraising managers, gift officers, fundraisers' },
+            {
+              label: 'Outcome',
+              value: 'Converted support-managed template workflows into a scalable self-service experience.',
+            },
+          ],
+          confidentiality:
+            'The original product is protected by NDA. Interface examples in this case study have been recreated to represent the underlying workflows, interaction patterns, and design decisions without exposing proprietary information.',
         },
         opportunity: {
           id: 'opportunity',
           title: 'Opportunity',
-          subtitle: 'From Support Tickets to Self-Service',
+          subtitle: 'From support tickets to self-service',
           paragraphs: [
-            'Fundraising teams relied on support engineers whenever they needed to create or update email templates. Even small content changes often required editing HTML, creating unnecessary delays and making campaign management difficult for non-technical users.',
-            'The opportunity was to design a system that gave users ownership over their templates while maintaining formatting consistency across the organization.',
+            'Routine template management had become an operational bottleneck. Fundraising teams could not independently create or modify templates, so even basic content updates moved through support engineers.',
+            'The existing workflow exposed raw HTML to non-technical users, creating risk for email integrity. At the same time, organizations still needed control over messaging consistency, ownership, and who could create, share, or change content.',
           ],
+          designChallenge:
+            'How might we give fundraising teams control over creating, editing, organizing, and sharing templates without sacrificing messaging consistency, permissions, or email integrity?',
         },
         workflow: {
           id: 'workflow',
           title: 'Understanding the Workflow',
-          subtitle: 'Designing Around Real User Roles',
+          subtitle: 'Designing around real user roles',
           paragraphs: [
-            'Rather than designing a simple CRUD interface, I first mapped how templates moved throughout an organization.',
-            'The platform needed to support two distinct user types:',
+            'The core problem was not simply deciding who could edit a template. I mapped how organizational governance and individual ownership could coexist without making permissions feel complicated.',
           ],
+          tension: 'Managers needed control. Fundraisers needed flexibility.',
           roles: [
             {
               title: 'Managers',
@@ -141,43 +181,76 @@ export const projects: Project[] = [
           ],
           conclusion: 'This permission model became the foundation for the entire experience.',
         },
+        decisions: {
+          id: 'decisions',
+          title: 'Key Design Decisions',
+          subtitle: 'Choosing the system, not just the screens',
+          items: [
+            {
+              title: 'One unified library',
+              initialHeading: 'Separate libraries',
+              explored: 'Separate areas for personal, shared, and assigned templates.',
+              problemHeading: 'Why it didn’t work',
+              problem:
+                'That model fragmented discovery and forced users to understand where a template originated before they could find it.',
+              finalHeading: 'Unified library',
+              final:
+                'One library, with ownership and access communicated contextually through labels, filters, permissions, and categories.',
+              principle:
+                'Let users find templates based on what they need to accomplish, not where the template came from.',
+            },
+            {
+              title: 'Structured editing instead of raw HTML',
+              initialHeading: 'Raw HTML or a custom editor',
+              explored: 'Continue exposing HTML, or build a completely custom editor.',
+              problemHeading: 'Why neither option worked',
+              problem:
+                'Raw HTML was unsafe for non-technical users, while a custom editor would add implementation cost without improving the core workflow.',
+              finalHeading: 'Structured editing',
+              final:
+                'Customize TinyMCE to provide familiar formatting controls while protecting the underlying email structure.',
+              principle:
+                'Balance user confidence, formatting control, implementation feasibility, and email integrity.',
+            },
+          ],
+        },
         organization: {
           id: 'organization',
           title: 'Organizing a Growing Library',
-          subtitle: 'Making Large Template Libraries Easy to Navigate',
+          subtitle: 'Making large template libraries easy to navigate',
           paragraphs: [
-            'As organizations grew, template collections became difficult to manage.',
-            'I designed a category-based navigation system using collapsible accordions that allowed users to quickly browse templates by type while reducing visual clutter.',
-            'The interface made it easy to scan, locate, and manage dozens of templates without overwhelming the user.',
+            'Large template libraries needed hierarchy, but a full folder tree would introduce unnecessary depth and management overhead.',
+            'I used collapsible categories to keep the structure visible, make template names easy to scan, and reduce visual noise as libraries grew.',
           ],
+          principle: 'Use the lightest hierarchy that keeps a growing content library understandable.',
         },
         editing: {
           id: 'editing',
           title: 'Safe Editing Without HTML',
-          subtitle: 'A Familiar Editing Experience',
+          subtitle: 'A familiar editing experience',
           paragraphs: [
-            'One of the biggest usability challenges was removing the need for users to edit raw HTML.',
-            'I integrated and customized TinyMCE to provide a structured editing experience where users could update subjects, body content, formatting, links, and images while preserving the underlying email structure.',
-            'This allowed non-technical users to confidently create professional emails without breaking layouts.',
+            'I integrated and customized TinyMCE so non-technical users could update subjects, body content, formatting, links, and images through familiar controls.',
+            'The editing surface deliberately constrained what could change, preserving the underlying email structure and giving users confidence to work independently.',
           ],
+          principle:
+            'Users gained editing flexibility without gaining the ability to accidentally break the underlying email structure.',
         },
         sharing: {
           id: 'sharing',
           title: 'Sharing Across Teams',
-          subtitle: 'Collaboration Built Into the Workflow',
+          subtitle: 'Collaboration built into the workflow',
           paragraphs: [
-            'Templates were no longer isolated to individual users.',
-            'Managers could create shared templates and assign them directly to their fundraising teams, ensuring everyone started from approved messaging while still allowing fundraisers to maintain their own personal library.',
-            'This reduced duplicated work and created a more consistent communication experience across organizations.',
+            'Shared templates were not simply copied files. They represented organizational content that managers could distribute while fundraisers still maintained their own personal libraries.',
+            'The assignment model let teams begin with approved messaging without removing the individual flexibility fundraisers needed in their day-to-day work.',
           ],
+          principle: 'Central consistency and individual flexibility had to coexist in the same workflow.',
         },
         discovery: {
           id: 'discovery',
           title: 'Find the Right Template, Fast',
-          subtitle: 'Easy Template Filters',
+          subtitle: 'Browse when exploring, search when the target is known',
           paragraphs: [
-            'As template libraries grew, finding the right email became just as important as creating one. I designed a flexible search and filtering experience that helped users quickly narrow large collections based on their role and workflow.',
-            'Depending on permissions, users could filter templates by:',
+            'As libraries grew, navigation could not rely on hierarchy alone. Search and filters created a second path for users who already knew what they were looking for.',
           ],
           filters: [
             'Assigned fundraiser (Managers)',
@@ -187,25 +260,31 @@ export const projects: Project[] = [
             'Template categories',
             'Search by template name or keywords',
           ],
+          navigationPaths: [
+            { label: 'Browse', value: 'Categories' },
+            { label: 'Find', value: 'Search + filters' },
+          ],
         },
         errors: {
           id: 'errors',
           title: 'Preventing User Errors',
-          subtitle: 'Designing for Edge Cases',
+          subtitle: 'Designing for edge cases',
           paragraphs: [
-            "Managing default templates introduced scenarios where multiple templates could accidentally be marked as the organization's default.",
-            'To prevent conflicts, I designed validation flows that detected duplicate defaults before saving changes and guided users toward a valid configuration.',
-            'Instead of simply displaying an error after the fact, the interface helped users make the correct decision during the workflow.',
+            'Default templates introduced a business-rule conflict: more than one template could unintentionally compete for the same organization-wide default state.',
+            'The validation flow checked the rule before committing changes, explained the conflict clearly, and directed the manager to the existing default so they could resolve it in context.',
           ],
+          principle: 'Prevent invalid configurations before users create them.',
         },
         implementation: {
           id: 'implementation',
           title: 'Technical Implementation',
-          subtitle: 'From Design to Production',
-          paragraphs: ['I designed and implemented the experience end-to-end.'],
+          subtitle: 'From design to production',
+          paragraphs: [
+            'Because I also owned frontend implementation, I was able to carry the interaction model directly into production and resolve permission, state-management, editor, and API constraints without losing the intended UX.',
+          ],
           responsibilities: [
             'UX flows',
-            'UI design',
+            'Interaction design',
             'React architecture',
             'Django REST API integration',
             'CRUD operations',
@@ -213,41 +292,42 @@ export const projects: Project[] = [
             'Permission-based rendering',
             'State management',
             'Template preview',
-            'API integration',
           ],
         },
         impact: {
           id: 'impact',
-          title: 'Impact',
+          title: 'Outcome',
           metrics: [
-            { value: '0', label: 'HTML edits required' },
-            { value: '1', label: 'shared source of truth' },
-            { value: '100s', label: 'of users supported' },
+            { value: '0', label: 'Raw HTML required for routine editing' },
+            { value: '100', label: 'Users supported' },
+            { value: 'Self-service', label: 'Creation and updates moved into the product' },
           ],
-          outcomeTitle: 'Outcome',
+          outcomeTitle: 'What changed',
           outcomes: [
             {
               title: 'Self Service',
               description:
-                'Fundraisers could independently create, edit, and organize templates without relying on support teams.',
+                'Fundraisers could independently create, edit, organize, and manage templates.',
             },
             {
               title: 'Consistency',
               description:
-                'Shared templates helped organizations maintain consistent messaging across fundraising teams.',
+                'Managers could distribute approved messaging and maintain standards across teams.',
             },
             {
               title: 'Scalability',
               description:
-                'A structured permission system and organized template library supported growing organizations with hundreds of users.',
+                'The permission and organization model supported larger teams, growing libraries, and different user roles.',
             },
           ],
         },
         reflection: {
           id: 'reflection',
           title: 'Reflection',
-          body:
-            'Template Manager challenged me to design beyond individual screens and think about how content, permissions, collaboration, and scalability fit together as one cohesive product. It reinforced the importance of designing systems that empower users while simplifying operational workflows.',
+          body: [
+            'The biggest lesson from Templates Manager was that seemingly simple content tools become systems problems at enterprise scale. The editor itself was only one part of the experience; the harder challenge was determining who could create, own, share, modify, and standardize content across an organization.',
+            'The project shifted my approach from designing individual interfaces toward designing relationships between roles, permissions, content, and workflows.',
+          ],
         },
       },
       sections: [

@@ -1,0 +1,100 @@
+[
+  {
+    "viewport": {
+      "name": "desktop-1440x900",
+      "width": 1440,
+      "height": 900
+    },
+    "contextual": true,
+    "navbarHeight": 60,
+    "withinViewport": true,
+    "noHorizontalOverflow": true,
+    "focusRestored": true,
+    "projectsTitleVisible": true,
+    "processIsCurrent": true
+  },
+  {
+    "viewport": {
+      "name": "desktop-1280x800",
+      "width": 1280,
+      "height": 800
+    },
+    "contextual": true,
+    "navbarHeight": 60,
+    "withinViewport": true,
+    "noHorizontalOverflow": true,
+    "focusRestored": true,
+    "projectsTitleVisible": true,
+    "processIsCurrent": true
+  },
+  {
+    "viewport": {
+      "name": "laptop-1024x768",
+      "width": 1024,
+      "height": 768
+    },
+    "contextual": true,
+    "navbarHeight": 60,
+    "withinViewport": true,
+    "noHorizontalOverflow": true,
+    "focusRestored": true,
+    "projectsTitleVisible": true,
+    "processIsCurrent": true
+  },
+  {
+    "viewport": {
+      "name": "tablet-768x900",
+      "width": 768,
+      "height": 900
+    },
+    "contextual": true,
+    "navbarHeight": 60,
+    "withinViewport": true,
+    "noHorizontalOverflow": true,
+    "focusRestored": true,
+    "projectsTitleVisible": true,
+    "processIsCurrent": true
+  },
+  {
+    "viewport": {
+      "name": "desktop-200-percent-zoom-equivalent",
+      "width": 720,
+      "height": 450
+    },
+    "contextual": true,
+    "navbarHeight": 60,
+    "withinViewport": true,
+    "noHorizontalOverflow": true,
+    "focusRestored": true,
+    "projectsTitleVisible": true,
+    "processIsCurrent": true
+  },
+  {
+    "viewport": {
+      "name": "mobile-390x844",
+      "width": 390,
+      "height": 844
+    },
+    "contextual": true,
+    "navbarHeight": 60,
+    "withinViewport": true,
+    "noHorizontalOverflow": true,
+    "focusRestored": true,
+    "projectsTitleVisible": true,
+    "processIsCurrent": true
+  },
+  {
+    "viewport": {
+      "name": "mobile-375x667",
+      "width": 375,
+      "height": 667
+    },
+    "contextual": true,
+    "navbarHeight": 60,
+    "withinViewport": true,
+    "noHorizontalOverflow": true,
+    "focusRestored": true,
+    "projectsTitleVisible": true,
+    "processIsCurrent": true
+  }
+]
