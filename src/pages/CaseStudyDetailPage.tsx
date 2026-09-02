@@ -16,13 +16,14 @@ const templateManagerSectionLinks: CaseStudySectionLink[] = [
   { id: 'hero', label: 'Hero', menuLabel: 'Hero' },
   { id: 'opportunity', label: 'Opportunity', menuLabel: 'Opportunity' },
   { id: 'workflow', label: 'Workflow', menuLabel: 'Workflow' },
+  { id: 'decisions', label: 'Decisions', menuLabel: 'Decisions' },
   { id: 'organization', label: 'Organization', menuLabel: 'Organization' },
-  { id: 'discovery', label: 'Discovery', menuLabel: 'Discovery' },
   { id: 'editing', label: 'Editor', menuLabel: 'Editor' },
   { id: 'sharing', label: 'Collaboration', menuLabel: 'Collaboration' },
+  { id: 'discovery', label: 'Discovery', menuLabel: 'Discovery' },
   { id: 'errors', label: 'Validation', menuLabel: 'Validation' },
   { id: 'implementation', label: 'Implementation', menuLabel: 'Implementation' },
-  { id: 'impact', label: 'Impact', menuLabel: 'Impact' },
+  { id: 'impact', label: 'Outcome', menuLabel: 'Outcome' },
   { id: 'reflection', label: 'Reflection', menuLabel: 'Reflection' },
 ];
 
@@ -138,9 +139,9 @@ const CaseStudyDetailPage: React.FC = () => {
             id="hero"
             aria-labelledby="template-manager-title"
             data-case-study-section="hero"
-            className="relative flex min-h-screen min-h-dvh scroll-mt-[152px] items-center justify-center px-6 py-24 text-center sm:scroll-mt-24 sm:px-10"
+            className="relative flex min-h-screen min-h-dvh scroll-mt-[152px] items-center justify-center px-6 py-20 text-center sm:scroll-mt-24 sm:px-10 sm:py-24"
           >
-            <div className="relative w-full max-w-[820px]">
+            <div className="relative w-full max-w-[1040px]">
               <div className="relative z-10">
                 <h1
                   id="template-manager-title"
@@ -151,8 +152,24 @@ const CaseStudyDetailPage: React.FC = () => {
                 <p className="mx-auto mb-0 mt-5 max-w-[760px] font-body text-[clamp(16px,2vw,20px)] font-normal leading-[1.6] tracking-[-0.015em] text-white/90">
                   {narrative?.hero.subtitle}
                 </p>
+
+                <dl data-testid="template-manager-project-summary" className="mx-auto mb-0 mt-8 grid max-w-[980px] gap-px overflow-hidden rounded-[18px] border border-white/10 bg-white/10 text-left shadow-[0_18px_55px_rgba(7,10,34,0.18)] backdrop-blur-[18px] sm:grid-cols-2 lg:grid-cols-3">
+                  {narrative?.hero.summary.map((item) => (
+                    <div key={item.label} className="bg-[#171B3A]/78 px-4 py-4 sm:px-5">
+                      <dt className="font-body text-[10px] font-semibold text-white/55">{item.label}</dt>
+                      <dd className="m-0 mt-2 font-body text-[10px] font-medium leading-[1.55] text-white/68 sm:text-[11px]">{item.value}</dd>
+                    </div>
+                  ))}
+                </dl>
+
+                <p className="mx-auto mb-0 mt-4 max-w-[900px] font-body text-[9px] leading-[1.55] text-white/45 sm:text-[10px]">
+                  <span className="font-medium text-white/58">Confidentiality note:</span>{' '}
+                  {narrative?.hero.confidentiality}
+                </p>
               </div>
-              <CaseStudySectionNavigation sections={templateManagerSectionLinks} />
+              <div className="relative z-20">
+                <CaseStudySectionNavigation sections={templateManagerSectionLinks} />
+              </div>
             </div>
           </section>
 

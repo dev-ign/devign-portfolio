@@ -1,0 +1,541 @@
+{
+  "viewports": [
+    {
+      "viewport": {
+        "name": "desktop-1440x900",
+        "width": 1440,
+        "height": 900
+      },
+      "forward": [
+        {
+          "id": "websites",
+          "activePanelCount": 1,
+          "activeNavCount": 1,
+          "chapter": 1,
+          "expectedChapter": 1,
+          "activeContentWithinStage": true,
+          "noHorizontalOverflow": true,
+          "serviceNavMetrics": {
+            "layerWidth": 600,
+            "leftClearance": 25,
+            "rightClearance": 25,
+            "balancedEdges": true,
+            "minimumGap": 8,
+            "activeClearanceLeft": 25,
+            "activeClearanceRight": 485,
+            "activeCapsuleCount": 1
+          }
+        },
+        {
+          "id": "web-applications",
+          "activePanelCount": 1,
+          "activeNavCount": 1,
+          "chapter": 2,
+          "expectedChapter": 2,
+          "activeContentWithinStage": true,
+          "noHorizontalOverflow": true,
+          "serviceNavMetrics": {
+            "layerWidth": 600,
+            "leftClearance": 25,
+            "rightClearance": 25,
+            "balancedEdges": true,
+            "minimumGap": 8,
+            "activeClearanceLeft": 123,
+            "activeClearanceRight": 336,
+            "activeCapsuleCount": 1
+          }
+        },
+        {
+          "id": "branding-marketing",
+          "activePanelCount": 1,
+          "activeNavCount": 1,
+          "chapter": 3,
+          "expectedChapter": 3,
+          "activeContentWithinStage": true,
+          "noHorizontalOverflow": true,
+          "serviceNavMetrics": {
+            "layerWidth": 600,
+            "leftClearance": 25,
+            "rightClearance": 25,
+            "balancedEdges": true,
+            "minimumGap": 8,
+            "activeClearanceLeft": 272,
+            "activeClearanceRight": 161,
+            "activeCapsuleCount": 1
+          }
+        },
+        {
+          "id": "motion-video",
+          "activePanelCount": 1,
+          "activeNavCount": 1,
+          "chapter": 4,
+          "expectedChapter": 4,
+          "activeContentWithinStage": true,
+          "noHorizontalOverflow": true,
+          "serviceNavMetrics": {
+            "layerWidth": 600,
+            "leftClearance": 25,
+            "rightClearance": 25,
+            "balancedEdges": true,
+            "minimumGap": 8,
+            "activeClearanceLeft": 447,
+            "activeClearanceRight": 25,
+            "activeCapsuleCount": 1
+          }
+        }
+      ],
+      "reverse": [
+        "motion-video",
+        "branding-marketing",
+        "web-applications",
+        "websites"
+      ],
+      "chapterLinkWorked": true,
+      "projectsTitleVisible": true,
+      "returnedToGeneral": true,
+      "pageErrors": []
+    },
+    {
+      "viewport": {
+        "name": "desktop-1280x800",
+        "width": 1280,
+        "height": 800
+      },
+      "forward": [
+        {
+          "id": "websites",
+          "activePanelCount": 1,
+          "activeNavCount": 1,
+          "chapter": 1,
+          "expectedChapter": 1,
+          "activeContentWithinStage": true,
+          "noHorizontalOverflow": true,
+          "serviceNavMetrics": {
+            "layerWidth": 600,
+            "leftClearance": 25,
+            "rightClearance": 25,
+            "balancedEdges": true,
+            "minimumGap": 8,
+            "activeClearanceLeft": 25,
+            "activeClearanceRight": 485,
+            "activeCapsuleCount": 1
+          }
+        },
+        {
+          "id": "web-applications",
+          "activePanelCount": 1,
+          "activeNavCount": 1,
+          "chapter": 2,
+          "expectedChapter": 2,
+          "activeContentWithinStage": true,
+          "noHorizontalOverflow": true,
+          "serviceNavMetrics": {
+            "layerWidth": 600,
+            "leftClearance": 25,
+            "rightClearance": 25,
+            "balancedEdges": true,
+            "minimumGap": 8,
+            "activeClearanceLeft": 123,
+            "activeClearanceRight": 336,
+            "activeCapsuleCount": 1
+          }
+        },
+        {
+          "id": "branding-marketing",
+          "activePanelCount": 1,
+          "activeNavCount": 1,
+          "chapter": 3,
+          "expectedChapter": 3,
+          "activeContentWithinStage": true,
+          "noHorizontalOverflow": true,
+          "serviceNavMetrics": {
+            "layerWidth": 600,
+            "leftClearance": 25,
+            "rightClearance": 25,
+            "balancedEdges": true,
+            "minimumGap": 8,
+            "activeClearanceLeft": 272,
+            "activeClearanceRight": 161,
+            "activeCapsuleCount": 1
+          }
+        },
+        {
+          "id": "motion-video",
+          "activePanelCount": 1,
+          "activeNavCount": 1,
+          "chapter": 4,
+          "expectedChapter": 4,
+          "activeContentWithinStage": true,
+          "noHorizontalOverflow": true,
+          "serviceNavMetrics": {
+            "layerWidth": 600,
+            "leftClearance": 25,
+            "rightClearance": 25,
+            "balancedEdges": true,
+            "minimumGap": 8,
+            "activeClearanceLeft": 447,
+            "activeClearanceRight": 25,
+            "activeCapsuleCount": 1
+          }
+        }
+      ],
+      "reverse": [
+        "motion-video",
+        "branding-marketing",
+        "web-applications",
+        "websites"
+      ],
+      "chapterLinkWorked": true,
+      "projectsTitleVisible": true,
+      "returnedToGeneral": true,
+      "pageErrors": []
+    },
+    {
+      "viewport": {
+        "name": "laptop-1024x768",
+        "width": 1024,
+        "height": 768
+      },
+      "forward": [
+        {
+          "id": "websites",
+          "activePanelCount": 1,
+          "activeNavCount": 1,
+          "chapter": 1,
+          "expectedChapter": 1,
+          "activeContentWithinStage": true,
+          "noHorizontalOverflow": true,
+          "serviceNavMetrics": {
+            "layerWidth": 600,
+            "leftClearance": 53,
+            "rightClearance": 53,
+            "balancedEdges": true,
+            "minimumGap": 8,
+            "activeClearanceLeft": 53,
+            "activeClearanceRight": 465,
+            "activeCapsuleCount": 1
+          }
+        },
+        {
+          "id": "web-applications",
+          "activePanelCount": 1,
+          "activeNavCount": 1,
+          "chapter": 2,
+          "expectedChapter": 2,
+          "activeContentWithinStage": true,
+          "noHorizontalOverflow": true,
+          "serviceNavMetrics": {
+            "layerWidth": 600,
+            "leftClearance": 53,
+            "rightClearance": 53,
+            "balancedEdges": true,
+            "minimumGap": 8,
+            "activeClearanceLeft": 143,
+            "activeClearanceRight": 331,
+            "activeCapsuleCount": 1
+          }
+        },
+        {
+          "id": "branding-marketing",
+          "activePanelCount": 1,
+          "activeNavCount": 1,
+          "chapter": 3,
+          "expectedChapter": 3,
+          "activeContentWithinStage": true,
+          "noHorizontalOverflow": true,
+          "serviceNavMetrics": {
+            "layerWidth": 600,
+            "leftClearance": 53,
+            "rightClearance": 53,
+            "balancedEdges": true,
+            "minimumGap": 8,
+            "activeClearanceLeft": 277,
+            "activeClearanceRight": 176,
+            "activeCapsuleCount": 1
+          }
+        },
+        {
+          "id": "motion-video",
+          "activePanelCount": 1,
+          "activeNavCount": 1,
+          "chapter": 4,
+          "expectedChapter": 4,
+          "activeContentWithinStage": true,
+          "noHorizontalOverflow": true,
+          "serviceNavMetrics": {
+            "layerWidth": 600,
+            "leftClearance": 53,
+            "rightClearance": 53,
+            "balancedEdges": true,
+            "minimumGap": 8,
+            "activeClearanceLeft": 433,
+            "activeClearanceRight": 53,
+            "activeCapsuleCount": 1
+          }
+        }
+      ],
+      "reverse": [
+        "motion-video",
+        "branding-marketing",
+        "web-applications",
+        "websites"
+      ],
+      "chapterLinkWorked": true,
+      "projectsTitleVisible": true,
+      "returnedToGeneral": true,
+      "pageErrors": []
+    },
+    {
+      "viewport": {
+        "name": "tablet-768x900",
+        "width": 768,
+        "height": 900
+      },
+      "forward": [
+        {
+          "id": "websites",
+          "activePanelCount": 1,
+          "activeNavCount": 1,
+          "chapter": 1,
+          "expectedChapter": 1,
+          "activeContentWithinStage": true,
+          "noHorizontalOverflow": true,
+          "serviceNavMetrics": null
+        },
+        {
+          "id": "web-applications",
+          "activePanelCount": 1,
+          "activeNavCount": 1,
+          "chapter": 2,
+          "expectedChapter": 2,
+          "activeContentWithinStage": true,
+          "noHorizontalOverflow": true,
+          "serviceNavMetrics": null
+        },
+        {
+          "id": "branding-marketing",
+          "activePanelCount": 1,
+          "activeNavCount": 1,
+          "chapter": 3,
+          "expectedChapter": 3,
+          "activeContentWithinStage": true,
+          "noHorizontalOverflow": true,
+          "serviceNavMetrics": null
+        },
+        {
+          "id": "motion-video",
+          "activePanelCount": 1,
+          "activeNavCount": 1,
+          "chapter": 4,
+          "expectedChapter": 4,
+          "activeContentWithinStage": true,
+          "noHorizontalOverflow": true,
+          "serviceNavMetrics": null
+        }
+      ],
+      "reverse": [
+        "motion-video",
+        "branding-marketing",
+        "web-applications",
+        "websites"
+      ],
+      "chapterLinkWorked": true,
+      "projectsTitleVisible": true,
+      "returnedToGeneral": true,
+      "pageErrors": []
+    },
+    {
+      "viewport": {
+        "name": "zoom-200-percent-equivalent",
+        "width": 720,
+        "height": 450
+      },
+      "forward": [
+        {
+          "id": "websites",
+          "activePanelCount": 1,
+          "activeNavCount": 1,
+          "chapter": 1,
+          "expectedChapter": 1,
+          "activeContentWithinStage": true,
+          "noHorizontalOverflow": true,
+          "serviceNavMetrics": null
+        },
+        {
+          "id": "web-applications",
+          "activePanelCount": 1,
+          "activeNavCount": 1,
+          "chapter": 2,
+          "expectedChapter": 2,
+          "activeContentWithinStage": true,
+          "noHorizontalOverflow": true,
+          "serviceNavMetrics": null
+        },
+        {
+          "id": "branding-marketing",
+          "activePanelCount": 1,
+          "activeNavCount": 1,
+          "chapter": 3,
+          "expectedChapter": 3,
+          "activeContentWithinStage": true,
+          "noHorizontalOverflow": true,
+          "serviceNavMetrics": null
+        },
+        {
+          "id": "motion-video",
+          "activePanelCount": 1,
+          "activeNavCount": 1,
+          "chapter": 4,
+          "expectedChapter": 4,
+          "activeContentWithinStage": true,
+          "noHorizontalOverflow": true,
+          "serviceNavMetrics": null
+        }
+      ],
+      "reverse": [
+        "motion-video",
+        "branding-marketing",
+        "web-applications",
+        "websites"
+      ],
+      "chapterLinkWorked": true,
+      "projectsTitleVisible": true,
+      "returnedToGeneral": true,
+      "pageErrors": []
+    },
+    {
+      "viewport": {
+        "name": "mobile-390x844",
+        "width": 390,
+        "height": 844
+      },
+      "forward": [
+        {
+          "id": "websites",
+          "activePanelCount": 1,
+          "activeNavCount": 1,
+          "chapter": 1,
+          "expectedChapter": 1,
+          "activeContentWithinStage": true,
+          "noHorizontalOverflow": true,
+          "serviceNavMetrics": null
+        },
+        {
+          "id": "web-applications",
+          "activePanelCount": 1,
+          "activeNavCount": 1,
+          "chapter": 2,
+          "expectedChapter": 2,
+          "activeContentWithinStage": true,
+          "noHorizontalOverflow": true,
+          "serviceNavMetrics": null
+        },
+        {
+          "id": "branding-marketing",
+          "activePanelCount": 1,
+          "activeNavCount": 1,
+          "chapter": 3,
+          "expectedChapter": 3,
+          "activeContentWithinStage": true,
+          "noHorizontalOverflow": true,
+          "serviceNavMetrics": null
+        },
+        {
+          "id": "motion-video",
+          "activePanelCount": 1,
+          "activeNavCount": 1,
+          "chapter": 4,
+          "expectedChapter": 4,
+          "activeContentWithinStage": true,
+          "noHorizontalOverflow": true,
+          "serviceNavMetrics": null
+        }
+      ],
+      "reverse": [
+        "motion-video",
+        "branding-marketing",
+        "web-applications",
+        "websites"
+      ],
+      "chapterLinkWorked": true,
+      "projectsTitleVisible": true,
+      "returnedToGeneral": true,
+      "pageErrors": []
+    },
+    {
+      "viewport": {
+        "name": "mobile-375x667",
+        "width": 375,
+        "height": 667
+      },
+      "forward": [
+        {
+          "id": "websites",
+          "activePanelCount": 1,
+          "activeNavCount": 1,
+          "chapter": 1,
+          "expectedChapter": 1,
+          "activeContentWithinStage": true,
+          "noHorizontalOverflow": true,
+          "serviceNavMetrics": null
+        },
+        {
+          "id": "web-applications",
+          "activePanelCount": 1,
+          "activeNavCount": 1,
+          "chapter": 2,
+          "expectedChapter": 2,
+          "activeContentWithinStage": true,
+          "noHorizontalOverflow": true,
+          "serviceNavMetrics": null
+        },
+        {
+          "id": "branding-marketing",
+          "activePanelCount": 1,
+          "activeNavCount": 1,
+          "chapter": 3,
+          "expectedChapter": 3,
+          "activeContentWithinStage": true,
+          "noHorizontalOverflow": true,
+          "serviceNavMetrics": null
+        },
+        {
+          "id": "motion-video",
+          "activePanelCount": 1,
+          "activeNavCount": 1,
+          "chapter": 4,
+          "expectedChapter": 4,
+          "activeContentWithinStage": true,
+          "noHorizontalOverflow": true,
+          "serviceNavMetrics": null
+        }
+      ],
+      "reverse": [
+        "motion-video",
+        "branding-marketing",
+        "web-applications",
+        "websites"
+      ],
+      "chapterLinkWorked": true,
+      "projectsTitleVisible": true,
+      "returnedToGeneral": true,
+      "pageErrors": []
+    }
+  ],
+  "guidedTransition": {
+    "forwardMidState": {
+      "scrollY": 8144,
+      "activeService": "web-applications",
+      "activePanelCount": 1,
+      "activeNav": "web-applications",
+      "chapter": "2"
+    },
+    "nativeForwardScrollAcknowledged": true,
+    "forwardDurationMs": 2331,
+    "forwardSettledService": "web-applications",
+    "reverseMidService": "branding-marketing",
+    "nativeReverseScrollAcknowledged": true,
+    "reverseDurationMs": 2472,
+    "reverseSettledService": "branding-marketing"
+  }
+}

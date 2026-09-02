@@ -1,0 +1,57 @@
+{
+  "viewport": {
+    "width": 1440,
+    "height": 900
+  },
+  "states": [
+    {
+      "id": "websites",
+      "label": "Websites",
+      "metrics": {
+        "layerWidth": 600,
+        "leftClearance": 25,
+        "rightClearance": 25,
+        "activeClearanceLeft": 25,
+        "activeClearanceRight": 485,
+        "activeId": "websites"
+      }
+    },
+    {
+      "id": "web-applications",
+      "label": "Web Applications",
+      "metrics": {
+        "layerWidth": 600,
+        "leftClearance": 25,
+        "rightClearance": 25,
+        "activeClearanceLeft": 123,
+        "activeClearanceRight": 336,
+        "activeId": "web-applications"
+      }
+    },
+    {
+      "id": "branding-marketing",
+      "label": "Branding & Marketing",
+      "metrics": {
+        "layerWidth": 600,
+        "leftClearance": 25,
+        "rightClearance": 25,
+        "activeClearanceLeft": 272,
+        "activeClearanceRight": 161,
+        "activeId": "branding-marketing"
+      }
+    },
+    {
+      "id": "motion-video",
+      "label": "Motion & Video",
+      "metrics": {
+        "layerWidth": 600,
+        "leftClearance": 25,
+        "rightClearance": 25,
+        "activeClearanceLeft": 447,
+        "activeClearanceRight": 25,
+        "activeId": "motion-video"
+      }
+    }
+  ],
+  "pageErrors": []
+}
