@@ -32,11 +32,6 @@ export interface TemplateManagerCaseStudyNarrative {
     confidentiality: string;
   };
   opportunity: CaseStudyNarrativeSection & { designChallenge: string };
-  workflow: CaseStudyNarrativeSection & {
-    tension: string;
-    roles: Array<{ title: string; responsibilities: string[] }>;
-    conclusion: string;
-  };
   decisions: {
     id: string;
     title: string;
@@ -51,22 +46,6 @@ export interface TemplateManagerCaseStudyNarrative {
       final: string;
       principle: string;
     }>;
-  };
-  organization: CaseStudyNarrativeSection;
-  editing: CaseStudyNarrativeSection;
-  sharing: CaseStudyNarrativeSection;
-  discovery: CaseStudyNarrativeSection & {
-    filters: string[];
-    navigationPaths: Array<{ label: string; value: string }>;
-  };
-  errors: CaseStudyNarrativeSection;
-  implementation: CaseStudyNarrativeSection & { responsibilities: string[] };
-  impact: {
-    id: string;
-    title: string;
-    metrics: Array<{ value: string; label: string }>;
-    outcomeTitle: string;
-    outcomes: Array<{ title: string; description: string }>;
   };
   reflection: {
     id: string;
@@ -106,35 +85,35 @@ export const projects: Project[] = [
     category: 'Enterprise SaaS · 2025',
     projectType: 'code',
     description:
-      'Self-serve email template system for fundraising teams — replacing support-dependent HTML editing with a structured TinyMCE editor and category-based organization.',
+      'A shared template workspace that helps managers distribute approved content and fundraisers make it their own.',
     image: templateManagerImage,
     tags: ['Enterprise SaaS', 'React', 'TinyMCE', 'UX Systems', 'Django API'],
     roles: ['Product Design', 'UX Engineering', 'React Dev', 'API Integration', 'TinyMCE Customization'],
     rolePillLabel: 'Design + Code',
-    impactLine: 'Self-serve templates · TinyMCE editor · React + Django',
+    impactLine: 'Manager sharing · Personal copies · Rich-text editing',
     liveUrl: '',
     githubUrl: '',
     accentColor: '#7B8CDE',
     caseStudy: {
       heroBackground: templateManagerImage,
-      footerImpact: 'Self-serve email templates · TinyMCE editor · React + Django',
+      footerImpact: 'Manager sharing · Personal copies · Rich-text editing',
       narrative: {
         hero: {
           title: 'Templates Manager',
           subtitle:
-            'Turning a support-dependent content workflow into a scalable self-service system for fundraising teams.',
+            'A content workspace for managers to share reusable donor messages and fundraisers to personalize them safely.',
           summary: [
-            { label: 'Role', value: 'Lead Product Designer & Frontend Engineer' },
+            { label: 'Contribution', value: 'Product design and frontend implementation' },
             {
-              label: 'Responsibilities',
-              value: 'Product discovery, UX strategy, interaction design, prototyping, UI design, usability testing, frontend implementation',
+              label: 'Focus',
+              value: 'Content ownership, sharing, library navigation, and rich-text editing',
             },
-            { label: 'Team', value: 'Product Manager, 4 Engineers, sole Product Designer' },
-            { label: 'Platform', value: 'B2B SaaS / React / Material UI / Django REST Framework' },
-            { label: 'Users', value: 'Fundraising managers, gift officers, fundraisers' },
+            { label: 'Product', value: 'Gravyty fundraising software' },
+            { label: 'Collaboration', value: 'Product management and engineering' },
+            { label: 'Implementation', value: 'React, MUI, TinyMCE, and Django REST API integration' },
             {
-              label: 'Outcome',
-              value: 'Converted support-managed template workflows into a scalable self-service experience.',
+              label: 'Delivered',
+              value: 'Manager sharing, read-only access, and editable personal copies',
             },
           ],
           confidentiality:
@@ -145,41 +124,11 @@ export const projects: Project[] = [
           title: 'Opportunity',
           subtitle: 'From support tickets to self-service',
           paragraphs: [
-            'Routine template management had become an operational bottleneck. Fundraising teams could not independently create or modify templates, so even basic content updates moved through support engineers.',
-            'The existing workflow exposed raw HTML to non-technical users, creating risk for email integrity. At the same time, organizations still needed control over messaging consistency, ownership, and who could create, share, or change content.',
+            'Fundraising teams reused donor communications, but the earlier workflow relied on support-managed edits and exposed HTML. Moving this work into the product meant solving more than an editing screen: managers and fundraisers needed different rights to the same content.',
+            'The interface had to make ownership and access understandable while keeping reusable messages safe to customize.',
           ],
           designChallenge:
-            'How might we give fundraising teams control over creating, editing, organizing, and sharing templates without sacrificing messaging consistency, permissions, or email integrity?',
-        },
-        workflow: {
-          id: 'workflow',
-          title: 'Understanding the Workflow',
-          subtitle: 'Designing around real user roles',
-          paragraphs: [
-            'The core problem was not simply deciding who could edit a template. I mapped how organizational governance and individual ownership could coexist without making permissions feel complicated.',
-          ],
-          tension: 'Managers needed control. Fundraisers needed flexibility.',
-          roles: [
-            {
-              title: 'Managers',
-              responsibilities: [
-                'View templates across all managed fundraisers',
-                'Create shared templates',
-                'Assign templates to individual team members',
-                'Maintain messaging consistency',
-              ],
-            },
-            {
-              title: 'Fundraisers',
-              responsibilities: [
-                'Create personal templates',
-                'Access manager-assigned templates',
-                'Customize and organize their own library',
-                'Quickly select templates while composing emails',
-              ],
-            },
-          ],
-          conclusion: 'This permission model became the foundation for the entire experience.',
+            'How could a manager distribute an approved message while a fundraiser could personalize it without changing the shared original?',
         },
         decisions: {
           id: 'decisions',
@@ -187,137 +136,50 @@ export const projects: Project[] = [
           subtitle: 'Choosing the system, not just the screens',
           items: [
             {
-              title: 'One unified library',
+              title: 'One library model across roles',
               initialHeading: 'Separate libraries',
               explored: 'Separate areas for personal, shared, and assigned templates.',
               problemHeading: 'Why it didn’t work',
               problem:
-                'That model fragmented discovery and forced users to understand where a template originated before they could find it.',
+                'Separate personal and assigned areas would fragment discovery as the library grew.',
               finalHeading: 'Unified library',
               final:
-                'One library, with ownership and access communicated contextually through labels, filters, permissions, and categories.',
+                'Use consistent categories, search, and ownership cues across manager, shared, and personal views.',
               principle:
                 'Let users find templates based on what they need to accomplish, not where the template came from.',
             },
             {
-              title: 'Structured editing instead of raw HTML',
+              title: 'Visible ownership and sharing',
+              initialHeading: 'Hidden permission rules',
+              explored: 'Users would infer access from which controls appeared.',
+              problemHeading: 'Why it fell short',
+              problem: 'A fundraiser could otherwise discover a shared template was read-only only after trying to edit it.',
+              finalHeading: 'Contextual permission cues',
+              final: 'Show the manager owner, assigned recipients, and read-only status where the template is selected.',
+              principle: 'Make access rules legible before users act; server authorization still enforces them.',
+            },
+            {
+              title: 'Safe editing through a personal copy',
               initialHeading: 'Raw HTML or a custom editor',
               explored: 'Continue exposing HTML, or build a completely custom editor.',
               problemHeading: 'Why neither option worked',
               problem:
-                'Raw HTML was unsafe for non-technical users, while a custom editor would add implementation cost without improving the core workflow.',
+                'Direct editing of the shared original would blur ownership, while raw HTML created formatting risk for non-technical users.',
               finalHeading: 'Structured editing',
               final:
-                'Customize TinyMCE to provide familiar formatting controls while protecting the underlying email structure.',
+                'Let fundraisers duplicate the shared original, then edit their own copy with TinyMCE and merge fields.',
               principle:
-                'Balance user confidence, formatting control, implementation feasibility, and email integrity.',
-            },
-          ],
-        },
-        organization: {
-          id: 'organization',
-          title: 'Organizing a Growing Library',
-          subtitle: 'Making large template libraries easy to navigate',
-          paragraphs: [
-            'Large template libraries needed hierarchy, but a full folder tree would introduce unnecessary depth and management overhead.',
-            'I used collapsible categories to keep the structure visible, make template names easy to scan, and reduce visual noise as libraries grew.',
-          ],
-          principle: 'Use the lightest hierarchy that keeps a growing content library understandable.',
-        },
-        editing: {
-          id: 'editing',
-          title: 'Safe Editing Without HTML',
-          subtitle: 'A familiar editing experience',
-          paragraphs: [
-            'I integrated and customized TinyMCE so non-technical users could update subjects, body content, formatting, links, and images through familiar controls.',
-            'The editing surface deliberately constrained what could change, preserving the underlying email structure and giving users confidence to work independently.',
-          ],
-          principle:
-            'Users gained editing flexibility without gaining the ability to accidentally break the underlying email structure.',
-        },
-        sharing: {
-          id: 'sharing',
-          title: 'Sharing Across Teams',
-          subtitle: 'Collaboration built into the workflow',
-          paragraphs: [
-            'Shared templates were not simply copied files. They represented organizational content that managers could distribute while fundraisers still maintained their own personal libraries.',
-            'The assignment model let teams begin with approved messaging without removing the individual flexibility fundraisers needed in their day-to-day work.',
-          ],
-          principle: 'Central consistency and individual flexibility had to coexist in the same workflow.',
-        },
-        discovery: {
-          id: 'discovery',
-          title: 'Find the Right Template, Fast',
-          subtitle: 'Browse when exploring, search when the target is known',
-          paragraphs: [
-            'As libraries grew, navigation could not rely on hierarchy alone. Search and filters created a second path for users who already knew what they were looking for.',
-          ],
-          filters: [
-            'Assigned fundraiser (Managers)',
-            'Favorites',
-            'Shared vs. personal templates',
-            'Engagement rate',
-            'Template categories',
-            'Search by template name or keywords',
-          ],
-          navigationPaths: [
-            { label: 'Browse', value: 'Categories' },
-            { label: 'Find', value: 'Search + filters' },
-          ],
-        },
-        errors: {
-          id: 'errors',
-          title: 'Preventing User Errors',
-          subtitle: 'Designing for edge cases',
-          paragraphs: [
-            'Default templates introduced a business-rule conflict: more than one template could unintentionally compete for the same organization-wide default state.',
-            'The validation flow checked the rule before committing changes, explained the conflict clearly, and directed the manager to the existing default so they could resolve it in context.',
-          ],
-          principle: 'Prevent invalid configurations before users create them.',
-        },
-        implementation: {
-          id: 'implementation',
-          title: 'Technical Implementation',
-          subtitle: 'From design to production',
-          paragraphs: [
-            'Because I also owned frontend implementation, I was able to carry the interaction model directly into production and resolve permission, state-management, editor, and API constraints without losing the intended UX.',
-          ],
-          responsibilities: [
-            'UX flows',
-            'Interaction design',
-            'React architecture',
-            'Django REST API integration',
-            'CRUD operations',
-            'TinyMCE customization',
-            'Permission-based rendering',
-            'State management',
-            'Template preview',
-          ],
-        },
-        impact: {
-          id: 'impact',
-          title: 'Outcome',
-          metrics: [
-            { value: '0', label: 'Raw HTML required for routine editing' },
-            { value: '100', label: 'Users supported' },
-            { value: 'Self-service', label: 'Creation and updates moved into the product' },
-          ],
-          outcomeTitle: 'What changed',
-          outcomes: [
-            {
-              title: 'Self Service',
-              description:
-                'Fundraisers could independently create, edit, organize, and manage templates.',
+                'Preserve the source while giving each fundraiser useful control over their outreach.',
             },
             {
-              title: 'Consistency',
-              description:
-                'Managers could distribute approved messaging and maintain standards across teams.',
-            },
-            {
-              title: 'Scalability',
-              description:
-                'The permission and organization model supported larger teams, growing libraries, and different user roles.',
+              title: 'Manage a growing library',
+              initialHeading: 'Deep hierarchy',
+              explored: 'Add more folders and nested paths as content grows.',
+              problemHeading: 'Why it fell short',
+              problem: 'A deeper tree would increase management work and make known templates harder to find.',
+              finalHeading: 'Two routes to content',
+              final: 'Keep categories shallow and pair browsing with search and contextual management actions.',
+              principle: 'Expose enough structure to scale without making every action feel administrative.',
             },
           ],
         },
@@ -335,7 +197,7 @@ export const projects: Project[] = [
           label: 'Overview',
           type: 'paragraph',
           content:
-            'Template Manager is a self-serve email template system built for fundraising teams using the Raise platform. The goal was to replace a legacy workflow where templates were edited directly in HTML or managed by support teams. The new system allowed fundraisers to create, edit, categorize, and share templates directly within the platform — reducing support dependency and enabling faster campaign execution.',
+            'Template Manager is a self-serve email template system built for fundraising teams using the Raise platform. The goal was to replace a legacy workflow where templates were edited directly in HTML or managed by support teams. The new system allowed fundraisers to create, edit, categorize, and share templates directly within the platform — moving routine content work into the product.',
         },
         {
           label: 'The Problem',
@@ -348,10 +210,10 @@ export const projects: Project[] = [
           ],
         },
         {
-          label: 'Research',
+          label: 'Design reasoning',
           type: 'paragraph',
           content:
-            'Internal interviews with fundraising teams revealed that templates were one of the most frequently requested support changes. The main friction wasn\'t writing the message — it was editing the HTML structure safely. The opportunity was to create a controlled editing environment that preserved email formatting while giving users full control over content.',
+            'The product needed a controlled editing environment that preserved email formatting while giving managers and fundraisers clear ownership and access rules.',
         },
         {
           label: 'Process',

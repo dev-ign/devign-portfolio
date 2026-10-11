@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { Project, ProjectType } from '@/data/projects';
 import { filterProjectsByType, projectTypeTabs } from '@/data/projectFilters';
 import DonorDirectoryAnimation from '@/components/showcase/DonorDirectoryAnimation';
-import TemplatesManagerPreview from '@/components/showcase/TemplatesManagerPreview';
+import TemplatesManagerDemo from '@/components/showcase/TemplatesManagerDemo';
 import TalentSearchWorkflowAnimation from '@/components/showcase/TalentSearchWorkflowAnimation';
 import { usePrefersReducedMotion } from '@/hooks/useMediaQuery';
 import { trackEvent } from '@/utils/analytics';
@@ -160,7 +160,7 @@ const ProjectCarousel: React.FC<ProjectCarouselProps> = ({
                 aria-label={project.title}
               >
                 {project.id === 'gravyty-template-manager' ? (
-                  <TemplatesManagerPreview variant="studio" isActive={activeIndex === index && isSettled} isTransitionComplete={isSettled} />
+                  <TemplatesManagerDemo variant="studio" isActive={activeIndex === index && isSettled} isTransitionComplete={isSettled} />
                 ) : project.id === 'gravyty-donor-directory' ? (
                   <DonorDirectoryAnimation className="h-full w-full" />
                 ) : project.id === 'urge-talent' ? (
