@@ -972,13 +972,13 @@ const ReflectionSection: React.FC<{ section: TemplateManagerCaseStudyNarrative['
       <div className="mx-auto mt-8 max-w-[900px] space-y-5">
         {section.body.map((paragraph, index) => <p key={paragraph} className={`m-0 font-body font-normal tracking-[-0.025em] ${index === 0 ? 'text-[clamp(18px,1.8vw,26px)] leading-[1.55] text-white/66' : 'text-[clamp(17px,1.55vw,22px)] font-medium leading-[1.55] text-white/84'}`}>{paragraph}</p>)}
       </div>
-      <LinkToCaseStudies />
+      <LinkToPortfolio />
     </div>
   </section>
 );
 
-const LinkToCaseStudies: React.FC = () => (
-  <Link to="/case-studies" className="mt-10 inline-flex rounded-full border border-white/13 bg-white/[0.055] px-5 py-3 font-body text-[11px] font-medium text-white/62 no-underline backdrop-blur-md transition hover:border-white/25 hover:text-white">Back to case studies ↗</Link>
+const LinkToPortfolio: React.FC = () => (
+  <Link to="/portfolio#selected-work" className="mt-10 inline-flex rounded-full border border-white/13 bg-white/[0.055] px-5 py-3 font-body text-[11px] font-medium text-white/62 no-underline backdrop-blur-md transition hover:border-white/25 hover:text-white">Back to Portfolio ↗</Link>
 );
 
 interface TemplateManagerStoryProps {

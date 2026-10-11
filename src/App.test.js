@@ -3,6 +3,7 @@ import { APP_ROUTE_PATHS } from './appRoutes';
 test('defines the public app routes', () => {
   expect(APP_ROUTE_PATHS).toEqual([
     '/',
+    '/studio',
     '/portfolio',
     '/projects',
     '/projects/:slug',

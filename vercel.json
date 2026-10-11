@@ -1,4 +1,10 @@
 {
+  "redirects": [
+    { "source": "/case-studies", "destination": "/portfolio", "permanent": true },
+    { "source": "/case-studies/", "destination": "/portfolio", "permanent": true },
+    { "source": "/case-studies/gravyty-donor-directory", "destination": "/case-studies/donor-directory", "permanent": true },
+    { "source": "/case-studies/gravyty-donor-directory/", "destination": "/case-studies/donor-directory", "permanent": true }
+  ],
   "headers": [
     {
       "source": "/(.*)",

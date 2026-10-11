@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { useGSAPContext } from '@/hooks/useGSAPContext';
 import { useLenis } from '@/hooks/useLenis';
 import {
@@ -74,6 +74,70 @@ const GatewayPage: React.FC = () => {
       isTouch ? undefined : videoRef.current ?? undefined
     );
   }, [reducedMotion]);
+
+  useLayoutEffect(() => {
+    const hash = decodeURIComponent(window.location.hash.slice(1));
+    if (hash || window.scrollY === 0) return;
+    const previousBehavior = document.documentElement.style.scrollBehavior;
+    document.documentElement.style.scrollBehavior = 'auto';
+    window.scrollTo(0, 0);
+    document.documentElement.style.scrollBehavior = previousBehavior;
+  }, []);
+
+  useEffect(() => {
+    let settleInterval: number | undefined;
+    let settleTimer: number | undefined;
+    let hashFrame: number | undefined;
+
+    const stopAligning = () => {
+      window.clearInterval(settleInterval);
+      window.clearTimeout(settleTimer);
+    };
+
+    const alignHash = () => {
+      stopAligning();
+      const hash = decodeURIComponent(window.location.hash.slice(1));
+      const target = hash ? document.getElementById(hash) : null;
+      if (!target) return;
+
+      const align = () => {
+        const distance = target.getBoundingClientRect().top - 96;
+        if (Math.abs(distance) < 3) return;
+        const top = Math.max(0, window.scrollY + distance);
+        if (lenisRef.current) {
+          lenisRef.current.scrollTo(top, { immediate: true });
+        } else {
+          const previousBehavior = document.documentElement.style.scrollBehavior;
+          document.documentElement.style.scrollBehavior = 'auto';
+          window.scrollTo(0, top);
+          document.documentElement.style.scrollBehavior = previousBehavior;
+        }
+      };
+
+      align();
+      settleInterval = window.setInterval(align, 150);
+      settleTimer = window.setTimeout(stopAligning, 2400);
+    };
+
+    const onHashChange = () => {
+      window.cancelAnimationFrame(hashFrame ?? 0);
+      hashFrame = window.requestAnimationFrame(alignHash);
+    };
+
+    alignHash();
+    window.addEventListener('hashchange', onHashChange);
+    window.addEventListener('wheel', stopAligning, { passive: true });
+    window.addEventListener('touchstart', stopAligning, { passive: true });
+    window.addEventListener('keydown', stopAligning);
+    return () => {
+      stopAligning();
+      window.cancelAnimationFrame(hashFrame ?? 0);
+      window.removeEventListener('hashchange', onHashChange);
+      window.removeEventListener('wheel', stopAligning);
+      window.removeEventListener('touchstart', stopAligning);
+      window.removeEventListener('keydown', stopAligning);
+    };
+  }, [lenisRef]);
 
   const scrollToSection = (id: string) => {
     if (id === 'top') {
@@ -234,11 +298,11 @@ const GatewayPage: React.FC = () => {
           <div ref={servicesSurfaceRef} className="gateway-services-surface">
             <Services revealIntroOnScroll={false} />
           </div>
-          <ProjectsShowcase />
           <Process />
+          <ProjectsShowcase />
           <BusinessOutcomes />
-          <InquiryForm onOpenInquiry={openInquiry} />
           <FAQ />
+          <InquiryForm onOpenInquiry={openInquiry} />
         </div>
       </main>
 

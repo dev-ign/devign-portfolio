@@ -11,11 +11,16 @@ const indexPath = path.join(buildDirectory, 'index.html');
 
 const routeMetadata = [
   {
-    pathname: 'case-studies',
-    title: 'Case Studies | DevignUX',
-    description:
-      'Explore selected DevignUX UX/UI design and development case studies for digital products and web experiences.',
-    canonical: 'https://devignux.com/case-studies',
+    pathname: 'studio',
+    title: 'DevignUX | Website Design, UX/UI & Development Studio',
+    description: 'DevignUX designs and builds premium websites, digital products, graphics, motion, and visual experiences for businesses worldwide.',
+    canonical: 'https://devignux.com/studio',
+  },
+  {
+    pathname: 'portfolio',
+    title: 'Jona Ferreira | Product Designer & UX Engineer | DevignUX',
+    description: 'Meet Jona Ferreira, a product designer and UX engineer who designs and builds digital products from 0 to 1.',
+    canonical: 'https://devignux.com/portfolio',
   },
   {
     pathname: 'case-studies/gravyty-template-manager',
@@ -47,7 +52,7 @@ const routeMetadata = [
           '@type': 'BreadcrumbList',
           itemListElement: [
             { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://devignux.com/' },
-            { '@type': 'ListItem', position: 2, name: 'Case Studies', item: 'https://devignux.com/case-studies' },
+            { '@type': 'ListItem', position: 2, name: 'Portfolio', item: 'https://devignux.com/portfolio' },
             { '@type': 'ListItem', position: 3, name: 'Donor Directory', item: donorDirectorySeo.canonical },
           ],
         },

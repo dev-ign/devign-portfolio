@@ -19,7 +19,7 @@ const Footer: React.FC<FooterProps> = ({ onScrollTo }) => {
   ) => {
     event.preventDefault();
     onScrollTo(target);
-    window.history.replaceState(null, '', target === 'top' ? '/' : `#${target}`);
+    window.history.replaceState(null, '', target === 'top' ? '/studio' : `/studio#${target}`);
   };
 
   return (
@@ -35,7 +35,7 @@ const Footer: React.FC<FooterProps> = ({ onScrollTo }) => {
             <a
               href="#top"
               onClick={event => handleSectionClick(event, 'top')}
-              aria-label="DevignUX home"
+              aria-label="DevignUX Studio home"
               className="inline-flex min-h-11 items-center rounded-sm no-underline"
             >
               <BrandLogo markSize={30} textSize={16} gap={9} />
@@ -53,7 +53,7 @@ const Footer: React.FC<FooterProps> = ({ onScrollTo }) => {
               {footerNavigation.map(item => (
                 <li key={item.target}>
                   <a
-                    href={item.target === 'top' ? '/' : `#${item.target}`}
+                    href={item.target === 'top' ? '/studio' : `/studio#${item.target}`}
                     onClick={event => handleSectionClick(event, item.target)}
                     className="inline-flex min-h-10 items-center font-body text-[14px] font-light text-white/62 no-underline transition-colors duration-200 hover:text-white"
                   >

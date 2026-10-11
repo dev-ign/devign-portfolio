@@ -12,6 +12,15 @@ export const siteConfig = {
     'A violet sunrise over the horizon, representing DevignUX digital design and development work.',
 } as const;
 
+export const RESUME_FILE_NAME = 'jona-ferreira-product-resume-devign.docx';
+export const RESUME_URL = `/${RESUME_FILE_NAME}`;
+export const CONTACT_EMAIL_URL = `mailto:${siteConfig.publicEmail}`;
+
+export const welcomeMetadata = {
+  title: 'DevignUX — Studio & Portfolio',
+  description: 'Explore DevignUX Studio for digital experiences and creative development, or discover selected product design and UX engineering work.',
+} as const;
+
 export const footerNavigation = [
   { label: 'Home', target: 'top' },
   { label: 'Services', target: 'services' },

@@ -44,9 +44,9 @@ test('renders the clean Template Manager case-study hero', () => {
       'Turning a support-dependent content workflow into a scalable self-service system for fundraising teams.'
     )
   ).toBeInTheDocument();
-  expect(screen.getByRole('link', { name: '← Case Studies' })).toHaveAttribute(
+  expect(screen.getByRole('link', { name: 'Back to Portfolio' })).toHaveAttribute(
     'href',
-    '/case-studies'
+    '/portfolio#selected-work'
   );
   expect(screen.getByTestId('template-manager-hero-visuals')).toBeInTheDocument();
   expect(screen.queryByText(/all projects/i)).not.toBeInTheDocument();
@@ -86,7 +86,8 @@ test('renders the clean Template Manager case-study hero', () => {
   expect(screen.queryByText('100s')).not.toBeInTheDocument();
   expect(screen.getByText('Self-service', { selector: '[data-impact-metric]' })).toBeInTheDocument();
   expect(screen.queryByText('02 / Opportunity')).not.toBeInTheDocument();
-  expect(screen.getByRole('link', { name: '← Case Studies' })).toHaveClass('fixed');
+  expect(screen.getByRole('link', { name: 'Back to Portfolio' })).toHaveClass('fixed');
+  expect(screen.getByRole('link', { name: 'Back to Portfolio ↗' })).toHaveAttribute('href', '/portfolio#selected-work');
   expect(window.scrollTo).toHaveBeenCalledWith({ top: 0, left: 0, behavior: 'auto' });
 });
 
@@ -205,10 +206,9 @@ test('renders the Donor Directory case-study foundation at its public slug', () 
       expect(screen.getByRole('menuitem', { name: label })).toBeInTheDocument();
     }
   );
-  expect(screen.getByRole('link', { name: '← Case Studies' })).toHaveAttribute(
-    'href',
-    '/case-studies'
-  );
+  const portfolioReturnLinks = screen.getAllByRole('link', { name: 'Back to Portfolio' });
+  expect(portfolioReturnLinks).toHaveLength(2);
+  portfolioReturnLinks.forEach(link => expect(link).toHaveAttribute('href', '/portfolio#donor-directory'));
   expect(screen.getByText(/original product is protected by NDA/i)).toBeInTheDocument();
   expect(screen.getByText(/contextual drawer accepted a tighter canvas/i)).toBeInTheDocument();
   expect(screen.getByText(/Request First Draft sat beside the donor context/i)).toBeInTheDocument();
@@ -228,8 +228,8 @@ test('shows a focused empty state for unsupported case-study slugs', () => {
   renderCaseStudy('not-a-case-study');
 
   expect(screen.getByText('Case study not found.')).toBeInTheDocument();
-  expect(screen.getByRole('link', { name: 'Back to case studies' })).toHaveAttribute(
+  expect(screen.getByRole('link', { name: 'Back to Portfolio' })).toHaveAttribute(
     'href',
-    '/case-studies'
+    '/portfolio'
   );
 });

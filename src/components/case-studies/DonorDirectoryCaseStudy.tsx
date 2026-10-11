@@ -587,8 +587,8 @@ const OutcomeSection: React.FC = () => (
           <Link to="/case-studies/gravyty-template-manager" className="inline-flex min-h-11 items-center rounded-full border border-[#D4A5EF]/34 bg-[#D4A5EF]/12 px-5 py-3 font-body text-[11px] font-semibold text-white/84 no-underline transition hover:border-[#D4A5EF]/58 hover:bg-[#D4A5EF]/18 hover:text-white focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white/80">
             View the Template Manager case study ↗
           </Link>
-          <Link to="/case-studies" className="inline-flex min-h-11 items-center rounded-full border border-white/13 bg-white/[0.055] px-5 py-3 font-body text-[11px] font-medium text-white/62 no-underline backdrop-blur-md transition hover:border-white/25 hover:text-white focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white/80">
-            Back to all case studies
+          <Link to="/portfolio#donor-directory" className="inline-flex min-h-11 items-center rounded-full border border-white/13 bg-white/[0.055] px-5 py-3 font-body text-[11px] font-medium text-white/62 no-underline backdrop-blur-md transition hover:border-white/25 hover:text-white focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white/80">
+            Back to Portfolio
           </Link>
           <Link to="/work-with-me" className="inline-flex min-h-11 items-center px-3 py-3 font-body text-[11px] font-medium text-white/48 no-underline transition hover:text-white/82 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white/80">
             Work with DevignUX

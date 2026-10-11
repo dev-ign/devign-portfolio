@@ -5,6 +5,8 @@ type BrandLogoProps = {
   textSize?: number;
   gap?: number;
   className?: string;
+  markSrc?: string;
+  text?: string;
 };
 
 const BrandLogo: React.FC<BrandLogoProps> = ({
@@ -12,6 +14,8 @@ const BrandLogo: React.FC<BrandLogoProps> = ({
   textSize = 16,
   gap = 8,
   className,
+  markSrc = '/devignuxlogo-mono.svg',
+  text = 'DevignUX',
 }) => {
   return (
     <span
@@ -25,7 +29,7 @@ const BrandLogo: React.FC<BrandLogoProps> = ({
       }}
     >
       <img
-        src="/devignuxlogo-mono.svg"
+        src={markSrc}
         alt=""
         width={markSize}
         height={markSize}
@@ -48,7 +52,7 @@ const BrandLogo: React.FC<BrandLogoProps> = ({
           lineHeight: 1,
         }}
       >
-        DevignUX
+        {text}
       </span>
     </span>
   );

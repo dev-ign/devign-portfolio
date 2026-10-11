@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { projects } from '@/data/projects';
 import donorDirectorySeo from '@/data/donorDirectorySeo.json';
-import { siteConfig, SITE_URL } from '@/config/site';
+import { siteConfig, SITE_URL, welcomeMetadata } from '@/config/site';
 
 type Metadata = {
   title: string;
@@ -24,9 +24,10 @@ const setMeta = (selector: string, attribute: 'content' | 'href', value: string)
 };
 
 export const getMetadata = (pathname: string): Metadata => {
+  const routePath = pathname === '/' ? pathname : pathname.replace(/\/+$/, '');
   if (
-    pathname === '/case-studies/donor-directory/visual-demo' ||
-    pathname === '/case-studies/donor-directory/evidence'
+    routePath === '/case-studies/donor-directory/visual-demo' ||
+    routePath === '/case-studies/donor-directory/evidence'
   ) {
     return {
       title: 'Donor Directory Visual Demo | DevignUX',
@@ -36,7 +37,11 @@ export const getMetadata = (pathname: string): Metadata => {
     };
   }
 
-  if (pathname === '/case-studies/donor-directory') {
+  if (routePath === '/case-studies/gravyty-donor-directory') {
+    return getMetadata('/case-studies/donor-directory');
+  }
+
+  if (routePath === '/case-studies/donor-directory') {
     return {
       ...donorDirectorySeo,
       structuredData: {
@@ -59,7 +64,7 @@ export const getMetadata = (pathname: string): Metadata => {
             '@type': 'BreadcrumbList',
             itemListElement: [
               { '@type': 'ListItem', position: 1, name: 'Home', item: `${SITE_URL}/` },
-              { '@type': 'ListItem', position: 2, name: 'Case Studies', item: `${SITE_URL}/case-studies` },
+              { '@type': 'ListItem', position: 2, name: 'Portfolio', item: `${SITE_URL}/portfolio` },
               { '@type': 'ListItem', position: 3, name: 'Donor Directory', item: donorDirectorySeo.canonical },
             ],
           },
@@ -68,33 +73,40 @@ export const getMetadata = (pathname: string): Metadata => {
     };
   }
 
-  if (pathname === '/case-studies') {
+  if (routePath === '/portfolio' || routePath === '/case-studies') {
     return {
-      title: 'Case Studies | DevignUX',
-      description:
-        'Explore selected DevignUX UX/UI design and development case studies for digital products and web experiences.',
-      canonical: `${SITE_URL}/case-studies`,
+      title: 'Jona Ferreira | Product Designer & UX Engineer | DevignUX',
+      description: 'Meet Jona Ferreira, a product designer and UX engineer who designs and builds digital products from 0 to 1.',
+      canonical: `${SITE_URL}/portfolio`,
     };
   }
 
-  if (pathname.startsWith('/case-studies/')) {
-    const slug = pathname.split('/').filter(Boolean).pop();
+  if (routePath.startsWith('/case-studies/')) {
+    const slug = routePath.split('/').filter(Boolean).pop();
     const projectId = slug === 'donor-directory' ? 'gravyty-donor-directory' : slug;
     const project = projects.find(item => item.id === projectId);
     if (project) {
       return {
         title: `${project.title} Case Study | DevignUX`,
         description: project.description,
-        canonical: `${SITE_URL}${pathname}`,
+        canonical: `${SITE_URL}${routePath}`,
       };
     }
   }
 
-  if (pathname === '/') {
+  if (routePath === '/') {
+    return {
+      title: welcomeMetadata.title,
+      description: welcomeMetadata.description,
+      canonical: `${SITE_URL}/`,
+    };
+  }
+
+  if (routePath === '/studio') {
     return {
       title: siteConfig.title,
       description: siteConfig.description,
-      canonical: `${SITE_URL}/`,
+      canonical: `${SITE_URL}/studio`,
     };
   }
 
@@ -102,7 +114,7 @@ export const getMetadata = (pathname: string): Metadata => {
     title: `Selected Work | DevignUX`,
     description:
       'Selected website, UX/UI, development, graphic, motion, and digital product work by DevignUX.',
-    canonical: `${SITE_URL}${pathname}`,
+    canonical: `${SITE_URL}${routePath}`,
     indexable: false,
   };
 };

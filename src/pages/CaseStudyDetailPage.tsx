@@ -48,6 +48,7 @@ const CaseStudyDetailPage: React.FC = () => {
   const narrative = templateManagerProject?.caseStudy.narrative;
   const isTemplateManager = slug === TEMPLATE_MANAGER_SLUG && Boolean(narrative);
   const isDonorDirectory = slug === DONOR_DIRECTORY_SLUG;
+  const portfolioReturnUrl = isDonorDirectory ? '/portfolio#donor-directory' : '/portfolio#selected-work';
 
   useLayoutEffect(() => {
     const alignCurrentHash = () => {
@@ -110,10 +111,10 @@ const CaseStudyDetailPage: React.FC = () => {
       <main id="main-content" tabIndex={-1} className="flex min-h-dvh flex-col items-center justify-center gap-5 bg-gateway px-6 text-center text-white">
         <p className="m-0 font-body text-[15px] text-white/60">Case study not found.</p>
         <Link
-          to="/case-studies"
+          to="/portfolio"
           className="font-body text-[13px] text-white/80 underline-offset-4 hover:underline"
         >
-          Back to case studies
+          Back to Portfolio
         </Link>
       </main>
     );
@@ -125,8 +126,8 @@ const CaseStudyDetailPage: React.FC = () => {
 
   return (
     <main id="main-content" tabIndex={-1} className={`${backgroundClassName} relative min-h-screen min-h-dvh overflow-x-clip text-white`}>
-      <Link to="/case-studies" className={backButtonClassName}>
-        ← Case Studies
+      <Link to={portfolioReturnUrl} className={backButtonClassName}>
+        <span aria-hidden="true" className="mr-1">←</span>Back to Portfolio
       </Link>
 
       {isDonorDirectory ? (
