@@ -13,6 +13,7 @@
 
 # misc
 *.md
+!docs/templates-manager-audit.md
 .DS_Store
 .env
 .env.local

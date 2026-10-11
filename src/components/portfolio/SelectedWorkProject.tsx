@@ -4,12 +4,13 @@ import { gsap } from 'gsap';
 import { Icon } from '@iconify/react';
 import { useGSAPContext } from '@/hooks/useGSAPContext';
 import { usePrefersReducedMotion } from '@/hooks/useMediaQuery';
-import TemplatesManagerPreview from '@/components/showcase/TemplatesManagerPreview';
+import TemplatesManagerDemo from '@/components/showcase/TemplatesManagerDemo';
 
 export type SelectedWorkProjectData = {
   id: string;
   sectionId: string;
   title: string;
+  category: string;
   summary: string;
   image: string;
   imageAlt: string;
@@ -41,7 +42,7 @@ const SelectedWorkProject: React.FC<Props> = ({ project, isActive = false }) => 
     timeline
       .from(find('.selected-work-decorative-heading'), { autoAlpha: 0, y: 12, duration: 0.5 })
       .from(find('.selected-work-preview'), { autoAlpha: 0, y: 24, duration: 0.65 }, '-=0.3')
-      .from(find('.selected-work-details h2'), { autoAlpha: 0, y: 16, duration: 0.48 }, '-=0.42')
+      .from(find('.selected-work-category, .selected-work-details h2'), { autoAlpha: 0, y: 16, duration: 0.48 }, '-=0.42')
       .from(find('.selected-work-summary'), { autoAlpha: 0, y: 12, duration: 0.46 }, '-=0.3')
       .from(find('.selected-work-highlights-label'), { autoAlpha: 0, y: 9, duration: 0.38 }, '-=0.25')
       .from(find('.selected-work-highlight'), { autoAlpha: 0, y: 12, duration: 0.46, stagger: 0.1 }, '-=0.19')
@@ -68,13 +69,14 @@ const SelectedWorkProject: React.FC<Props> = ({ project, isActive = false }) => 
       <div className="selected-work-grid">
         <div className={`selected-work-preview${project.id === 'templates-manager' ? ' selected-work-preview--templates' : ''}`}>
           {project.id === 'templates-manager' ? (
-            <TemplatesManagerPreview variant="portfolio" isActive={isActive} isTransitionComplete={reducedMotion || presentationReady} />
+            <TemplatesManagerDemo variant="portfolio" isActive={isActive} isTransitionComplete={reducedMotion || presentationReady} />
           ) : (
             <img src={project.image} alt={project.imageAlt} loading="lazy" />
           )}
         </div>
         <div className="selected-work-details">
           <div className="selected-work-copy">
+            <p className="selected-work-category">{project.category}</p>
             <h2 id={`${project.id}-title`}>{project.title}</h2>
             <p className="selected-work-summary">{project.summary}</p>
 

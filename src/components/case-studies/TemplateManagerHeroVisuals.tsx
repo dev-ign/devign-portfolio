@@ -1,4 +1,5 @@
 import React from 'react';
+import { templateManagerDemo as demo } from '@/data/templateManagerDemo';
 
 type FloatingPanelStyle = React.CSSProperties & {
   '--tm-delay': string;
@@ -46,7 +47,7 @@ const TemplateLibraryPanel: React.FC = () => (
     style={floatingStyle('-3deg', '-11px', '8.6s', '-2.4s')}
   >
     <div className="template-manager-panel overflow-hidden rounded-[16px]">
-      <WindowControls label="Template library" meta="48 templates" />
+      <WindowControls label="Template library" meta="38 templates" />
       <div className="p-3.5">
         <div className="mb-3 flex h-8 items-center rounded-[8px] border border-white/8 bg-white/[0.035] px-2.5">
           <span className="mr-2 grid h-4 w-4 place-items-center rounded-full border border-white/20 text-[8px] text-white/35">
@@ -61,8 +62,8 @@ const TemplateLibraryPanel: React.FC = () => (
         <div className="space-y-1.5">
           {[
             ['Annual Giving', '12'],
-            ['Stewardship', '08'],
-            ['Campaign Updates', '16'],
+            ['Stewardship', '9'],
+            ['Campaign Updates', '6'],
           ].map(([label, count], index) => (
             <div
               key={label}
@@ -86,15 +87,15 @@ const TemplateLibraryPanel: React.FC = () => (
         </div>
 
         <div className="mt-2.5 space-y-1 pl-6">
-          {['First-time donor welcome', 'Year-end appeal'].map((label, index) => (
+          {[demo.template.title, 'Year-End Giving Appeal'].map((label, index) => (
             <div
               key={label}
               className={`flex items-center rounded-[6px] px-2 py-1.5 ${
-                index === 1 ? 'bg-white/[0.055]' : ''
+                index === 0 ? 'bg-white/[0.055]' : ''
               }`}
             >
               <span className="font-body text-[7px] text-white/40">{label}</span>
-              {index === 1 && (
+              {index === 0 && (
                 <span className="ml-auto rounded-full bg-[#B06EF3]/18 px-1.5 py-0.5 font-mono text-[5px] uppercase tracking-[0.08em] text-[#D7B9FA]/75">
                   shared
                 </span>
@@ -163,7 +164,7 @@ const SideDrawerPanel: React.FC = () => (
     style={floatingStyle('2deg', '-9px', '9.4s', '-5.5s')}
   >
     <div className="template-manager-panel overflow-hidden rounded-[16px]">
-      <WindowControls label="Template details" meta="autosaved" />
+      <WindowControls label="Template details" meta="shared" />
       <div className="p-3.5">
         <div className="mb-3 flex items-start justify-between">
           <div>
@@ -176,9 +177,9 @@ const SideDrawerPanel: React.FC = () => (
         </div>
         <div className="space-y-2.5 rounded-[9px] border border-white/7 bg-black/10 p-3">
           {[
-            ['Owner', 'Advancement team'],
-            ['Category', 'Annual giving'],
-            ['Access', '12 fundraisers'],
+            ['Owner', demo.manager],
+            ['Category', demo.template.category],
+            ['Access', '2 fundraisers'],
           ].map(([label, value]) => (
             <div key={label} className="flex items-center justify-between">
               <span className="font-body text-[7px] text-white/25">{label}</span>
@@ -230,7 +231,7 @@ const EditorPanel: React.FC<{ mobile?: boolean }> = ({ mobile = false }) => (
       <div className="border-b border-white/7 px-3 py-2">
         <div className="flex items-center gap-2 rounded-[5px] bg-black/12 px-2.5 py-1.5">
           <span className="font-mono text-[6px] uppercase tracking-[0.08em] text-white/20">Subject</span>
-          <span className="font-body text-[7px] text-white/52">Your impact starts here</span>
+          <span className="font-body text-[7px] text-white/52">{demo.template.subject}</span>
         </div>
       </div>
       <div className={`bg-[#10101F] p-3 ${mobile ? 'h-[92px]' : 'h-[168px]'}`}>
@@ -266,7 +267,7 @@ const MobileTemplateStrip: React.FC = () => (
       <div className="mb-2.5 flex items-center">
         <span className="font-body text-[9px] font-semibold text-white/65">Template library</span>
         <span className="ml-auto rounded-full bg-[#B06EF3]/13 px-2 py-1 font-mono text-[6px] text-[#D1AFF6]/70">
-          48 total
+          38 total
         </span>
       </div>
       <div className="grid grid-cols-3 gap-1.5">

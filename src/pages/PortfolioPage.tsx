@@ -23,24 +23,25 @@ const templatesManager: SelectedWorkProjectData = {
   id: 'templates-manager',
   sectionId: 'selected-work',
   title: 'Templates Manager',
-  summary: 'A centralized workspace for creating, organizing, and sharing communication templates across fundraising teams.',
+  category: 'Enterprise SaaS',
+  summary: 'A manager shares a donor message; a fundraiser makes a personal copy to tailor the outreach. One workspace makes ownership clear at each step.',
   image: '',
   imageAlt: 'Templates Manager application workspace',
   highlights: [
     {
-      title: 'Role-Based Workflows',
-      description: 'Designed ownership, sharing, and permission experiences for managers and fundraisers.',
+      title: 'Manager to Fundraiser',
+      description: 'Mapped assignment, read-only access, and personal duplication into one understandable journey.',
     },
     {
-      title: 'Scalable Template Libraries',
-      description: 'Organized reusable templates into a unified library with categories, search, and filters.',
+      title: 'One Discoverable Library',
+      description: 'Used categories, search, and ownership cues to help teams locate reusable content.',
     },
     {
       title: 'Design-to-Development Ownership',
       description: 'Carried UX flows and interaction states into the React implementation and Django API integration.',
     },
   ],
-  technologies: ['Figma', 'React', 'TypeScript', 'MUI', 'Django REST Framework'],
+  technologies: ['Figma', 'React', 'MUI', 'TinyMCE', 'Django REST Framework'],
   caseStudyUrl: '/case-studies/gravyty-template-manager',
 };
 
@@ -48,6 +49,7 @@ const donorDirectory: SelectedWorkProjectData = {
   id: 'donor-directory',
   sectionId: 'donor-directory',
   title: 'Donor Directory',
+  category: 'Enterprise SaaS',
   summary: 'A donor workspace that helps fundraisers search large datasets and review relationship context without losing their place.',
   image: donorDirectoryImage,
   imageAlt: 'Reconstructed Donor Directory screen showing search, filters, donor records, engagement, giving, and status',
@@ -73,6 +75,7 @@ const urgeTalent: SelectedWorkProjectData = {
   id: 'urge-talent',
   sectionId: 'urge-talent',
   title: 'Urge Talent',
+  category: 'Talent Discovery Platform',
   summary: 'A talent agency dashboard for discovering talent, reviewing profiles, and curating packages in one workspace.',
   image: urgeTalentImage,
   imageAlt: 'Urge Talent dashboard showing a searchable talent grid and an open profile drawer with details and photos',

@@ -1,5 +1,5 @@
 import React from 'react';
-import { fireEvent, render, screen } from '@testing-library/react';
+import { fireEvent, render, screen, within } from '@testing-library/react';
 import CaseStudyDetailPage from './CaseStudyDetailPage';
 
 jest.mock('gsap', () => ({
@@ -35,91 +35,73 @@ beforeEach(() => {
   window.scrollTo = jest.fn();
 });
 
-test('renders the clean Template Manager case-study hero', () => {
+test('presents the Templates Manager story around ownership and the role transition', () => {
   renderCaseStudy();
 
   expect(screen.getByRole('heading', { name: 'Templates Manager' })).toBeInTheDocument();
-  expect(
-    screen.getByText(
-      'Turning a support-dependent content workflow into a scalable self-service system for fundraising teams.'
-    )
-  ).toBeInTheDocument();
-  expect(screen.getByRole('link', { name: 'Back to Portfolio' })).toHaveAttribute(
-    'href',
-    '/portfolio#selected-work'
-  );
-  expect(screen.getByTestId('template-manager-hero-visuals')).toBeInTheDocument();
-  expect(screen.queryByText(/all projects/i)).not.toBeInTheDocument();
-  expect(screen.queryByText(/enterprise saas/i)).not.toBeInTheDocument();
+  expect(screen.getByText(/A content workspace for managers to share reusable donor messages/i)).toBeInTheDocument();
   expect(screen.getByTestId('template-manager-project-summary')).toBeInTheDocument();
-  expect(screen.getByText('Lead Product Designer & Frontend Engineer')).toBeInTheDocument();
+  expect(screen.getByText('Product design and frontend implementation')).toBeInTheDocument();
   expect(screen.getByText(/The original product is protected by NDA/i)).toBeInTheDocument();
-  expect(screen.getAllByTestId('case-study-section')).toHaveLength(11);
+  expect(screen.getAllByTestId('case-study-section')).toHaveLength(8);
   [
-    'Opportunity',
-    'Understanding the Workflow',
-    'Key Design Decisions',
-    'Organizing a Growing Library',
-    'Safe Editing Without HTML',
-    'Sharing Across Teams',
-    'Find the Right Template, Fast',
-    'Preventing User Errors',
-    'Technical Implementation',
-    'Outcome',
-    'Reflection',
-  ].forEach((heading) => {
-    expect(screen.getByRole('heading', { name: heading })).toBeInTheDocument();
-  });
-  expect(screen.getByAltText('TinyMCE formatting toolbar examples')).toBeInTheDocument();
-  expect(screen.getByText(/How might we give fundraising teams control/i)).toBeInTheDocument();
-  expect(screen.getByText('Managers needed control. Fundraisers needed flexibility.')).toBeInTheDocument();
-  expect(screen.getByText('One unified library')).toBeInTheDocument();
-  expect(screen.getByText('Structured editing instead of raw HTML')).toBeInTheDocument();
-  expect(screen.getByRole('heading', { name: 'Separate libraries' })).toBeInTheDocument();
-  expect(screen.getByRole('heading', { name: 'Why it didn’t work' })).toBeInTheDocument();
-  expect(screen.getByRole('heading', { name: 'Unified library' })).toBeInTheDocument();
-  expect(screen.getByRole('heading', { name: 'Raw HTML or a custom editor' })).toBeInTheDocument();
-  expect(screen.queryByText('Explored')).not.toBeInTheDocument();
-  expect(screen.queryByText('Why it fell short')).not.toBeInTheDocument();
-  expect(screen.queryByText('Final approach')).not.toBeInTheDocument();
-  expect(screen.getByText('100', { selector: '[data-impact-metric="1"]' })).toBeInTheDocument();
-  expect(screen.queryByText('100s')).not.toBeInTheDocument();
-  expect(screen.getByText('Self-service', { selector: '[data-impact-metric]' })).toBeInTheDocument();
-  expect(screen.queryByText('02 / Opportunity')).not.toBeInTheDocument();
-  expect(screen.getByRole('link', { name: 'Back to Portfolio' })).toHaveClass('fixed');
-  expect(screen.getByRole('link', { name: 'Back to Portfolio ↗' })).toHaveAttribute('href', '/portfolio#selected-work');
+    'A template is only useful when the right person can find and use it.',
+    'Manager → Shared Library → Fundraiser',
+    'Design the rules into the interface.',
+    'Follow the template from one role to the next.',
+    'One rule. One designated default.',
+    'The rules carried through to the frontend.',
+    'A clearer path from approved content to personal outreach.',
+    'The interface was the visible part of a content system.',
+  ].forEach((heading) => expect(screen.getByRole('heading', { name: heading })).toBeInTheDocument());
+  expect(screen.getByText('Visible ownership and sharing')).toBeInTheDocument();
+  expect(screen.getByText('Safe editing through a personal copy')).toBeInTheDocument();
+  const ownershipTimeline = screen.getByTestId('ownership-timeline');
+  expect(within(ownershipTimeline).getAllByRole('listitem')).toHaveLength(3);
+  expect(within(ownershipTimeline).getByRole('heading', { name: 'Manager' })).toBeInTheDocument();
+  expect(within(ownershipTimeline).getByRole('heading', { name: 'Shared Library' })).toBeInTheDocument();
+  expect(within(ownershipTimeline).getByRole('heading', { name: 'Fundraiser' })).toBeInTheDocument();
+  const firstDraft = screen.getByRole('region', { name: 'One rule. One designated default.' });
+  expect(within(firstDraft).getByText('1 assigned in applicable scope')).toBeInTheDocument();
+  expect(within(firstDraft).getAllByText('Top Donor')).toHaveLength(2);
+  expect(within(firstDraft).getByText(/historical rule list, uniqueness scope, and reassignment behavior need confirmation/)).toBeInTheDocument();
+  expect(screen.queryByText('100 users supported')).not.toBeInTheDocument();
+  expect(screen.getByRole('link', { name: 'Back to Portfolio' })).toHaveAttribute('href', '/portfolio#selected-work');
   expect(window.scrollTo).toHaveBeenCalledWith({ top: 0, left: 0, behavior: 'auto' });
 });
 
-test('configures the users-supported metric as a one-time 0 to 100 scroll animation', () => {
+test('guides readers from manager sharing to an editable fundraiser copy', () => {
   renderCaseStudy();
+  const controls = screen.getByLabelText('Workflow controls');
+  const advance = (name) => fireEvent.click(within(controls).getByRole('button', { name }));
 
-  const { gsap } = require('gsap');
-  const { useGSAPContext } = require('../hooks/useGSAPContext');
-  const impactAnimation = useGSAPContext.mock.calls.find(
-    ([, options]) => options?.scope?.current?.id === 'impact'
-  );
-
-  expect(impactAnimation).toBeDefined();
-  gsap.to.mockImplementation((target, config) => {
-    target.value = 100;
-    config.onUpdate();
-    config.onComplete();
-    return {};
-  });
-
-  impactAnimation[0]();
-
-  expect(gsap.to).toHaveBeenCalledTimes(1);
-  expect(gsap.to.mock.calls[0][1]).toEqual(
-    expect.objectContaining({
-      value: 100,
-      duration: 1.15,
-      ease: 'power1.out',
-      scrollTrigger: expect.objectContaining({ once: true }),
-    })
-  );
-  expect(screen.getByText('100', { selector: '[data-impact-metric="1"]' })).toBeInTheDocument();
+  advance('Select template');
+  expect(within(screen.getByLabelText('Template details')).getByRole('heading', { name: 'First-Time Donor Thank You' })).toBeInTheDocument();
+  advance('Assign fundraisers');
+  expect(screen.getByRole('dialog', { name: 'Assign fundraisers' })).toBeInTheDocument();
+  expect(screen.getByRole('checkbox', { name: /Maya Rodriguez/ })).toBeChecked();
+  advance('Confirm sharing');
+  expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+  expect(screen.getByText('Shared with 2 fundraisers', { selector: '.tmx-savebar span' })).toBeInTheDocument();
+  advance('View as Maya');
+  expect(screen.getByText(/Read-only shared template/)).toBeInTheDocument();
+  advance('Duplicate to my library');
+  const library = screen.getByLabelText('Fundraiser template library');
+  expect(within(library).getByRole('button', { name: /First-Time Donor Thank You Shared by Dana Whitfield/ })).toHaveAttribute('data-template-id', 'template-dana-first-time');
+  expect(within(library).getByRole('button', { name: /First-Time Donor Thank You — My Copy/ })).toHaveAttribute('data-template-id', 'template-maya-first-time-copy');
+  expect(within(library).getByText('Update available')).toBeInTheDocument();
+  expect(screen.getByLabelText('Personal template message')).toBeInTheDocument();
+  expect(screen.getByDisplayValue('Thank you for joining our community')).not.toHaveAttribute('readonly');
+  fireEvent.change(screen.getByLabelText('Personal template message'), { target: { value: 'A personal note' } });
+  advance('Save personal copy');
+  expect(screen.getByText('Personal copy saved')).toBeInTheDocument();
+  fireEvent.click(within(library).getByRole('button', { name: /First-Time Donor Thank You Shared by Dana Whitfield/ }));
+  expect(screen.getByText('Update available on Dana’s shared original')).toBeInTheDocument();
+  expect(screen.getByDisplayValue('Thank you for your first gift')).toHaveAttribute('readonly');
+  expect(screen.queryByLabelText('Personal template message')).not.toBeInTheDocument();
+  fireEvent.click(within(library).getByRole('button', { name: /First-Time Donor Thank You — My Copy/ }));
+  expect(screen.getByLabelText('Personal template message')).toHaveValue('A personal note');
+  expect(screen.queryByText('Update available on Dana’s shared original')).not.toBeInTheDocument();
 });
 
 test('opens the section menu and updates the current section after navigation', () => {
