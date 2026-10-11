@@ -1,9 +1,10 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { gsap } from 'gsap';
 import { Icon } from '@iconify/react';
 import { useGSAPContext } from '@/hooks/useGSAPContext';
 import { usePrefersReducedMotion } from '@/hooks/useMediaQuery';
+import TemplatesManagerPreview from '@/components/showcase/TemplatesManagerPreview';
 
 export type SelectedWorkProjectData = {
   id: string;
@@ -17,11 +18,12 @@ export type SelectedWorkProjectData = {
   caseStudyUrl?: string;
 };
 
-type Props = { project: SelectedWorkProjectData };
+type Props = { project: SelectedWorkProjectData; isActive?: boolean };
 
-const SelectedWorkProject: React.FC<Props> = ({ project }) => {
+const SelectedWorkProject: React.FC<Props> = ({ project, isActive = false }) => {
   const chapterRef = useRef<HTMLElement>(null);
   const reducedMotion = usePrefersReducedMotion();
+  const [presentationReady, setPresentationReady] = useState(false);
 
   const preserveReturnChapter = (event: React.MouseEvent<HTMLAnchorElement>) => {
     if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
@@ -34,7 +36,7 @@ const SelectedWorkProject: React.FC<Props> = ({ project }) => {
     if (!chapter || reducedMotion || typeof IntersectionObserver === 'undefined') return;
 
     const find = (selector: string) => Array.from(chapter.querySelectorAll<HTMLElement>(selector));
-    const timeline = gsap.timeline({ paused: true, defaults: { ease: 'power2.out' } });
+    const timeline = gsap.timeline({ paused: true, defaults: { ease: 'power2.out' }, onComplete: () => setPresentationReady(true) });
 
     timeline
       .from(find('.selected-work-decorative-heading'), { autoAlpha: 0, y: 12, duration: 0.5 })
@@ -64,8 +66,12 @@ const SelectedWorkProject: React.FC<Props> = ({ project }) => {
     <section id={project.sectionId} ref={chapterRef} className="selected-work-chapter" aria-labelledby={`${project.id}-title`} tabIndex={-1}>
       <div className="selected-work-decorative-heading" aria-hidden="true">{project.title}</div>
       <div className="selected-work-grid">
-        <div className="selected-work-preview">
-          <img src={project.image} alt={project.imageAlt} loading="lazy" />
+        <div className={`selected-work-preview${project.id === 'templates-manager' ? ' selected-work-preview--templates' : ''}`}>
+          {project.id === 'templates-manager' ? (
+            <TemplatesManagerPreview variant="portfolio" isActive={isActive} isTransitionComplete={reducedMotion || presentationReady} />
+          ) : (
+            <img src={project.image} alt={project.imageAlt} loading="lazy" />
+          )}
         </div>
         <div className="selected-work-details">
           <div className="selected-work-copy">

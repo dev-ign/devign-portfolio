@@ -7,7 +7,6 @@ import { usePrefersReducedMotion } from '@/hooks/useMediaQuery';
 import { CONTACT_EMAIL_URL, RESUME_FILE_NAME, RESUME_URL } from '@/config/site';
 import founderPortrait from '@/assets/portfolio/founder-figma.png';
 import downloadIcon from '@/assets/portfolio/download-icon.svg';
-import templateManagerImage from '@/assets/portfolio/templates-manager-static.webp';
 import donorDirectoryImage from '@/assets/case-studies/donor-directory/donor-directory-hero.webp';
 import urgeTalentImage from '@/assets/urge-project.png';
 import './PortfolioPage.css';
@@ -20,14 +19,13 @@ const biography = [
   'I enjoy being part of the whole journey, from an early conversation or rough sketch to a polished product people actually use. For me, the best part has always been connecting the dots between people, design, and technology.',
 ];
 
-// Static frame captured from the TemplateManagerAnimation used by the home page carousel.
 const templatesManager: SelectedWorkProjectData = {
   id: 'templates-manager',
   sectionId: 'selected-work',
   title: 'Templates Manager',
   summary: 'A centralized workspace for creating, organizing, and sharing communication templates across fundraising teams.',
-  image: templateManagerImage,
-  imageAlt: 'Templates Manager project screen showing the template library, filters, status indicators, and an action menu',
+  image: '',
+  imageAlt: 'Templates Manager application workspace',
   highlights: [
     {
       title: 'Role-Based Workflows',
@@ -105,6 +103,7 @@ const PortfolioPage: React.FC = () => {
   const biographyRef = useRef<HTMLDivElement>(null);
   const reducedMotion = usePrefersReducedMotion();
   const [biographyScrollable, setBiographyScrollable] = useState(false);
+  const [navigationTarget, setNavigationTarget] = useState<string | null>(null);
   const [activeChapter, setActiveChapter] = useState<PortfolioChapter>(() => {
     const hash = decodeURIComponent(window.location.hash.slice(1));
     return chapterIds.includes(hash) ? hash : 'meet-the-founder';
@@ -146,17 +145,30 @@ const PortfolioPage: React.FC = () => {
         const bounds = chapter.getBoundingClientRect();
         return bounds.top <= center && bounds.bottom > center;
       });
-      if (current) setActiveChapter(current.id);
+      if (current) {
+        setActiveChapter(current.id);
+        if (current.id === navigationTarget) setNavigationTarget(null);
+      }
     }, { rootMargin: '-49% 0px -49% 0px' });
 
     chapters.forEach(chapter => observer.observe(chapter));
     return () => observer.disconnect();
+  }, [navigationTarget]);
+
+  useEffect(() => {
+    const onHashChange = () => {
+      const id = decodeURIComponent(window.location.hash.slice(1));
+      if (chapterIds.includes(id)) setNavigationTarget(id);
+    };
+    window.addEventListener('hashchange', onHashChange);
+    return () => window.removeEventListener('hashchange', onHashChange);
   }, []);
 
   useEffect(() => {
     const alignHistoryChapter = () => {
       const id = decodeURIComponent(window.location.hash.slice(1)) || 'meet-the-founder';
       if (!chapterIds.includes(id)) return;
+      setNavigationTarget(id);
       window.requestAnimationFrame(() => {
         document.getElementById(id)?.scrollIntoView({
           behavior: reducedMotion ? 'auto' : 'smooth',
@@ -254,7 +266,7 @@ const PortfolioPage: React.FC = () => {
             </div>
           </div>
         </section>
-        {selectedWorkProjects.map(project => <SelectedWorkProject key={project.id} project={project} />)}
+        {selectedWorkProjects.map(project => <SelectedWorkProject key={project.id} project={project} isActive={navigationTarget === null && activeChapter === project.sectionId} />)}
       </main>
     </div>
   );
