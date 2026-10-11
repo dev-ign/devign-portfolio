@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { Project, ProjectType } from '@/data/projects';
 import { filterProjectsByType, projectTypeTabs } from '@/data/projectFilters';
 import DonorDirectoryAnimation from '@/components/showcase/DonorDirectoryAnimation';
-import TemplateManagerAnimation from '@/components/showcase/TemplateManagerAnimation';
+import TemplatesManagerPreview from '@/components/showcase/TemplatesManagerPreview';
 import TalentSearchWorkflowAnimation from '@/components/showcase/TalentSearchWorkflowAnimation';
 import { usePrefersReducedMotion } from '@/hooks/useMediaQuery';
 import { trackEvent } from '@/utils/analytics';
@@ -23,6 +23,7 @@ const ProjectCarousel: React.FC<ProjectCarouselProps> = ({
   const [activeType, setActiveType] = useState<ProjectType>('code');
   const [activeIndex, setActiveIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
+  const [isSettled, setIsSettled] = useState(true);
   const reducedMotion = usePrefersReducedMotion();
   const filteredProjects = useMemo(
     () => filterProjectsByType(projects, activeType),
@@ -35,12 +36,15 @@ const ProjectCarousel: React.FC<ProjectCarouselProps> = ({
     if (!scroller) return;
     const card = scroller.querySelector<HTMLElement>(`[data-project-index="${index}"]`);
     if (!card) return;
+    if (Math.abs(scroller.scrollLeft - card.offsetLeft) < 1) return;
+    setIsSettled(false);
     scroller.scrollTo({ left: card.offsetLeft, behavior: reducedMotion ? 'auto' : 'smooth' });
   }, [reducedMotion]);
 
   const scrollToProject = useCallback((direction: 1 | -1) => {
     const scroller = scrollerRef.current;
     if (!scroller || filteredProjects.length === 0) return;
+    setIsSettled(false);
 
     const card = scroller.querySelector<HTMLElement>('[data-project-card]');
     const cardStep = card ? card.offsetWidth : scroller.clientWidth;
@@ -61,20 +65,30 @@ const ProjectCarousel: React.FC<ProjectCarouselProps> = ({
   }, [filteredProjects.length, reducedMotion]);
 
   useEffect(() => {
-    scrollerRef.current?.scrollTo({ left: 0, behavior: reducedMotion ? 'auto' : 'smooth' });
+    scrollerRef.current?.scrollTo({ left: 0, behavior: 'auto' });
     setActiveIndex(0);
+    setIsSettled(true);
     onActiveProjectChange?.(filteredProjects[0] || projects[0]);
   }, [activeType, filteredProjects, onActiveProjectChange, projects, reducedMotion]);
 
   useEffect(() => {
-    if (reducedMotion || isPaused || filteredProjects.length <= 1) return;
+    if (reducedMotion || isPaused || filteredProjects.length <= 1 || filteredProjects[activeIndex]?.id === 'gravyty-template-manager') return;
     const timer = window.setInterval(() => scrollToProject(1), 5000);
     return () => window.clearInterval(timer);
-  }, [filteredProjects.length, isPaused, reducedMotion, scrollToProject]);
+  }, [activeIndex, filteredProjects, isPaused, reducedMotion, scrollToProject]);
+
+  useEffect(() => {
+    const scroller = scrollerRef.current;
+    if (!scroller) return;
+    const onScrollEnd = () => setIsSettled(true);
+    scroller.addEventListener('scrollend', onScrollEnd);
+    return () => scroller.removeEventListener('scrollend', onScrollEnd);
+  }, []);
 
   const handleScroll = () => {
     const scroller = scrollerRef.current;
     if (!scroller || filteredProjects.length === 0) return;
+    setIsSettled(false);
     const cards = Array.from(scroller.querySelectorAll<HTMLElement>('[data-project-card]'));
     const activeCard = cards.reduce((closest, card) => {
       const currentDistance = Math.abs(card.offsetLeft - scroller.scrollLeft);
@@ -138,7 +152,7 @@ const ProjectCarousel: React.FC<ProjectCarouselProps> = ({
                 key={project.id}
                 data-project-card
                 data-project-index={index}
-                className={`relative aspect-16/10 min-w-full snap-start overflow-hidden rounded-lg border ${
+                className={`relative aspect-16/10 min-w-full snap-start overflow-hidden rounded-lg border ${project.id === 'gravyty-template-manager' ? 'template-manager-carousel-card' : ''} ${
                   isDark
                     ? 'border-white/7 bg-white/2.5'
                     : 'border-black/8 bg-black/3.5'
@@ -146,7 +160,7 @@ const ProjectCarousel: React.FC<ProjectCarouselProps> = ({
                 aria-label={project.title}
               >
                 {project.id === 'gravyty-template-manager' ? (
-                  <TemplateManagerAnimation className="h-full w-full" />
+                  <TemplatesManagerPreview variant="studio" isActive={activeIndex === index && isSettled} isTransitionComplete={isSettled} />
                 ) : project.id === 'gravyty-donor-directory' ? (
                   <DonorDirectoryAnimation className="h-full w-full" />
                 ) : project.id === 'urge-talent' ? (
@@ -162,7 +176,7 @@ const ProjectCarousel: React.FC<ProjectCarouselProps> = ({
                 )}
 
                 {/* Bottom feather overlay — always visible */}
-                <div className="absolute bottom-0 left-0 right-0 h-[42%] pointer-events-none [background:linear-gradient(to_bottom,transparent_0%,rgba(12,12,14,0.96)_100%)] flex flex-col justify-end px-5 pb-5 gap-1.5">
+                <div className={`absolute bottom-0 left-0 right-0 h-[42%] pointer-events-none [background:linear-gradient(to_bottom,transparent_0%,rgba(12,12,14,0.96)_100%)] flex flex-col justify-end px-5 pb-5 gap-1.5 ${project.id === 'gravyty-template-manager' ? 'template-manager-card-caption' : ''}`}>
                   <p className="m-0 font-mono text-[9px] uppercase tracking-[0.13em] text-white/50">
                     {project.category}
                   </p>
@@ -180,7 +194,7 @@ const ProjectCarousel: React.FC<ProjectCarouselProps> = ({
                         ['gravyty-template-manager', 'gravyty-donor-directory'].includes(project.id) ? 'case_study_view' : 'project_view',
                         { project_id: project.id }
                       )}
-                      className="text-white no-underline transition-colors duration-200 hover:text-[#D7B9FA]"
+                      className="pointer-events-auto text-white no-underline transition-colors duration-200 hover:text-[#D7B9FA]"
                     >
                       {project.title}
                     </Link>

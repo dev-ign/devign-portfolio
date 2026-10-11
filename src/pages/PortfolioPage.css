@@ -393,11 +393,20 @@ body[data-page='portfolio']::after { opacity: 0.12; }
   box-shadow: 0 24px 60px rgba(0, 0, 0, 0.28);
 }
 
-.selected-work-preview img {
+.selected-work-preview > img {
   display: block;
   width: 100%;
   height: 100%;
   object-fit: contain;
+}
+
+@media (max-width: 640px) {
+  .selected-work-preview--templates {
+    height: 640px;
+    min-height: 0;
+    max-height: none;
+    aspect-ratio: auto;
+  }
 }
 
 .selected-work-details {
