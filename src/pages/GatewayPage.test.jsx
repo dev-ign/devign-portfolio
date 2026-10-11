@@ -22,16 +22,16 @@ jest.mock('@/animations/gatewayAnimations', () => ({
 }), { virtual: true });
 
 jest.mock('@/components/navigation/GlobalNavigation', () => () => <nav aria-label="Primary" />, { virtual: true });
-jest.mock('@/components/work-with-me/Services', () => () => <section id="services" />, { virtual: true });
-jest.mock('@/components/work-with-me/Process', () => () => <section id="process" />, { virtual: true });
-jest.mock('@/components/work-with-me/ProjectsShowcase', () => () => <section id="projects" />, { virtual: true });
+jest.mock('@/components/work-with-me/Services', () => () => <section id="services" aria-label="Services" />, { virtual: true });
+jest.mock('@/components/work-with-me/Process', () => () => <section id="process" aria-label="Process" />, { virtual: true });
+jest.mock('@/components/work-with-me/ProjectsShowcase', () => () => <section id="projects" aria-label="Projects" />, { virtual: true });
 jest.mock('@/components/work-with-me/BusinessOutcomes', () => () => <section />, { virtual: true });
 jest.mock('@/components/work-with-me/InquiryForm', () => ({ onOpenInquiry }) => (
-  <section id="inquiry">
+  <section id="inquiry" aria-label="Inquiry">
     <button type="button" onClick={onOpenInquiry}>Section inquiry</button>
   </section>
 ), { virtual: true });
-jest.mock('@/components/work-with-me/FAQ', () => () => <section id="faq" />, { virtual: true });
+jest.mock('@/components/work-with-me/FAQ', () => () => <section id="faq" aria-label="FAQ" />, { virtual: true });
 jest.mock('@/components/work-with-me/InquiryModal', () => ({ open, onClose }) => (
   open ? (
     <div role="dialog" aria-label="Project inquiry">
@@ -45,11 +45,21 @@ test('opens the inquiry modal from the hero Work With Us button', () => {
 
   expect(screen.getByRole('heading', { name: /crafting digital experiences for modern brands/i }))
     .toHaveClass('home-display');
-  expect(screen.getByText(/every decision starts with understanding your business/i)).toBeInTheDocument();
+  expect(screen.getByText(/every decision begins with understanding your business/i)).toBeInTheDocument();
   expect(screen.getAllByText(/^(Websites|Apps|Marketing|Motion|Branding)\.$/)).toHaveLength(5);
   expect(screen.getByText('Strategy, design, and technology working as one.')).toBeInTheDocument();
 
   fireEvent.click(screen.getByRole('button', { name: /^work with us$/i }));
 
   expect(screen.getByRole('dialog', { name: /project inquiry/i })).toBeInTheDocument();
+});
+
+test('renders the Studio sections in the navigation order', () => {
+  render(<GatewayPage />);
+
+  const sectionIds = screen.getAllByRole('region')
+    .map(section => section.id)
+    .filter(id => ['services', 'process', 'projects', 'faq', 'inquiry'].includes(id));
+
+  expect(sectionIds).toEqual(['services', 'process', 'projects', 'faq', 'inquiry']);
 });

@@ -1,6 +1,7 @@
 import React from 'react';
 import { Box, Typography } from '@mui/material';
 import { useAudience } from '@/context/AudienceContext';
+import { RESUME_FILE_NAME, RESUME_URL } from '@/config/site';
 
 const ResumeStrip: React.FC = () => {
   const { audienceMode } = useAudience();
@@ -49,7 +50,7 @@ const ResumeStrip: React.FC = () => {
             letterSpacing: '0.06em',
           }}
         >
-          PDF · Updated 2025
+          Word document
         </Typography>
       </Box>
 
@@ -57,8 +58,8 @@ const ResumeStrip: React.FC = () => {
       <Box sx={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
         <Box
           component="a"
-          href="/Jona_Ferreira_Resume-devign.pdf"
-          download="Jona_Ferreira_Resume-devign.pdf"
+          href={RESUME_URL}
+          download={RESUME_FILE_NAME}
           sx={{
             display: 'inline-flex',
             alignItems: 'center',
@@ -75,7 +76,7 @@ const ResumeStrip: React.FC = () => {
             '&:hover': { opacity: 0.85 },
           }}
         >
-          Download PDF
+          Download Resume
         </Box>
         <Box
           component="a"

@@ -188,7 +188,6 @@ body[data-theme='light']::after { opacity: 0.07; }
 .marquee-mask:hover .marquee-track { animation-play-state: paused; }
 
 /* ── Per-page canvas tokens ── */
-body[data-page='story'],
 body[data-page='projects'],
 body[data-page='project-detail'] {
   --bg: #E8E7E1; --surface: #E8E7E1; --card: #DDDCD6;
@@ -196,19 +195,16 @@ body[data-page='project-detail'] {
   --muted: rgba(0, 0, 0, 0.35); --grid-line: rgba(0, 0, 0, 0.025);
   --ghost-stroke: rgba(0, 0, 0, 0.12); --step-number-color: rgba(0, 0, 0, 0.03);
 }
-body[data-page='story']::after,
 body[data-page='projects']::after,
 body[data-page='project-detail']::after { opacity: 0.04; }
 
-body[data-page='gateway'],
-body[data-page='case-studies'] {
+body[data-page='gateway'] {
   --bg: #0C0C0E; --surface: #0C0C0E; --card: #18181c;
   --border: rgba(255, 255, 255, 0.08); --text: rgba(255, 255, 255, 0.87);
   --dim: rgba(255, 255, 255, 0.45); --muted: rgba(255, 255, 255, 0.28);
   background: #0C0C0E;
 }
-body[data-page='gateway']::after,
-body[data-page='case-studies']::after { opacity: 0.18; }
+body[data-page='gateway']::after { opacity: 0.18; }
 
 body[data-page='template-manager-case-study'] {
   --bg: #151A36;
@@ -1369,6 +1365,12 @@ body[data-page='donor-directory-visual-demo']::after { opacity: 0.035; }
 .hero-reveal-item {
   opacity: 0;
   transform: translateY(24px);
+}
+
+/* Keep the Studio introduction readable while video metadata is loading. */
+.gateway-hero-content > .hero-reveal-item {
+  opacity: 1;
+  transform: none;
 }
 
 .gateway-intro-experience {

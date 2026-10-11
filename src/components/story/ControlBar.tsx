@@ -2,6 +2,7 @@ import React from 'react';
 import { motion } from 'motion/react';
 import { Icon } from '@iconify/react';
 import { useIsMobile } from '@/hooks/useMediaQuery';
+import { RESUME_FILE_NAME, RESUME_URL } from '@/config/site';
 
 interface ControlBarProps {
   show: boolean;
@@ -39,8 +40,8 @@ const ControlBar: React.FC<ControlBarProps> = ({ show }) => {
         </div>
 
         <a
-          href="/Jona_Ferreira_Resume-devign.pdf"
-          download
+          href={RESUME_URL}
+          download={RESUME_FILE_NAME}
           className="inline-flex items-center gap-1.5 bg-transparent text-[rgba(10,10,10,0.72)] rounded-full font-body text-[13px] font-medium tracking-[0.01em] no-underline whitespace-nowrap transition-colors duration-200 hover:text-[rgba(10,10,10,1)]"
           style={{ padding: isMobile ? '9px 14px' : '10px 22px' }}
         >

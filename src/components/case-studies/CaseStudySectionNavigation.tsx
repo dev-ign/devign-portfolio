@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
+import NavigationMenuToggle from '@/components/navigation/NavigationMenuToggle';
 
 export interface CaseStudySectionLink {
   id: string;
@@ -170,32 +171,14 @@ const CaseStudySectionNavigation: React.FC<CaseStudySectionNavigationProps> = ({
           >
             {activeLabel}
           </span>
-          <button
-            type="button"
-            aria-label={isOpen ? 'Close section navigation' : 'Open section navigation'}
-            aria-expanded={isOpen}
-            aria-controls="case-study-section-popover"
+          <NavigationMenuToggle
+            open={isOpen}
+            controls="case-study-section-popover"
+            openLabel="Open section navigation"
+            closeLabel="Close section navigation"
             onClick={() => setIsOpen((current) => !current)}
-            className="group grid h-11 w-11 shrink-0 cursor-pointer place-items-center rounded-full border-0 bg-transparent p-0 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white/80"
-          >
-            <span aria-hidden="true" className="relative block h-[17px] w-5">
-              <span
-                className={`absolute left-0 top-0 h-[3px] w-5 rounded-full transition-transform duration-300 ease-out ${colors.menuLine} ${
-                  isOpen ? 'translate-y-[7px] rotate-45' : ''
-                }`}
-              />
-              <span
-                className={`absolute left-0 top-[7px] h-[3px] w-5 rounded-full transition-[opacity,transform] duration-200 ${colors.menuLine} ${
-                  isOpen ? 'scale-x-0 opacity-0' : 'scale-x-100 opacity-100'
-                }`}
-              />
-              <span
-                className={`absolute bottom-0 left-0 h-[3px] w-5 rounded-full transition-transform duration-300 ease-out ${colors.menuLine} ${
-                  isOpen ? '-translate-y-[7px] -rotate-45' : ''
-                }`}
-              />
-            </span>
-          </button>
+            lineClassName={colors.menuLine}
+          />
         </nav>
 
         {isOpen && (

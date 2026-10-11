@@ -1,5 +1,6 @@
 export const APP_ROUTE_PATHS = [
   '/',
+  '/studio',
   '/portfolio',
   '/projects',
   '/projects/:slug',

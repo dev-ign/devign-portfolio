@@ -2,6 +2,7 @@ import React, { useRef, useEffect } from 'react';
 import { Box, Button, Typography } from '@mui/material';
 import { motion, useMotionValue, useSpring } from 'motion/react';
 import { useAudience } from '@/context/AudienceContext';
+import { RESUME_FILE_NAME, RESUME_URL } from '@/config/site';
 // import HeroStats from '@/components/hero/HeroStats';
 
 const ghost = {
@@ -348,8 +349,8 @@ const HeroSection: React.FC = () => {
             </Button>
             <Button
               component="a"
-              href="/Jona_Ferreira_Resume-devign.pdf"
-              download="Jona_Ferreira_Resume-devign.pdf"
+              href={RESUME_URL}
+              download={RESUME_FILE_NAME}
               sx={{
                 fontFamily: 'var(--font-mono)',
                 fontSize: '11px',

@@ -10,7 +10,7 @@ import React, {
 import type { ServiceBranchId } from '@/features/service-planner/types/servicePlanner.types';
 
 export type HomeNavMode = 'general' | 'contextual';
-export type HomeSection = 'intro' | 'services' | 'projects' | 'process' | 'faq' | 'contact';
+export type HomeSection = 'intro' | 'services' | 'process' | 'projects' | 'faq' | 'contact';
 
 export interface HomeNavigationState {
   mode: HomeNavMode;
@@ -36,10 +36,10 @@ const INITIAL_STATE: HomeNavigationState = {
 
 const sectionOrder: Array<{ id: string; section: HomeSection }> = [
   { id: 'services', section: 'services' },
-  { id: 'projects', section: 'projects' },
   { id: 'process', section: 'process' },
-  { id: 'inquiry', section: 'contact' },
+  { id: 'projects', section: 'projects' },
   { id: 'faq', section: 'faq' },
+  { id: 'inquiry', section: 'contact' },
   { id: 'contact', section: 'contact' },
 ];
 
