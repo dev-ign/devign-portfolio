@@ -39,9 +39,9 @@ test('presents the Templates Manager story around ownership and the role transit
   renderCaseStudy();
 
   expect(screen.getByRole('heading', { name: 'Templates Manager' })).toBeInTheDocument();
-  expect(screen.getByText(/A content workspace for managers to share reusable donor messages/i)).toBeInTheDocument();
+  expect(screen.getByText(/I designed the user workflows, interaction states, and reusable UI patterns/i)).toBeInTheDocument();
   expect(screen.getByTestId('template-manager-project-summary')).toBeInTheDocument();
-  expect(screen.getByText('Product design and frontend implementation')).toBeInTheDocument();
+  expect(screen.getByText('Product Design & Frontend Engineering')).toBeInTheDocument();
   expect(screen.getByText(/The original product is protected by NDA/i)).toBeInTheDocument();
   expect(screen.getAllByTestId('case-study-section')).toHaveLength(8);
   [
