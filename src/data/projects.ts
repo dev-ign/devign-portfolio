@@ -101,9 +101,9 @@ export const projects: Project[] = [
         hero: {
           title: 'Templates Manager',
           subtitle:
-            'A content workspace for managers to share reusable donor messages and fundraisers to personalize them safely.',
+            'I designed the user workflows, interaction states, and reusable UI patterns, then implemented the production frontend in React and Material UI with Django REST API integration for role-based behavior.',
           summary: [
-            { label: 'Contribution', value: 'Product design and frontend implementation' },
+            { label: 'Role', value: 'Product Design & Frontend Engineering' },
             {
               label: 'Focus',
               value: 'Content ownership, sharing, library navigation, and rich-text editing',
