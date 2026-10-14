@@ -118,7 +118,7 @@ export const DonorNextAction: React.FC<{ donor: DonorRecord; emphasized?: boolea
       <button type="button" onClick={() => setRequested(true)} disabled={requested}>
         {requested ? 'Request submitted' : 'Request First Draft'}
       </button>
-      {requested && <p role="status" className="donor-drawer-success">The request was added to the donor workflow.</p>}
+      {requested && <p role="status" className="donor-drawer-success">Demo request prepared. Nothing was sent.</p>}
     </section>
   );
 };

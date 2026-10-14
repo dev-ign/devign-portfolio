@@ -63,6 +63,53 @@ test('lets a viewer search and apply or remove a high-engagement filter', () => 
   expect(screen.getByText('3 matching donors')).toBeInTheDocument();
 });
 
+test('sorts and paginates the sample, then resets to page one on search', () => {
+  render(<DirectoryDemo state="default" />);
+
+  expect(screen.getByText('1–8 of 30')).toBeInTheDocument();
+  fireEvent.click(screen.getByRole('button', { name: 'Next page' }));
+  expect(screen.getByText('9–16 of 30')).toBeInTheDocument();
+
+  fireEvent.click(screen.getByRole('button', { name: /Sort: recent contact/i }));
+  expect(screen.getByText('1–8 of 30')).toBeInTheDocument();
+  expect(within(screen.getAllByRole('row')[1]).getByText('Elena Rivera')).toBeInTheDocument();
+
+  fireEvent.change(screen.getByRole('searchbox', { name: 'Search donors' }), {
+    target: { value: 'Martinez' },
+  });
+  expect(screen.getByText('1–3 of 3')).toBeInTheDocument();
+  expect(screen.getByText('Page 1 of 1')).toBeInTheDocument();
+});
+
+test('explains empty results and restores the sample', () => {
+  render(<DirectoryDemo state="default" />);
+  fireEvent.change(screen.getByRole('searchbox', { name: 'Search donors' }), {
+    target: { value: 'no matching donor' },
+  });
+  expect(screen.getByText('No donors match these controls.')).toBeInTheDocument();
+  expect(screen.getByText('0–0 of 0')).toBeInTheDocument();
+  fireEvent.click(screen.getByRole('button', { name: 'Clear search and filters' }));
+  expect(screen.getByText('1–8 of 30')).toBeInTheDocument();
+});
+
+test('exports only selected fictional records and announces completion', () => {
+  const createObjectURL = jest.fn(() => 'blob:donor-demo');
+  const revokeObjectURL = jest.fn();
+  Object.defineProperty(URL, 'createObjectURL', { configurable: true, value: createObjectURL });
+  Object.defineProperty(URL, 'revokeObjectURL', { configurable: true, value: revokeObjectURL });
+  const click = jest.spyOn(HTMLAnchorElement.prototype, 'click').mockImplementation(() => {});
+  render(<DirectoryDemo state="default" />);
+
+  fireEvent.click(screen.getByRole('checkbox', { name: 'Select Amara Lewis' }));
+  fireEvent.click(screen.getByRole('checkbox', { name: 'Select Julian Mercer' }));
+  fireEvent.click(screen.getByRole('button', { name: 'Export CSV' }));
+
+  expect(createObjectURL).toHaveBeenCalledTimes(1);
+  expect(click).toHaveBeenCalledTimes(1);
+  expect(screen.getByText('2 fictional donor records exported as CSV.')).toBeInTheDocument();
+  click.mockRestore();
+});
+
 test('opens the contextual drawer with history and the confirmed primary action', () => {
   render(<DirectoryDemo state="drawer" donorId="amara-lewis" />);
 

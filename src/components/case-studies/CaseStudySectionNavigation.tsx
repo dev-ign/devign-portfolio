@@ -67,6 +67,7 @@ const CaseStudySectionNavigation: React.FC<CaseStudySectionNavigationProps> = ({
   const [isPinned, setIsPinned] = useState(false);
   const slotRef = useRef<HTMLDivElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
+  const toggleRef = useRef<HTMLButtonElement>(null);
   const colors = toneClasses[tone];
   const isDonorTone = tone === 'donor-directory';
 
@@ -112,7 +113,12 @@ const CaseStudySectionNavigation: React.FC<CaseStudySectionNavigationProps> = ({
       if (!menuRef.current?.contains(event.target as Node)) setIsOpen(false);
     };
     const closeOnEscape = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') setIsOpen(false);
+      if (event.key !== 'Escape') return;
+      const focusedInPopover = menuRef.current
+        ?.querySelector('#case-study-section-popover')
+        ?.contains(document.activeElement);
+      setIsOpen(false);
+      if (isDonorTone && focusedInPopover) toggleRef.current?.focus({ preventScroll: true });
     };
 
     document.addEventListener('mousedown', closeOnOutsidePress);
@@ -121,7 +127,7 @@ const CaseStudySectionNavigation: React.FC<CaseStudySectionNavigationProps> = ({
       document.removeEventListener('mousedown', closeOnOutsidePress);
       document.removeEventListener('keydown', closeOnEscape);
     };
-  }, [isOpen]);
+  }, [isOpen, isDonorTone]);
 
   const navigateToSection = (sectionId: string) => {
     const section = document.getElementById(sectionId);
@@ -172,6 +178,7 @@ const CaseStudySectionNavigation: React.FC<CaseStudySectionNavigationProps> = ({
             {activeLabel}
           </span>
           <NavigationMenuToggle
+            buttonRef={toggleRef}
             open={isOpen}
             controls="case-study-section-popover"
             openLabel="Open section navigation"
@@ -186,10 +193,8 @@ const CaseStudySectionNavigation: React.FC<CaseStudySectionNavigationProps> = ({
             id="case-study-section-popover"
             role="menu"
             className={`case-study-section-popover absolute left-1/2 top-[calc(100%+12px)] max-h-[min(70vh,520px)] w-[min(370px,calc(100vw-32px))] -translate-x-1/2 overflow-y-auto overscroll-contain rounded-[22px] border border-white/14 p-3 shadow-[0_24px_70px_rgba(4,6,20,0.48)] backdrop-blur-[20px] ${colors.popover} ${
-              isPinned
-                ? 'max-sm:left-auto max-sm:right-0 max-sm:translate-x-0'
-                : 'max-sm:bottom-[calc(100%+12px)] max-sm:top-auto'
-            }`}
+              isPinned && !isDonorTone ? 'max-sm:left-auto max-sm:right-0 max-sm:translate-x-0' : ''
+            } ${!isPinned ? 'max-sm:bottom-[calc(100%+12px)] max-sm:top-auto' : ''}`}
           >
             <div className="grid grid-cols-2 gap-1.5">
               {sections.map((section) => {

@@ -296,9 +296,17 @@ export const useCaseStudyScrollReveal = (rootRef: React.RefObject<HTMLElement | 
       const scheduleRefresh = () => {
         window.clearTimeout(refreshTimer);
         refreshTimer = window.setTimeout(() => {
+          refreshTimer = 0;
           if (isActive) ScrollTrigger.refresh();
-        }, 140);
+        }, 250);
       };
+
+      // A refresh resets the window scroll position internally, so wait for native
+      // smooth section navigation to finish before refreshing trigger positions.
+      const deferRefreshWhileScrolling = () => {
+        if (refreshTimer) scheduleRefresh();
+      };
+      window.addEventListener('scroll', deferRefreshWhileScrolling, { passive: true });
 
       const lazyImages = Array.from(root.querySelectorAll<HTMLImageElement>('img[loading="lazy"]'));
       lazyImages.forEach((image) => {
@@ -312,6 +320,7 @@ export const useCaseStudyScrollReveal = (rootRef: React.RefObject<HTMLElement | 
       return () => {
         isActive = false;
         window.clearTimeout(refreshTimer);
+        window.removeEventListener('scroll', deferRefreshWhileScrolling);
         lazyImages.forEach((image) => image.removeEventListener('load', scheduleRefresh));
         media.revert();
         delete root.dataset.motionBreakpoint;

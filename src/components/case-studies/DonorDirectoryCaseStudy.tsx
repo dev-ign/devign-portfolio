@@ -5,14 +5,7 @@ import CaseStudySectionNavigation, {
 } from './CaseStudySectionNavigation';
 import { donorDirectoryCaseStudyContent as content } from '../../data/donorDirectoryCaseStudy';
 import donorDirectoryHero from '../../assets/case-studies/donor-directory/donor-directory-hero.webp';
-import donorDirectoryDrawerOverview from '../../assets/case-studies/donor-directory/donor-directory-drawer-overview.webp';
-import donorDirectoryHistoryTimeline from '../../assets/case-studies/donor-directory/donor-directory-history-timeline.webp';
-import donorDirectoryRequestFirstDraft from '../../assets/case-studies/donor-directory/donor-directory-request-first-draft.webp';
-import donorDirectoryComponentSheet from '../../assets/case-studies/donor-directory/donor-directory-component-sheet.webp';
-import donorDirectoryStateGrid from '../../assets/case-studies/donor-directory/donor-directory-state-grid.webp';
 import donorDirectoryDesignToProduction from '../../assets/case-studies/donor-directory/donor-directory-design-to-production.webp';
-import donorDirectoryAccessibilityDetails from '../../assets/case-studies/donor-directory/donor-directory-accessibility-details.webp';
-import donorDirectoryImpactSummary from '../../assets/case-studies/donor-directory/donor-directory-impact-summary.webp';
 import DirectoryDemo, {
   ROW_TO_DRAWER_DURATION,
   type DirectoryDemoState,
@@ -20,17 +13,17 @@ import DirectoryDemo, {
 import { useCaseStudyScrollReveal } from '../../hooks/useCaseStudyScrollReveal';
 
 export const donorDirectorySectionLinks: CaseStudySectionLink[] = [
-  { id: 'opportunity', label: 'Opportunity', menuLabel: 'Opportunity' },
-  { id: 'discovery', label: 'Discovery', menuLabel: 'Discovery' },
-  { id: 'donor-context', label: 'Donor context', menuLabel: 'Donor context' },
-  { id: 'bulk-actions', label: 'Bulk work', menuLabel: 'Bulk work' },
-  { id: 'reusable-system', label: 'Reusable system', menuLabel: 'Reusable system' },
-  { id: 'implementation', label: 'Implementation', menuLabel: 'Implementation' },
-  { id: 'outcome', label: 'Outcome', menuLabel: 'Outcome' },
+  { id: 'opportunity', label: 'The problem', menuLabel: 'Problem' },
+  { id: 'discovery', label: 'Discover and narrow', menuLabel: 'Discovery' },
+  { id: 'donor-context', label: 'Inspect in context', menuLabel: 'Donor context' },
+  { id: 'bulk-actions', label: 'From discovery to action', menuLabel: 'Action' },
+  { id: 'reusable-system', label: 'Scale and accessibility', menuLabel: 'Scale' },
+  { id: 'implementation', label: 'Design to implementation', menuLabel: 'Implementation' },
+  { id: 'outcome', label: 'Reflection', menuLabel: 'Reflection' },
 ];
 
 const sectionClassName =
-  'case-study-section donor-directory-top-level-section relative overflow-hidden border-t border-white/[0.055] px-6 pb-[clamp(76px,8vw,112px)] pt-[clamp(76px,8vw,112px)] sm:px-10 lg:px-14 xl:px-20';
+  'case-study-section donor-directory-top-level-section relative overflow-hidden border-t border-white/[0.055] px-6 pb-[clamp(56px,6vw,84px)] pt-[clamp(56px,6vw,84px)] sm:px-10 lg:px-14 xl:px-20';
 
 const PortfolioAsset: React.FC<{
   src: string;
@@ -72,7 +65,7 @@ const PortfolioAsset: React.FC<{
       loading={priority ? 'eager' : 'lazy'}
       fetchPriority={priority ? 'high' : 'auto'}
       decoding="async"
-      className={`h-full w-full object-cover ${imageClassName}`}
+      className={imageClassName || 'h-full w-full object-cover'}
       style={objectPosition ? { objectPosition } : undefined}
     />
   </figure>
@@ -99,7 +92,6 @@ const LiveDirectoryDemo: React.FC<{
   children?: React.ReactNode;
 }> = ({ state, title, instruction, variant = 'discovery', children }) => {
   const frameRef = useRef<HTMLElement>(null);
-  const [shouldRender, setShouldRender] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
   const [demoKey, setDemoKey] = useState(0);
@@ -107,26 +99,8 @@ const LiveDirectoryDemo: React.FC<{
   const isAnimated = state === 'row-to-drawer';
 
   useEffect(() => {
-    if (!frameRef.current || typeof IntersectionObserver === 'undefined') {
-      setShouldRender(true);
-      return undefined;
-    }
-
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (!entry.isIntersecting) return;
-        setShouldRender(true);
-        observer.disconnect();
-      },
-      { rootMargin: '700px 0px', threshold: 0 }
-    );
-    observer.observe(frameRef.current);
-    return () => observer.disconnect();
-  }, []);
-
-  useEffect(() => {
-    if (!isAnimated || !shouldRender || !frameRef.current || typeof IntersectionObserver === 'undefined') {
-      setIsVisible(shouldRender);
+    if (!isAnimated || !frameRef.current || typeof IntersectionObserver === 'undefined') {
+      setIsVisible(true);
       return undefined;
     }
 
@@ -137,7 +111,7 @@ const LiveDirectoryDemo: React.FC<{
     );
     observer.observe(frameRef.current);
     return () => observer.disconnect();
-  }, [isAnimated, shouldRender]);
+  }, [isAnimated]);
 
   const replay = useCallback(() => {
     setDemoKey((current) => current + 1);
@@ -155,7 +129,7 @@ const LiveDirectoryDemo: React.FC<{
     >
       <figcaption className="donor-directory-live-caption">
         <div>
-          <span>Interactive reconstruction</span>
+          <span>{isAnimated ? 'Reconstructed interaction sequence' : 'Interactive reconstruction'}</span>
           <strong>{title}</strong>
         </div>
         <p>{instruction}</p>
@@ -174,22 +148,15 @@ const LiveDirectoryDemo: React.FC<{
         )}
       </figcaption>
       <div className="donor-directory-live-demo">
-        {shouldRender ? (
-          <>
-            <DirectoryDemo
-              key={demoKey}
-              state={state}
-              autoPlay={!isAnimated || (isVisible && !isPaused)}
-              onAnimationStageChange={isAnimated ? setStage : undefined}
-              embedded
-            />
-            {children}
-          </>
-        ) : (
-          <div className="donor-directory-demo-pending" aria-hidden="true">
-            <span /><span /><span />
-          </div>
-        )}
+        <DirectoryDemo
+          key={demoKey}
+          state={state}
+          autoPlay={!isAnimated || (isVisible && !isPaused)}
+          onAnimationStageChange={isAnimated ? setStage : undefined}
+          embedded
+          presentationOnly={isAnimated}
+        />
+        {children}
       </div>
       {isAnimated && (
         <p className="sr-only">
@@ -226,7 +193,7 @@ const DonorDirectoryHero: React.FC = () => (
     id="hero"
     aria-labelledby="donor-directory-title"
     data-case-study-section="hero"
-    className="relative px-6 pb-16 pt-24 sm:px-10 sm:pb-20 sm:pt-28 lg:px-14 xl:px-20"
+    className="relative px-6 pb-12 pt-24 sm:px-10 sm:pb-16 sm:pt-28 lg:px-14 xl:px-20"
   >
     <div data-reveal="hero" className="relative mx-auto w-full max-w-[1320px]">
       <div data-hero-copy className="mx-auto max-w-[1020px] text-center">
@@ -257,17 +224,20 @@ const DonorDirectoryHero: React.FC = () => (
         </p>
       </section>
 
-      <PortfolioAsset
-        src={donorDirectoryHero}
-        alt="Reconstructed Northstar Foundation donor directory showing search, filters, donor records, engagement, relationship managers, recent contact, giving, and status."
-        assetId="donor-directory-hero"
-        aspectRatio="16 / 10"
-        width={2400}
-        height={1500}
-        priority
-        reveal="hero-item"
-        className="mt-8 sm:mt-10"
-      />
+      <div className="mt-8 flex w-full justify-center sm:mt-10">
+        <PortfolioAsset
+          src={donorDirectoryHero}
+          alt="Top of a reconstructed donor directory showing navigation, search, filters, and a donor results table."
+          assetId="donor-directory-hero"
+          aspectRatio="16 / 10"
+          width={2400}
+          height={1500}
+          priority
+          reveal="hero-item"
+          className="w-full max-w-[1320px]"
+          imageClassName="block h-auto w-full object-contain"
+        />
+      </div>
 
       <CaseStudySectionNavigation sections={donorDirectorySectionLinks} tone="donor-directory" />
     </div>
@@ -293,7 +263,6 @@ const OpportunitySection: React.FC = () => (
         <p className="m-0 font-disp text-[clamp(22px,2.6vw,36px)] font-bold leading-[1.25] tracking-[-0.03em] text-white/86">
           {content.opportunity.problem}
         </p>
-        <p className="mb-0 mt-5 max-w-[760px] font-body text-[15px] leading-[1.72] text-[#E0C0F2]/76">{content.opportunity.challenge}</p>
       </blockquote>
     </div>
   </section>
@@ -325,42 +294,13 @@ const DiscoverySection: React.FC = () => (
       <SectionTitle id="discovery" heading={content.experience.heading} intro={content.experience.intro} maxWidth="max-w-[1060px]" />
       <WorkflowModel />
 
-      <div data-reveal="intro" className="mt-[clamp(56px,7vw,88px)] max-w-[860px]">
-        <h3 className="m-0 font-disp text-[clamp(34px,4.7vw,62px)] font-extrabold leading-[0.98] tracking-[-0.045em] text-white">{content.experience.discovery.heading}</h3>
-        <p className="mb-0 mt-6 max-w-[740px] font-body text-[16px] leading-[1.76] text-white/68">{content.experience.discovery.body}</p>
-      </div>
-      <div className="mt-10">
+      <div className="mt-8">
         <LiveDirectoryDemo
           state="default"
-          title="Search, filters, and sorting in context"
-          instruction="Search by donor name, open Filters, sort the result set, or select a record to inspect the interaction."
+          title="Search, inspect, select, and export"
+          instruction="Try “Martinez”, apply High engagement, open a result, close the drawer, then select records and export the fictional sample."
           variant="discovery"
         />
-      </div>
-
-      <div data-reveal="intro" className="mt-[clamp(56px,7vw,88px)] grid gap-10 lg:grid-cols-[1.12fr_0.88fr] lg:gap-16">
-        <article className="border-t-2 border-[#D6A7F0]/44 pt-6">
-          <h3 className="m-0 max-w-[650px] font-disp text-[clamp(31px,3.6vw,48px)] font-bold leading-[1.04] tracking-[-0.04em] text-white/94">{content.experience.scale.heading}</h3>
-          <p className="mb-0 mt-5 max-w-[650px] font-body text-[16px] leading-[1.76] text-white/70">{content.experience.scale.body}</p>
-        </article>
-        <article className="border-t border-white/12 pt-6 lg:mt-5">
-          <h3 className="m-0 max-w-[520px] font-disp text-[clamp(24px,2.6vw,34px)] font-bold leading-[1.1] tracking-[-0.03em] text-white/82">{content.experience.tables.heading}</h3>
-          <p className="mb-0 mt-5 max-w-[540px] font-body text-[15px] leading-[1.74] text-white/60">{content.experience.tables.body}</p>
-        </article>
-      </div>
-      <div className="mt-10 sm:mt-12">
-        <LiveDirectoryDemo
-          state="row-selected"
-          title="Table hierarchy in practice"
-          instruction="Annotations focus on the three decisions that made dense records easier to scan."
-          variant="anatomy"
-        >
-          <ol className="donor-directory-anatomy-annotations donor-directory-anatomy-annotations--condensed" aria-label="Table anatomy annotations">
-            <li><span>1</span>Information hierarchy</li>
-            <li><span>2</span>Controlled density</li>
-            <li><span>3</span>Predictable interaction</li>
-          </ol>
-        </LiveDirectoryDemo>
       </div>
     </div>
   </section>
@@ -384,59 +324,16 @@ const DonorContextSection: React.FC = () => (
           </article>
         ))}
       </div>
-      <div className="mt-12">
+      <div className="mt-9">
         <LiveDirectoryDemo
           state="row-to-drawer"
           title="Directory remains visible; donor context comes forward"
-          instruction="The sequence moves through overview, giving, history, and the next action before returning to the preserved table state."
+          instruction="This controlled sequence illustrates the drawer decision. Use the interactive demo above to open and close a donor yourself."
           variant="hero"
         />
       </div>
 
-      <PortfolioAsset
-        src={donorDirectoryDrawerOverview}
-        alt="Reconstructed donor directory with Amara Lewis selected and an Overview drawer showing metrics, Request First Draft, Giving History, and recent relationship activity."
-        assetId="donor-directory-drawer-overview"
-        aspectRatio="16 / 10"
-        width={2400}
-        height={1500}
-        className="mt-8 sm:mt-10"
-      />
-      <div data-reveal="text" className="mt-7 grid gap-5 lg:grid-cols-[0.9fr_1.1fr] lg:items-start">
-        <div className="rounded-[20px] border border-[#D4A5EF]/18 bg-black/10 p-6 sm:p-8">
-          <h3 className="m-0 font-disp text-[clamp(23px,2.5vw,34px)] font-bold tracking-[-0.03em] text-white/90">Human-in-the-loop by design</h3>
-          <p className="mb-0 mt-4 font-body text-[15px] leading-[1.74] text-white/66">{content.experience.donorContext.ai}</p>
-          <p className="mb-0 mt-5 font-body text-[13px] font-semibold text-[#E0BCF4]/80">AI support → human decision</p>
-        </div>
-        <div className="grid gap-5 sm:grid-cols-2">
-          <div>
-            <PortfolioAsset
-              src={donorDirectoryHistoryTimeline}
-              alt="History tab showing five chronological fictional donor activities for Amara Lewis, tightly framed with only enough table context for orientation."
-              assetId="donor-directory-history-timeline"
-              aspectRatio="4 / 3"
-              width={1800}
-              height={1200}
-              objectPosition="72% center"
-              reveal="none"
-            />
-            <p className="mb-0 mt-3 font-body text-[12px] leading-[1.6] text-white/58">Relationship history becomes a narrative, not an activity dump.</p>
-          </div>
-          <div>
-            <PortfolioAsset
-              src={donorDirectoryRequestFirstDraft}
-              alt="Overview drawer detail focused on the recommendation, Request First Draft call to action, surrounding metrics, and five-year giving history."
-              assetId="donor-directory-request-first-draft"
-              aspectRatio="4 / 3"
-              width={1600}
-              height={1200}
-              objectPosition="76% center"
-              reveal="none"
-            />
-            <p className="mb-0 mt-3 font-body text-[12px] leading-[1.6] text-white/58">Recommendation, supporting context, and giving stay connected.</p>
-          </div>
-        </div>
-      </div>
+      <p data-reveal="text" className="mb-0 mt-7 max-w-[800px] font-body text-[14px] leading-[1.7] text-white/62">{content.experience.donorContext.ai}</p>
     </div>
   </section>
 );
@@ -481,28 +378,20 @@ const SystemsSection: React.FC = () => (
           <p key={paragraph} className="m-0 font-body text-[16px] leading-[1.74] text-white/68">{paragraph}</p>
         ))}
       </div>
-      <PortfolioAsset
-        src={donorDirectoryComponentSheet}
-        alt="Reconstructed donor directory component system grouped into Inputs and Filters, Data and Selection, Donor Context, and Feedback and States."
-        assetId="donor-directory-component-sheet"
-        aspectRatio="16 / 10"
-        width={2400}
-        height={1500}
-        className="mt-10 sm:mt-12"
-      />
-      <div data-reveal="intro" className="mt-[clamp(60px,7vw,88px)] max-w-[900px]">
-        <h3 className="m-0 font-disp text-[clamp(32px,4.2vw,54px)] font-extrabold leading-[1] tracking-[-0.045em] text-white">{content.experience.states.heading}</h3>
-        <p className="mb-0 mt-5 max-w-[740px] font-body text-[16px] leading-[1.76] text-white/68">{content.experience.states.body}</p>
+      <div data-reveal="card-group" className="mt-9 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        {[
+          ['Search and filters', 'Clear input, active states, and a recoverable no-results view.'],
+          ['Table and selection', 'Stable row identity, readable hierarchy, and contextual bulk controls.'],
+          ['Donor context', 'A drawer with focused details, keyboard tabs, and focus return.'],
+          ['Feedback and states', 'Loading, empty, error, and action states specified alongside the ideal path.'],
+        ].map(([title, description]) => (
+          <article key={title} className="rounded-[18px] border border-white/10 bg-white/[0.035] p-5 sm:p-6">
+            <h3 className="m-0 font-disp text-[20px] font-bold tracking-[-0.025em] text-white/90">{title}</h3>
+            <p className="mb-0 mt-3 font-body text-[14px] leading-[1.65] text-white/66">{description}</p>
+          </article>
+        ))}
       </div>
-      <PortfolioAsset
-        src={donorDirectoryStateGrid}
-        alt="Interaction state grid for the donor directory showing loading, empty, no-results, error, selected, and unavailable-action states."
-        assetId="donor-directory-state-grid"
-        aspectRatio="3 / 2"
-        width={2400}
-        height={1600}
-        className="mt-9 sm:mt-10"
-      />
+      <p data-reveal="text" className="mb-0 mt-7 max-w-[900px] font-body text-[15px] leading-[1.72] text-white/66">{content.experience.states.body}</p>
     </div>
   </section>
 );
@@ -535,19 +424,7 @@ const ImplementationSection: React.FC = () => (
         className="mt-10 sm:mt-12"
       />
 
-      <div data-reveal="intro" className="mt-[clamp(60px,7vw,88px)] max-w-[920px]">
-        <h3 className="m-0 font-disp text-[clamp(32px,4.2vw,54px)] font-extrabold leading-[1] tracking-[-0.045em] text-white">{content.quality.heading}</h3>
-        <p className="mb-0 mt-5 max-w-[740px] font-body text-[16px] leading-[1.76] text-white/68">{content.quality.body}</p>
-      </div>
-      <PortfolioAsset
-        src={donorDirectoryAccessibilityDetails}
-        alt="Accessibility and interaction-quality composition highlighting visible keyboard focus, row selection, drawer tabs, responsive mobile information priority, loading structure, and reduced-motion behavior."
-        assetId="donor-directory-accessibility-details"
-        aspectRatio="3 / 2"
-        width={2400}
-        height={1600}
-        className="mt-9 sm:mt-10"
-      />
+      <p data-reveal="text" className="mb-0 mt-7 max-w-[900px] font-body text-[15px] leading-[1.72] text-white/66">{content.quality.body}</p>
     </div>
   </section>
 );
@@ -570,18 +447,7 @@ const OutcomeSection: React.FC = () => (
           </article>
         ))}
       </div>
-      <PortfolioAsset
-        src={donorDirectoryImpactSummary}
-        alt="Calm summary of the reconstructed donor platform showing the directory, contextual donor drawer, relationship history, and connected next actions."
-        assetId="donor-directory-impact-summary"
-        aspectRatio="16 / 10"
-        width={2400}
-        height={1500}
-        className="mt-12 sm:mt-14"
-      />
-
-      <div data-reveal="text" className="mx-auto mt-[clamp(60px,7vw,88px)] max-w-[820px] text-center">
-        <h3 className="m-0 font-disp text-[clamp(34px,4.5vw,58px)] font-extrabold tracking-[-0.045em] text-white">{content.reflection.heading}</h3>
+      <div data-reveal="text" className="mx-auto mt-12 max-w-[820px] text-center">
         <p className="mx-auto mb-0 mt-6 max-w-[720px] font-body text-[clamp(16px,1.7vw,22px)] leading-[1.68] text-white/70">{content.reflection.body}</p>
         <nav aria-label="Continue exploring" className="mt-12 flex flex-col items-center justify-center gap-3 sm:flex-row">
           <Link to="/case-studies/gravyty-template-manager" className="inline-flex min-h-11 items-center rounded-full border border-[#D4A5EF]/34 bg-[#D4A5EF]/12 px-5 py-3 font-body text-[11px] font-semibold text-white/84 no-underline transition hover:border-[#D4A5EF]/58 hover:bg-[#D4A5EF]/18 hover:text-white focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white/80">

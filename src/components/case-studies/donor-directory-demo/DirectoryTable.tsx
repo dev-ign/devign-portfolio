@@ -107,6 +107,15 @@ const DirectoryTable: React.FC<DirectoryTableProps> = ({
                 </span>
                 <span className="directory-demo-mobile-record__arrow" aria-hidden="true">›</span>
               </button>
+              <label className="directory-demo-mobile-record__select">
+                <input
+                  type="checkbox"
+                  aria-label={`Select ${donor.name}`}
+                  checked={selected}
+                  onChange={() => onToggleDonor(donor.id)}
+                />
+                <span>Select</span>
+              </label>
             </article>
           );
         })}
@@ -134,7 +143,6 @@ const DirectoryTable: React.FC<DirectoryTableProps> = ({
             <th className="directory-demo-column--numeric directory-demo-column--last-gift">Last gift</th>
             <th className="directory-demo-column--numeric">Lifetime giving</th>
             <th className="directory-demo-column--status">Status</th>
-            <th className="directory-demo-actions-cell"><span className="sr-only">Actions</span></th>
           </tr>
         </thead>
         <tbody>
@@ -175,11 +183,6 @@ const DirectoryTable: React.FC<DirectoryTableProps> = ({
                 <td className="directory-demo-column--numeric directory-demo-column--last-gift">{currency.format(donor.lastGift)}</td>
                 <td className="directory-demo-column--numeric">{currency.format(donor.lifetimeGiving)}</td>
                 <td className="directory-demo-column--status"><StatusBadge status={donor.status} /></td>
-                <td className="directory-demo-actions-cell">
-                  <button type="button" aria-label={`More actions for ${donor.name}`} className="directory-demo-icon-button">
-                    ···
-                  </button>
-                </td>
               </tr>
             );
           })}

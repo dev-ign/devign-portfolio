@@ -1,7 +1,6 @@
 import React, { useCallback, useEffect, useId, useMemo, useRef, useState } from 'react';
 import {
   DONOR_DIRECTORY_ORGANIZATION,
-  DONOR_DIRECTORY_TOTAL_RECORDS,
   donorDirectoryRecords,
   getDemoDonor,
   type DonorRecord,
@@ -26,9 +25,12 @@ interface DirectoryDemoProps {
   autoPlay?: boolean;
   onAnimationStageChange?: (stage: string) => void;
   embedded?: boolean;
+  presentationOnly?: boolean;
 }
 
 const selectedStateIds = ['amara-lewis', 'julian-mercer', 'elena-rivera'];
+const DEFAULT_PAGE_SIZE = 8;
+type SortOrder = 'recent' | 'giving-desc' | 'giving-asc';
 
 export const ROW_TO_DRAWER_TIMELINE = [
   { id: 'resting', duration: 1000 },
@@ -60,6 +62,7 @@ const DirectoryDemo: React.FC<DirectoryDemoProps> = ({
   autoPlay = true,
   onAnimationStageChange,
   embedded = false,
+  presentationOnly = false,
 }) => {
   const titleId = useId();
   const [query, setQuery] = useState(state === 'filtered' ? 'Martinez' : '');
@@ -73,6 +76,10 @@ const DirectoryDemo: React.FC<DirectoryDemoProps> = ({
   const [engagementFilter, setEngagementFilter] = useState<'High' | null>(
     state === 'filtered' ? 'High' : null
   );
+  const [sortOrder, setSortOrder] = useState<SortOrder>('recent');
+  const [page, setPage] = useState(1);
+  const [feedback, setFeedback] = useState('');
+  const pageSize = state === 'selected' ? 4 : DEFAULT_PAGE_SIZE;
   const [animationStep, setAnimationStep] = useState(state === 'row-to-drawer' ? 0 : -1);
   const lastTriggerRef = useRef<HTMLButtonElement | null>(null);
 
@@ -82,6 +89,9 @@ const DirectoryDemo: React.FC<DirectoryDemoProps> = ({
     setDrawerDonor(state.startsWith('drawer') ? getDemoDonor(donorId) : null);
     setFiltersOpen(state === 'filtered');
     setEngagementFilter(state === 'filtered' ? 'High' : null);
+    setSortOrder('recent');
+    setPage(1);
+    setFeedback('');
   }, [donorId, state]);
 
   useEffect(() => {
@@ -115,7 +125,7 @@ const DirectoryDemo: React.FC<DirectoryDemoProps> = ({
     onAnimationStageChange?.(ROW_TO_DRAWER_TIMELINE[animationStep].id);
   }, [animationStep, onAnimationStageChange, state]);
 
-  const displayedRecords = useMemo(() => {
+  const matchingRecords = useMemo(() => {
     const normalizedQuery = query.trim().toLowerCase();
     let records = normalizedQuery
       ? donorDirectoryRecords.filter((donor) =>
@@ -129,8 +139,16 @@ const DirectoryDemo: React.FC<DirectoryDemoProps> = ({
       records = records.filter((donor) => donor.engagement === engagementFilter);
     }
 
-    return records.slice(0, 8);
-  }, [engagementFilter, query]);
+    if (sortOrder === 'giving-desc') return [...records].sort((a, b) => b.lifetimeGiving - a.lifetimeGiving);
+    if (sortOrder === 'giving-asc') return [...records].sort((a, b) => a.lifetimeGiving - b.lifetimeGiving);
+    return records;
+  }, [engagementFilter, query, sortOrder]);
+
+  const pageCount = Math.max(1, Math.ceil(matchingRecords.length / pageSize));
+  const currentPage = Math.min(page, pageCount);
+  const displayedRecords = matchingRecords.slice((currentPage - 1) * pageSize, currentPage * pageSize);
+  const rangeStart = matchingRecords.length ? (currentPage - 1) * pageSize + 1 : 0;
+  const rangeEnd = Math.min(currentPage * pageSize, matchingRecords.length);
 
   const activeFilterCount = (engagementFilter ? 1 : 0) + (query.trim() ? 1 : 0);
 
@@ -165,8 +183,34 @@ const DirectoryDemo: React.FC<DirectoryDemoProps> = ({
   const toggleAll = () => {
     setSelectedIds((current) => {
       const allSelected = displayedRecords.every(({ id }) => current.has(id));
-      return allSelected ? new Set() : new Set(displayedRecords.map(({ id }) => id));
+      const next = new Set(current);
+      displayedRecords.forEach(({ id }) => allSelected ? next.delete(id) : next.add(id));
+      return next;
     });
+  };
+
+  const exportSelection = () => {
+    const selected = donorDirectoryRecords.filter(({ id }) => selectedIds.has(id));
+    if (!selected.length) return;
+    const cells = [
+      ['Name', 'Email', 'Location', 'Engagement', 'Status', 'Lifetime giving'],
+      ...selected.map((donor) => [donor.name, donor.email, donor.location, donor.engagement, donor.status, String(donor.lifetimeGiving)]),
+    ];
+    const csv = cells.map((row) => row.map((cell) => `"${cell.replace(/"/g, '""')}"`).join(',')).join('\r\n');
+    const url = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8' }));
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = 'donor-directory-demo-selection.csv';
+    link.click();
+    window.setTimeout(() => URL.revokeObjectURL(url), 1000);
+    setFeedback(`${selected.length} fictional donor ${selected.length === 1 ? 'record' : 'records'} exported as CSV.`);
+  };
+
+  const updateQuery = (value: string) => { setQuery(value); setPage(1); setFeedback(''); };
+  const updateEngagement = (value: 'High' | null) => { setEngagementFilter(value); setPage(1); setFeedback(''); };
+  const cycleSort = () => {
+    setSortOrder((current) => current === 'recent' ? 'giving-desc' : current === 'giving-desc' ? 'giving-asc' : 'recent');
+    setPage(1);
   };
 
   const openDonor = (donor: DonorRecord, trigger: HTMLButtonElement) => {
@@ -185,6 +229,8 @@ const DirectoryDemo: React.FC<DirectoryDemoProps> = ({
   return (
     <div
       className="directory-demo-shell"
+      inert={presentationOnly}
+      aria-hidden={presentationOnly ? 'true' : undefined}
       data-testid="directory-demo-shell"
       data-demo-state={state}
       data-animation-step={animationStep}
@@ -207,11 +253,7 @@ const DirectoryDemo: React.FC<DirectoryDemoProps> = ({
           <div>
             <span className="directory-demo-kicker">Relationship intelligence</span>
             <DemoHeading id={titleId}>Donor Directory</DemoHeading>
-            <p>{DONOR_DIRECTORY_TOTAL_RECORDS.toLocaleString()} donor records</p>
-          </div>
-          <div className="directory-demo-heading-actions">
-            <button type="button" className="directory-demo-button directory-demo-button--secondary">Import CSV</button>
-            <button type="button" className="directory-demo-button directory-demo-button--primary">Add donor</button>
+            <p>{donorDirectoryRecords.length} fictional records in this interactive sample</p>
           </div>
         </section>
 
@@ -223,10 +265,9 @@ const DirectoryDemo: React.FC<DirectoryDemoProps> = ({
               type="search"
               aria-label="Search donors"
               value={query}
-              onChange={(event) => setQuery(event.target.value)}
+              onChange={(event) => updateQuery(event.target.value)}
               placeholder="Search donors"
             />
-            <kbd>⌘ K</kbd>
           </label>
           <button
             type="button"
@@ -242,7 +283,7 @@ const DirectoryDemo: React.FC<DirectoryDemoProps> = ({
               <button
                 type="button"
                 aria-label="Remove engagement filter"
-                onClick={() => setEngagementFilter(null)}
+                onClick={() => updateEngagement(null)}
               >
                 ×
               </button>
@@ -250,48 +291,49 @@ const DirectoryDemo: React.FC<DirectoryDemoProps> = ({
           )}
           {query.trim() && (
             <span className="directory-demo-filter-chip">
-              Name: {query.trim()}
-              <button type="button" aria-label="Clear donor search" onClick={() => setQuery('')}>×</button>
+              Search: {query.trim()}
+              <button type="button" aria-label="Clear donor search" onClick={() => updateQuery('')}>×</button>
             </span>
           )}
-          <button type="button" className="directory-demo-sort-control">Lifetime giving ↓</button>
-          <span className="directory-demo-result-count">
-            {activeFilterCount > 0
-              ? `${displayedRecords.length} matching donors`
-              : `1–${displayedRecords.length} of ${DONOR_DIRECTORY_TOTAL_RECORDS.toLocaleString()}`}
-          </span>
+          <button type="button" className="directory-demo-sort-control" onClick={cycleSort} aria-label={`Sort: ${sortOrder === 'recent' ? 'recent contact, newest first' : sortOrder === 'giving-desc' ? 'lifetime giving, highest first' : 'lifetime giving, lowest first'}. Change sort`}>
+            {sortOrder === 'recent' ? 'Recent contact ↓' : sortOrder === 'giving-desc' ? 'Lifetime giving ↓' : 'Lifetime giving ↑'}
+          </button>
+          <span className="directory-demo-result-count" role="status">{matchingRecords.length} {activeFilterCount ? 'matching' : 'sample'} donors</span>
         </section>
 
         {filtersOpen && (
           <div className="directory-demo-filter-panel" role="region" aria-label="Filters">
-            <button type="button">Relationship manager</button>
             <button
               type="button"
               aria-pressed={engagementFilter === 'High'}
               onClick={() => {
-                setEngagementFilter((current) => (current === 'High' ? null : 'High'));
+                updateEngagement(engagementFilter === 'High' ? null : 'High');
                 setFiltersOpen(false);
               }}
             >
               High engagement
             </button>
-            <button type="button">Donor status</button>
-            <button type="button">Location</button>
           </div>
         )}
 
         {effectiveSelectedIds.size > 0 && (
           <section className="directory-demo-bulk-bar" aria-label="Bulk actions">
             <strong>{effectiveSelectedIds.size} selected</strong>
-            <button type="button">Export CSV</button>
-            <button type="button">Assign</button>
-            <button type="button">Add tag</button>
-            <button type="button" disabled={effectiveSelectedIds.size < 2}>Update status</button>
+            <button type="button" onClick={exportSelection}>Export CSV</button>
             <button type="button" onClick={() => setSelectedIds(new Set())} className="directory-demo-bulk-clear">Clear selection</button>
           </section>
         )}
+        {feedback && <p className="directory-demo-feedback" role="status">{feedback}</p>}
 
-        <DirectoryTable
+        {matchingRecords.length === 0 && (
+          <div className="directory-demo-empty" role="status">
+            <strong>No donors match these controls.</strong>
+            <span>Try another search or clear the filter to return to the sample records.</span>
+            <button type="button" onClick={() => { updateQuery(''); updateEngagement(null); }}>Clear search and filters</button>
+          </div>
+        )}
+
+        {matchingRecords.length > 0 && <DirectoryTable
           records={displayedRecords}
           selectedIds={effectiveSelectedIds}
           emphasizedDonorId={
@@ -303,17 +345,15 @@ const DirectoryDemo: React.FC<DirectoryDemoProps> = ({
           onToggleDonor={toggleDonor}
           onToggleAll={toggleAll}
           onOpenDonor={openDonor}
-        />
+        />}
 
         <footer className="directory-demo-pagination" aria-label="Pagination">
-          <span>Rows per page <strong>25</strong></span>
-          <span>1–25 of {DONOR_DIRECTORY_TOTAL_RECORDS.toLocaleString()}</span>
+          <span>Rows per page <strong>{pageSize}</strong></span>
+          <span>{rangeStart}–{rangeEnd} of {matchingRecords.length}</span>
           <div>
-            <button type="button" aria-label="Previous page" disabled>‹</button>
-            <button type="button" aria-current="page">1</button>
-            <button type="button">2</button>
-            <button type="button">3</button>
-            <button type="button" aria-label="Next page">›</button>
+            <button type="button" aria-label="Previous page" disabled={currentPage === 1} onClick={() => setPage(currentPage - 1)}>‹</button>
+            <span aria-live="polite">Page {currentPage} of {pageCount}</span>
+            <button type="button" aria-label="Next page" disabled={currentPage === pageCount} onClick={() => setPage(currentPage + 1)}>›</button>
           </div>
         </footer>
       </MainElement>
