@@ -193,7 +193,7 @@ const CaseStudySectionNavigation: React.FC<CaseStudySectionNavigationProps> = ({
             id="case-study-section-popover"
             role="menu"
             className={`case-study-section-popover absolute left-1/2 top-[calc(100%+12px)] max-h-[min(70vh,520px)] w-[min(370px,calc(100vw-32px))] -translate-x-1/2 overflow-y-auto overscroll-contain rounded-[22px] border border-white/14 p-3 shadow-[0_24px_70px_rgba(4,6,20,0.48)] backdrop-blur-[20px] ${colors.popover} ${
-              isPinned && !isDonorTone ? 'max-sm:left-auto max-sm:right-0 max-sm:translate-x-0' : ''
+              isPinned ? 'max-sm:left-auto max-sm:right-0 max-sm:translate-x-0' : ''
             } ${!isPinned ? 'max-sm:bottom-[calc(100%+12px)] max-sm:top-auto' : ''}`}
           >
             <div className="grid grid-cols-2 gap-1.5">

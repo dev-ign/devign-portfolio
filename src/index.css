@@ -2554,10 +2554,12 @@ body[data-page='work-with-me']::after { opacity: 0.04; }
 .directory-demo-pagination button { min-width: 40px; font-size: 16px; }
 .directory-demo-pagination div { align-items: center; gap: 8px; }
 .directory-demo-pagination div span { white-space: nowrap; color: rgba(255, 255, 255, 0.7); }
-body[data-page='donor-directory-case-study'] .case-study-section-navigation--pinned {
-  right: auto;
-  left: 50%;
-  transform: translateX(-50%);
+@media (min-width: 640px) {
+  body[data-page='donor-directory-case-study'] .case-study-section-navigation--pinned {
+    right: auto;
+    left: 50%;
+    transform: translateX(-50%);
+  }
 }
 .directory-demo-feedback,
 .directory-demo-empty { margin: 0; border-inline: 1px solid #292941; padding: 12px 16px; color: #baffed; background: #122a2a; font: 500 12px/1.5 var(--font-body); }

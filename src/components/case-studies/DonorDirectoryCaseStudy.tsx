@@ -14,12 +14,14 @@ import { useCaseStudyScrollReveal } from '../../hooks/useCaseStudyScrollReveal';
 
 export const donorDirectorySectionLinks: CaseStudySectionLink[] = [
   { id: 'opportunity', label: 'The problem', menuLabel: 'Problem' },
-  { id: 'discovery', label: 'Discover and narrow', menuLabel: 'Discovery' },
+  { id: 'research', label: 'Research and discovery', menuLabel: 'Research' },
+  { id: 'design-priorities', label: 'From findings to decisions', menuLabel: 'Design priorities' },
+  { id: 'discovery', label: 'Discover and narrow', menuLabel: 'Search and filters' },
+  { id: 'bulk-actions', label: 'From discovery to action', menuLabel: 'Bulk actions' },
   { id: 'donor-context', label: 'Inspect in context', menuLabel: 'Donor context' },
-  { id: 'bulk-actions', label: 'From discovery to action', menuLabel: 'Action' },
   { id: 'reusable-system', label: 'Scale and accessibility', menuLabel: 'Scale' },
   { id: 'implementation', label: 'Design to implementation', menuLabel: 'Implementation' },
-  { id: 'outcome', label: 'Reflection', menuLabel: 'Reflection' },
+  { id: 'outcome', label: 'Validation and lessons', menuLabel: 'Outcomes' },
 ];
 
 const sectionClassName =
@@ -268,6 +270,71 @@ const OpportunitySection: React.FC = () => (
   </section>
 );
 
+const ResearchSection: React.FC = () => (
+  <section
+    id="research"
+    aria-labelledby="research-title"
+    data-case-study-section="research"
+    data-testid="case-study-section"
+    className={sectionClassName}
+  >
+    <div className="mx-auto max-w-[1320px]">
+      <SectionTitle id="research" heading={content.research.heading} intro={content.research.approach} maxWidth="max-w-[1100px]" />
+      <p data-reveal="text" className="mb-0 mt-6 max-w-[800px] font-body text-[16px] leading-[1.76] text-white/68">{content.research.participants}</p>
+      <div data-reveal="text" className="mt-9 max-w-[1060px] border-t border-white/14 pt-6">
+        <h3 className="m-0 font-disp text-[23px] font-bold tracking-[-0.025em] text-white/90">{content.research.questionsHeading}</h3>
+        <p className="mb-0 mt-3 font-body text-[14px] leading-[1.7] text-white/64">{content.research.questionsContext}</p>
+        <ul className="mb-0 mt-5 grid list-disc gap-x-12 gap-y-4 pl-5 font-body text-[15px] leading-[1.72] text-white/78 md:grid-cols-2">
+          {content.research.questions.map((question) => <li key={question}>{question}</li>)}
+        </ul>
+      </div>
+      <div data-reveal="card-group" className="mt-10">
+        <h3 className="m-0 font-disp text-[23px] font-bold tracking-[-0.025em] text-white/90">{content.research.findingsHeading}</h3>
+        <div className="mt-6 grid gap-x-12 gap-y-6 lg:grid-cols-3">
+          {content.research.findings.map((finding) => (
+            <article key={finding.title} className="border-t border-[#D8AEF0]/24 pt-5">
+              <h4 className="m-0 font-disp text-[21px] font-bold tracking-[-0.025em] text-white/90">{finding.title}</h4>
+              <p className="mb-0 mt-3 max-w-[600px] font-body text-[15px] leading-[1.72] text-white/68">{finding.body}</p>
+            </article>
+          ))}
+        </div>
+      </div>
+      <div data-reveal="text" className="mt-9 max-w-[900px] border-l-2 border-[#D7A9F0]/42 pl-6 sm:pl-8">
+        <h3 className="m-0 font-disp text-[23px] font-bold tracking-[-0.025em] text-white/90">{content.research.shiftHeading}</h3>
+        <p className="mb-0 mt-3 font-body text-[16px] leading-[1.76] text-white/70">{content.research.shift}</p>
+      </div>
+    </div>
+  </section>
+);
+
+const DesignPrioritiesSection: React.FC = () => (
+  <section
+    id="design-priorities"
+    aria-labelledby="design-priorities-title"
+    data-case-study-section="design-priorities"
+    data-testid="case-study-section"
+    className={sectionClassName}
+  >
+    <div className="mx-auto max-w-[1320px]">
+      <SectionTitle id="design-priorities" heading={content.priorities.heading} intro={content.priorities.intro} />
+      <dl data-reveal="card-group" className="mb-0 mt-9 grid max-w-[1180px] gap-x-12 gap-y-6 md:grid-cols-2">
+        {content.priorities.items.map((item) => (
+          <div key={item.need} className="border-t border-white/14 pt-5">
+            <dt className="font-body text-[14px] leading-[1.7] text-white/68">{item.need}</dt>
+            <dd className="mb-0 ml-0 mt-2 font-disp text-[20px] font-bold leading-[1.4] tracking-[-0.025em] text-white/90">
+              <a href={`#${item.target}`} className="rounded-sm underline decoration-white/25 underline-offset-4 transition hover:decoration-white/70 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white/80">
+                {item.decision}
+              </a>
+            </dd>
+          </div>
+        ))}
+      </dl>
+      <p data-reveal="text" className="mb-0 mt-8 max-w-[900px] font-body text-[14px] leading-[1.72] text-white/64">{content.priorities.scope}</p>
+      <WorkflowModel />
+    </div>
+  </section>
+);
+
 const WorkflowModel: React.FC = () => (
   <div data-reveal="card-group" className="donor-directory-workflow-model mt-10" aria-label="Donor directory workflow model">
     {content.experience.flow.map((step, index) => (
@@ -292,13 +359,21 @@ const DiscoverySection: React.FC = () => (
   >
     <div className="mx-auto max-w-[1320px]">
       <SectionTitle id="discovery" heading={content.experience.heading} intro={content.experience.intro} maxWidth="max-w-[1060px]" />
-      <WorkflowModel />
+
+      <div data-reveal="card-group" className="mt-9 grid max-w-[1180px] gap-6 md:grid-cols-2 md:gap-12">
+        {[content.experience.tables, content.experience.navigation].map((item) => (
+          <article key={item.heading} className="border-t border-white/14 pt-5">
+            <h3 className="m-0 font-disp text-[21px] font-bold tracking-[-0.025em] text-white/86">{item.heading}</h3>
+            <p className="mb-0 mt-3 max-w-[550px] font-body text-[15px] leading-[1.72] text-white/68">{item.body}</p>
+          </article>
+        ))}
+      </div>
 
       <div className="mt-8">
         <LiveDirectoryDemo
           state="default"
-          title="Search, inspect, select, and export"
-          instruction="Try “Martinez”, apply High engagement, open a result, close the drawer, then select records and export the fictional sample."
+          title="Find a person, then refine the results"
+          instruction="Try “Martinez” and High engagement. Clear those controls to explore sorting and pagination, or open a donor to inspect their context."
           variant="discovery"
         />
       </div>
@@ -328,12 +403,15 @@ const DonorContextSection: React.FC = () => (
         <LiveDirectoryDemo
           state="row-to-drawer"
           title="Directory remains visible; donor context comes forward"
-          instruction="This controlled sequence illustrates the drawer decision. Use the interactive demo above to open and close a donor yourself."
+          instruction="This sequence illustrates inspection and return. Try the drawer yourself in either interactive directory above, including Overview, History, Details, and Request First Draft."
           variant="hero"
         />
       </div>
 
-      <p data-reveal="text" className="mb-0 mt-7 max-w-[800px] font-body text-[14px] leading-[1.7] text-white/62">{content.experience.donorContext.ai}</p>
+      <div data-reveal="text" className="mt-8 max-w-[800px]">
+        <h3 className="m-0 font-disp text-[23px] font-bold tracking-[-0.025em] text-white/90">{content.experience.donorContext.aiHeading}</h3>
+        <p className="mb-0 mt-3 font-body text-[16px] leading-[1.76] text-white/70">{content.experience.donorContext.ai}</p>
+      </div>
     </div>
   </section>
 );
@@ -349,7 +427,7 @@ const BulkActionsSection: React.FC = () => (
     <div className="mx-auto max-w-[1320px]">
       <SectionTitle id="bulk-actions" heading={content.experience.bulkActions.heading} intro={content.experience.bulkActions.body} />
       <p data-reveal="text" className="mb-0 mt-6 max-w-[720px] border-l border-[#D4A5EF]/32 pl-5 font-body text-[14px] leading-[1.72] text-white/60">
-        {content.experience.bulkActions.mapping}
+        {content.experience.bulkActions.scope}
       </p>
       <div className="mt-10 sm:mt-12">
         <LiveDirectoryDemo
@@ -359,6 +437,7 @@ const BulkActionsSection: React.FC = () => (
           variant="bulk"
         />
       </div>
+      <p data-reveal="text" className="mb-0 mt-7 max-w-[900px] font-body text-[15px] leading-[1.72] text-white/68">{content.experience.bulkActions.consideration}</p>
     </div>
   </section>
 );
@@ -438,7 +517,7 @@ const OutcomeSection: React.FC = () => (
     className={`${sectionClassName} donor-directory-impact-section`}
   >
     <div className="mx-auto max-w-[1320px]">
-      <SectionTitle id="outcome" heading={content.outcome.heading} />
+      <SectionTitle id="outcome" heading={content.outcome.heading} intro={content.outcome.intro} />
       <div data-reveal="card-group" className="mt-12 grid max-w-[1180px] gap-x-12 gap-y-9 lg:grid-cols-3">
         {content.outcome.items.map((item) => (
           <article key={item.title} className="border-t border-[#D8AEF0]/24 pt-6">
@@ -447,7 +526,15 @@ const OutcomeSection: React.FC = () => (
           </article>
         ))}
       </div>
+      <div data-reveal="text" className="mt-10 max-w-[1180px] border-t border-white/14 pt-6">
+        <h3 className="m-0 font-disp text-[23px] font-bold tracking-[-0.025em] text-white/90">{content.outcome.measurementHeading}</h3>
+        <p className="mb-0 mt-3 max-w-[800px] font-body text-[15px] leading-[1.72] text-white/68">{content.outcome.measurementContext}</p>
+        <ul className="mb-0 mt-5 grid list-disc gap-x-12 gap-y-3 pl-5 font-body text-[15px] leading-[1.72] text-white/72 md:grid-cols-2">
+          {content.outcome.measures.map((measure) => <li key={measure}>{measure}</li>)}
+        </ul>
+      </div>
       <div data-reveal="text" className="mx-auto mt-12 max-w-[820px] text-center">
+        <h3 className="m-0 font-disp text-[clamp(23px,2.2vw,31px)] font-bold leading-[1.12] tracking-[-0.03em] text-white/92">{content.reflection.heading}</h3>
         <p className="mx-auto mb-0 mt-6 max-w-[720px] font-body text-[clamp(16px,1.7vw,22px)] leading-[1.68] text-white/70">{content.reflection.body}</p>
         <nav aria-label="Continue exploring" className="mt-12 flex flex-col items-center justify-center gap-3 sm:flex-row">
           <Link to="/case-studies/gravyty-template-manager" className="inline-flex min-h-11 items-center rounded-full border border-[#D4A5EF]/34 bg-[#D4A5EF]/12 px-5 py-3 font-body text-[11px] font-semibold text-white/84 no-underline transition hover:border-[#D4A5EF]/58 hover:bg-[#D4A5EF]/18 hover:text-white focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white/80">
@@ -473,9 +560,11 @@ const DonorDirectoryCaseStudy: React.FC = () => {
     <div ref={motionRootRef} data-case-study-motion-root="donor-directory">
       <DonorDirectoryHero />
       <OpportunitySection />
+      <ResearchSection />
+      <DesignPrioritiesSection />
       <DiscoverySection />
-      <DonorContextSection />
       <BulkActionsSection />
+      <DonorContextSection />
       <SystemsSection />
       <ImplementationSection />
       <OutcomeSection />

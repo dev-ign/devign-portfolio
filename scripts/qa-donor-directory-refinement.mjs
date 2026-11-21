@@ -61,7 +61,7 @@ for (const width of [1440, 1024, 768, 390]) {
   });
   const focusReturned = await donor.evaluate((element) => document.activeElement === element);
   await page.getByRole('button', { name: 'Open section navigation' }).click();
-  await page.getByRole('menuitem', { name: 'Reflection' }).click();
+  await page.getByRole('menuitem', { name: 'Validation and lessons' }).click();
   const navigation = await page.evaluate(() => window.location.hash === '#outcome');
   report.push({ width, layout, mobileDrawerTop, filtered, drawer, restored, selected, exported, focusReturned, navigation, errors });
   await context.close();

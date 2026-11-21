@@ -126,84 +126,85 @@ test('opens the section menu and updates the current section after navigation', 
   );
 });
 
-test('renders the Donor Directory case-study foundation at its public slug', () => {
+test('presents the Donor Directory research, decisions, and credible outcomes at its public slug', () => {
   renderCaseStudy('donor-directory');
 
-  expect(
-    screen.getByRole('heading', { name: 'Designing Enterprise Data Experiences' })
-  ).toBeInTheDocument();
-  expect(
-    screen.getByRole('img', {
-      name: /Reconstructed Northstar Foundation donor directory showing search/i,
-    })
-  ).toBeInTheDocument();
+  expect(screen.getByRole('heading', { level: 1, name: 'Donor Directory' })).toBeInTheDocument();
+  expect(screen.getByRole('img', {
+    name: /Top of a reconstructed donor directory showing navigation, search, filters/i,
+  })).toBeInTheDocument();
   expect(screen.getByRole('heading', { name: 'Project details' })).toBeInTheDocument();
-  expect(screen.getAllByTestId('case-study-section')).toHaveLength(7);
-  [
-    'Making large record sets easier to navigate',
-    'A workflow system, not a table',
-    'Finding the right donor, faster',
-    'Designing around real data constraints',
-    'Using hierarchy and spacing to improve scanability',
-    'From a record to a relationship',
-    'Reducing repetitive work',
-    'Designing beyond the ideal path',
-    'Turning individual solutions into reusable product patterns',
-    'Designing with production behavior in mind',
-    'Designing for real-world interaction',
-    'Outcome',
-    'Reflection',
-  ].forEach((heading) => {
-    expect(screen.getByRole('heading', { name: heading })).toBeInTheDocument();
+  expect(screen.getAllByTestId('case-study-section').map((section) => section.id)).toEqual([
+    'opportunity', 'research', 'design-priorities', 'discovery', 'bulk-actions',
+    'donor-context', 'reusable-system', 'implementation', 'outcome',
+  ]);
+  expect(screen.getByRole('heading', { name: 'Recommendations weren’t enough' })).toBeInTheDocument();
+  expect(screen.getByText(/Original production assets and source code remain proprietary/)).toBeInTheDocument();
+
+  const research = screen.getByRole('region', {
+    name: 'I wanted to understand the workflow before designing the interface.',
   });
-  expect(screen.queryByRole('heading', { name: 'A foundation for every design decision' })).not.toBeInTheDocument();
-  expect(screen.queryByRole('heading', { name: 'Search' })).not.toBeInTheDocument();
-  expect(screen.queryByText(/^undo$/i)).not.toBeInTheDocument();
-  expect(screen.queryByText(/^restricted$/i)).not.toBeInTheDocument();
-  expect(screen.getByText(/DataGrid virtualization/i)).toBeInTheDocument();
-  expect(screen.getByText(/CSV import and export/i)).toBeInTheDocument();
-  expect(screen.getByText(/WCAG 2.1 AA-aligned practices/i)).toBeInTheDocument();
-  expect(screen.getByText(/Search, filters, DataGrid behavior/i)).toBeInTheDocument();
-  expect(screen.queryByText('donor-directory-overview')).not.toBeInTheDocument();
+  expect(within(research).getByText(/champion users, fundraisers, gift officers, fundraising managers, and customer support/)).toBeInTheDocument();
+  expect(within(research).getByText(/Representative questions from my recollection/)).toBeInTheDocument();
+  expect(within(research).getByText('What information do you need before deciding to engage a donor?')).toBeInTheDocument();
+  expect(within(research).getAllByRole('article')).toHaveLength(3);
+  expect(within(research).getByText(/Fundraisers described friction/)).toBeInTheDocument();
+
+  const priorities = screen.getByRole('region', { name: 'Turning what I learned into design priorities' });
+  expect(within(priorities).getByRole('link', { name: 'Search and filtering' })).toHaveAttribute('href', '#discovery');
+  expect(within(priorities).getByRole('link', { name: 'A contextual information drawer' })).toHaveAttribute('href', '#donor-context');
+  expect(within(priorities).getByText(/Notes and reminders were needs raised in discovery; they are not implemented/)).toBeInTheDocument();
+
   expect(screen.getByTestId('live-directory-demo-discovery')).toBeInTheDocument();
-  expect(screen.getByTestId('live-directory-demo-anatomy')).toBeInTheDocument();
-  expect(screen.getByTestId('live-directory-demo-hero')).toBeInTheDocument();
   expect(screen.getByTestId('live-directory-demo-bulk')).toBeInTheDocument();
-  expect(screen.getByText('Information hierarchy')).toBeInTheDocument();
+  expect(screen.getByTestId('live-directory-demo-hero')).toBeInTheDocument();
   expect(screen.getByRole('button', { name: 'Pause row-to-drawer animation' })).toBeInTheDocument();
   expect(screen.getByRole('button', { name: 'Replay row-to-drawer animation' })).toBeInTheDocument();
-  expect(screen.getByRole('img', { name: /Amara Lewis selected and an Overview drawer/i })).toBeInTheDocument();
-  expect(screen.getByRole('img', { name: /five chronological fictional donor activities/i })).toBeInTheDocument();
-  expect(screen.getByRole('img', { name: /Request First Draft call to action/i })).toBeInTheDocument();
-  expect(screen.queryByRole('img', { name: /row highlighted by hover or keyboard focus/i })).not.toBeInTheDocument();
-  expect(screen.getByRole('img', { name: /component system grouped into Inputs and Filters/i })).toBeInTheDocument();
-  expect(screen.getByRole('img', { name: /Interaction state grid for the donor directory/i })).toBeInTheDocument();
+  expect(screen.getByText(/less suited to a long, detailed workflow/)).toBeInTheDocument();
+  expect(screen.getByText(/The goal wasn’t to replace the AI/)).toBeInTheDocument();
+  expect(screen.getByText(/server-side retrieval and pagination with DataGrid virtualization/)).toBeInTheDocument();
   expect(screen.getByRole('img', { name: /design specification and reconstructed React component implementation/i })).toBeInTheDocument();
-  expect(screen.getByRole('img', { name: /Accessibility and interaction-quality composition/i })).toBeInTheDocument();
-  expect(screen.getByRole('img', { name: /Calm summary of the reconstructed donor platform/i })).toBeInTheDocument();
-  expect(screen.getByTestId('active-section-label')).toHaveTextContent('Opportunity');
-  fireEvent.click(screen.getByRole('button', { name: 'Open section navigation' }));
-  ['Opportunity', 'Discovery', 'Donor context', 'Bulk work', 'Reusable system', 'Implementation', 'Outcome'].forEach(
-    (label) => {
-      expect(screen.getByRole('menuitem', { name: label })).toBeInTheDocument();
-    }
-  );
+
+  const outcome = screen.getByRole('region', { name: 'What I heard, and what I’d measure today' });
+  expect(within(outcome).getByText(/My product manager shared usage data/)).toBeInTheDocument();
+  expect(within(outcome).getByText(/These are future evaluation measures, not historical results/)).toBeInTheDocument();
+  expect(within(outcome).getAllByRole('listitem')).toHaveLength(6);
+  expect(screen.queryByText(/30%/)).not.toBeInTheDocument();
+
   const portfolioReturnLinks = screen.getAllByRole('link', { name: 'Back to Portfolio' });
   expect(portfolioReturnLinks).toHaveLength(2);
   portfolioReturnLinks.forEach(link => expect(link).toHaveAttribute('href', '/portfolio#donor-directory'));
-  expect(screen.getByText(/original product is protected by NDA/i)).toBeInTheDocument();
-  expect(screen.getByText(/contextual drawer accepted a tighter canvas/i)).toBeInTheDocument();
-  expect(screen.getByText(/Request First Draft sat beside the donor context/i)).toBeInTheDocument();
-  expect(screen.getByText(/The directory did not create that system alone/i)).toBeInTheDocument();
-  ['Discover and understand', 'Act without losing context', 'Scale beyond one feature'].forEach(
-    (outcome) => expect(screen.getByRole('heading', { name: outcome })).toBeInTheDocument()
-  );
-  expect(screen.queryByRole('heading', { name: 'Improved discoverability' })).not.toBeInTheDocument();
   expect(screen.getByRole('navigation', { name: 'Continue exploring' })).toBeInTheDocument();
   expect(screen.getByRole('link', { name: /View the Template Manager case study/i })).toHaveAttribute(
-    'href',
-    '/case-studies/gravyty-template-manager'
+    'href', '/case-studies/gravyty-template-manager'
   );
+});
+
+test('navigates the Donor Directory story without resetting the working demo', () => {
+  renderCaseStudy('donor-directory');
+  const demo = screen.getByTestId('live-directory-demo-discovery');
+  fireEvent.change(within(demo).getByRole('searchbox', { name: 'Search donors' }), {
+    target: { value: 'Martinez' },
+  });
+
+  expect(screen.getByTestId('active-section-label')).toHaveTextContent('Problem');
+  for (const [label, activeLabel, hash] of [
+    ['Research and discovery', 'Research', '#research'],
+    ['From findings to decisions', 'Design priorities', '#design-priorities'],
+    ['Discover and narrow', 'Search and filters', '#discovery'],
+    ['From discovery to action', 'Bulk actions', '#bulk-actions'],
+    ['Inspect in context', 'Donor context', '#donor-context'],
+    ['Validation and lessons', 'Outcomes', '#outcome'],
+  ]) {
+    fireEvent.click(screen.getByRole('button', { name: 'Open section navigation' }));
+    expect(screen.getAllByRole('menuitem')).toHaveLength(9);
+    fireEvent.click(screen.getByRole('menuitem', { name: label }));
+    expect(window.location.hash).toBe(hash);
+    expect(screen.getByTestId('active-section-label')).toHaveTextContent(activeLabel);
+    expect(screen.queryByRole('menu')).not.toBeInTheDocument();
+  }
+  expect(within(demo).getByRole('searchbox', { name: 'Search donors' })).toHaveValue('Martinez');
+  expect(within(demo).getByText('3 matching donors')).toBeInTheDocument();
 });
 
 test('shows a focused empty state for unsupported case-study slugs', () => {
