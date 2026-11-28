@@ -103,6 +103,7 @@
 
 /* Home-only typography evaluation. Shared page tokens remain unchanged. */
 .home-page {
+  --studio-deliberate-gradient: linear-gradient(135deg, #C9B8E8 0%, #AC5D64 55%, #E1DEE3 100%);
   --font-body: 'Instrument Sans', sans-serif;
   --font-mono: 'Instrument Sans', sans-serif;
   font-family: var(--font-body);
@@ -227,6 +228,8 @@ body[data-page='donor-directory-case-study']::after { opacity: 0; }
 
 /* ── Template Manager case study ── */
 .template-manager-case-study-bg {
+  --case-study-details-surface: #181c38;
+  --case-study-label-color: #d7b9fa;
   background:
     radial-gradient(circle at 14% 10%, rgba(117, 137, 216, 0.3), transparent 34%),
     radial-gradient(circle at 88% 54%, rgba(101, 76, 160, 0.2), transparent 38%),
@@ -236,6 +239,7 @@ body[data-page='donor-directory-case-study']::after { opacity: 0; }
 }
 
 .donor-directory-case-study-bg {
+  --case-study-details-surface: #281a32;
   background:
     radial-gradient(circle at 14% 10%, rgba(213, 158, 246, 0.28), transparent 34%),
     radial-gradient(circle at 88% 54%, rgba(133, 75, 166, 0.24), transparent 38%),
@@ -364,14 +368,6 @@ body[data-page='donor-directory-case-study']::after { opacity: 0; }
   background:
     radial-gradient(circle at 50% 48%, rgba(197, 137, 232, 0.16), transparent 42%),
     linear-gradient(180deg, rgba(66, 35, 82, 0.7), rgba(35, 18, 45, 0.94));
-}
-
-.donor-directory-project-facts > div {
-  border-left: 1px solid rgba(255, 255, 255, 0.08);
-}
-
-.donor-directory-project-facts > div:first-child {
-  border-left: 0;
 }
 
 .donor-directory-workflow-model {
@@ -621,10 +617,6 @@ body[data-page='donor-directory-case-study']::after { opacity: 0; }
 }
 
 @media (max-width: 900px) {
-  .donor-directory-project-facts > div:nth-child(4) {
-    border-left: 0;
-  }
-
   .donor-directory-workflow-model {
     grid-template-columns: 1fr auto 1fr auto 1fr;
   }
@@ -667,19 +659,6 @@ body[data-page='donor-directory-case-study']::after { opacity: 0; }
     right: max(12px, env(safe-area-inset-right));
     left: auto;
     transform: none;
-  }
-
-  .donor-directory-project-facts > div:nth-child(n) {
-    border-top: 1px solid rgba(255, 255, 255, 0.08);
-    border-left: 1px solid rgba(255, 255, 255, 0.08);
-  }
-
-  .donor-directory-project-facts > div:nth-child(-n + 2) {
-    border-top: 0;
-  }
-
-  .donor-directory-project-facts > div:nth-child(odd) {
-    border-left: 0;
   }
 
   .donor-directory-workflow-model {

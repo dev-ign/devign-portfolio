@@ -6,7 +6,7 @@ import { getAssignedFirstDraftRule, templateManagerDemo as demo } from '@/data/t
 import type { TemplateManagerCaseStudyNarrative } from '@/data/projects';
 
 const sectionClass = 'relative scroll-mt-[152px] border-t border-white/[0.09] px-6 py-20 sm:scroll-mt-24 sm:px-10 sm:py-28 lg:px-14 xl:px-20';
-const eyebrowClass = 'm-0 font-mono text-[12px] font-medium uppercase tracking-[0.12em] text-[#D7B9FA]';
+const eyebrowClass = 'case-study-editorial-label';
 const titleClass = 'm-0 mt-4 font-disp text-[clamp(38px,5vw,72px)] font-extrabold leading-[1.04] tracking-[-0.045em] text-white';
 const bodyClass = 'font-body text-[clamp(16px,1.2vw,19px)] leading-[1.68] text-white/75';
 const smallClass = 'font-body text-[14px] leading-[1.65] text-white/70';

@@ -1,4 +1,4 @@
-import { Project, ProjectType } from './projects';
+import type { ProjectType } from './projects';
 
 export const projectTypeTabs: Array<{ type: ProjectType; label: string }> = [
   { type: 'code', label: 'Code' },
@@ -6,5 +6,5 @@ export const projectTypeTabs: Array<{ type: ProjectType; label: string }> = [
   { type: 'videos', label: 'Videos' },
 ];
 
-export const filterProjectsByType = (projectList: Project[], type: ProjectType) =>
+export const filterProjectsByType = <T extends { projectType: ProjectType }>(projectList: T[], type: ProjectType) =>
   projectList.filter((project) => project.projectType === type);

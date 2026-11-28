@@ -48,3 +48,18 @@ test('keeps the internal visual demo out of search results', () => {
   expect(metadata.indexable).toBe(false);
   expect(metadata.canonical).toBe('https://devignux.com/case-studies/donor-directory');
 });
+
+test('serves Mirembe’s canonical and social metadata with or without a trailing slash', () => {
+  const path = '/case-studies/mirembe-cleaning';
+  const metadata = getMetadata(path);
+  expect(getMetadata(`${path}/`)).toEqual(metadata);
+  expect(metadata).toMatchObject({
+    title: 'Mirembe Cleaning Case Study | DevignUX',
+    canonical: `https://devignux.com${path}`,
+    image: 'https://devignux.com/mirembe-case-study/social.jpg',
+    imageWidth: '1200',
+    imageHeight: '630',
+    ogType: 'article',
+  });
+  expect(metadata.indexable).not.toBe(false);
+});

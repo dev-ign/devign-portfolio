@@ -1,5 +1,5 @@
 import React from 'react';
-import { fireEvent, render, screen } from '@testing-library/react';
+import { fireEvent, render, screen, within } from '@testing-library/react';
 import GlobalNavigation from './GlobalNavigation';
 
 jest.mock('react-router-dom', () => ({
@@ -21,6 +21,7 @@ describe('GlobalNavigation', () => {
     portfolioProjects: [
       { sectionId: 'selected-work', title: 'Templates Manager' },
       { sectionId: 'donor-directory', title: 'Donor Directory' },
+      { sectionId: 'mirembe-cleaning', title: 'Mirembe Cleaning' },
       { sectionId: 'urge-talent', title: 'Urge Talent' },
     ],
   };
@@ -61,6 +62,37 @@ describe('GlobalNavigation', () => {
       'href',
       '/portfolio'
     );
+  });
+
+  test('marks exactly one Studio anchor as current while retaining the existing scroll callback', () => {
+    const onScrollTo = jest.fn();
+    const props = { onScrollTo, onOpenInquiry: jest.fn() };
+    const { rerender } = renderNavigation(props);
+    const services = screen.getByRole('link', { name: 'Services' });
+    const projects = screen.getByRole('link', { name: 'Projects' });
+    expect(services).toHaveAttribute('href', '#services');
+    expect(services).not.toHaveAttribute('aria-current');
+
+    rerender(<GlobalNavigation {...props} activeStudioSection="projects" />);
+    expect(projects).toHaveAttribute('aria-current', 'location');
+    expect(services).not.toHaveAttribute('aria-current');
+    fireEvent.click(services);
+    expect(onScrollTo).toHaveBeenCalledWith('services');
+  });
+
+  test('keeps the current location and returns focus when using the mobile section links', () => {
+    const onScrollTo = jest.fn();
+    renderNavigation({ onScrollTo, onOpenInquiry: jest.fn(), activeStudioSection: 'faq' });
+    const toggle = screen.getByRole('button', { name: 'Open menu' });
+    fireEvent.click(toggle);
+    const menu = screen.getByRole('navigation', { name: 'Mobile' });
+    const faq = within(menu).getByRole('link', { name: 'FAQ' });
+    expect(faq).toHaveAttribute('href', '#faq');
+    expect(faq).toHaveAttribute('aria-current', 'location');
+
+    fireEvent.click(faq);
+    expect(onScrollTo).toHaveBeenCalledWith('faq');
+    expect(toggle).toHaveFocus();
   });
 
   test('transitions the Portfolio action to its glass pill state on scroll', () => {
@@ -115,6 +147,9 @@ describe('GlobalNavigation', () => {
     expect(title).toHaveAttribute('aria-expanded', 'true');
     expect(screen.getByRole('link', { name: 'Donor Directory' })).toHaveAttribute('aria-current', 'location');
     expect(screen.getByRole('link', { name: 'Urge Talent' })).toHaveAttribute('href', '#urge-talent');
+    expect(screen.getAllByRole('link').map((link) => link.getAttribute('href')).filter((href) => (
+      ['#selected-work', '#donor-directory', '#mirembe-cleaning', '#urge-talent'].includes(href)
+    ))).toEqual(['#selected-work', '#donor-directory', '#mirembe-cleaning', '#urge-talent']);
     fireEvent.click(screen.getByRole('link', { name: 'Templates Manager' }));
     expect(title).toHaveAttribute('aria-expanded', 'false');
   });

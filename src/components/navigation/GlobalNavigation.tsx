@@ -1,19 +1,22 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { Link } from 'react-router-dom';
-import { AnimatePresence, motion } from 'motion/react';
+import { AnimatePresence, motion, useSpring } from 'motion/react';
 import { Icon } from '@iconify/react';
 import BrandLogo from '@/components/BrandLogo';
 import portfolioBrandMark from '@/assets/portfolio/brand-mark.svg';
 import downloadIcon from '@/assets/portfolio/download-icon.svg';
 import NavigationMenuToggle from '@/components/navigation/NavigationMenuToggle';
 import { usePrefersReducedMotion } from '@/hooks/useMediaQuery';
+import { STUDIO_NAV_ITEMS, type StudioSection } from '@/hooks/useStudioScrollSpy';
 import { CONTACT_EMAIL_URL, RESUME_FILE_NAME, RESUME_URL } from '@/config/site';
 
 type HomeNavigationProps = {
   variant?: 'home';
   onScrollTo: (id: string) => void;
   onOpenInquiry: () => void;
+  activeStudioSection?: StudioSection | null;
+  headerRef?: React.Ref<HTMLElement>;
   activePortfolioSection?: never;
   activePortfolioChapter?: never;
   portfolioProjects?: never;
@@ -23,25 +26,87 @@ type PortfolioNavigationProps = {
   variant: 'portfolio';
   onScrollTo?: never;
   onOpenInquiry?: never;
+  activeStudioSection?: never;
+  headerRef?: never;
   activePortfolioChapter: string;
   portfolioProjects: ReadonlyArray<{ sectionId: string; title: string }>;
 };
 
 export type GlobalNavigationProps = HomeNavigationProps | PortfolioNavigationProps;
 
-const NAV_ITEMS = [
-  { label: 'Services', target: 'services' },
-  { label: 'Process', target: 'process' },
-  { label: 'Projects', target: 'projects' },
-  { label: 'FAQ', target: 'faq' },
-];
-
 const ease = [0.16, 1, 0.3, 1] as [number, number, number, number];
+
+type StudioSectionClick = (event: React.MouseEvent<HTMLAnchorElement>, target: StudioSection) => void;
+
+function StudioDesktopLinks({ active, reducedMotion, onClick }: {
+  active?: StudioSection | null;
+  reducedMotion: boolean;
+  onClick: StudioSectionClick;
+}) {
+  const rowRef = useRef<HTMLDivElement>(null);
+  const previousSection = useRef<StudioSection | null>(null);
+  const indicatorX = useSpring(0, { stiffness: 390, damping: 32, mass: 0.75 });
+
+  useLayoutEffect(() => {
+    const row = rowRef.current;
+    const link = row?.querySelector<HTMLElement>('[aria-current="location"]');
+    const canSlide = previousSection.current && !reducedMotion;
+    previousSection.current = active ?? null;
+    if (!row || !link) return;
+
+    const center = () => link.offsetLeft + (link.offsetWidth - 6) / 2;
+    let position = center();
+    if (canSlide) indicatorX.set(position);
+    else indicatorX.jump(position);
+
+    const realign = () => {
+      const next = center();
+      if (next === position) return;
+      position = next;
+      indicatorX.jump(next);
+    };
+    const observer = typeof ResizeObserver === 'undefined' ? null : new ResizeObserver(realign);
+    observer?.observe(row);
+    observer?.observe(link);
+    window.addEventListener('resize', realign);
+    return () => {
+      observer?.disconnect();
+      window.removeEventListener('resize', realign);
+    };
+  }, [active, indicatorX, reducedMotion]);
+
+  return (
+    <div ref={rowRef} className="relative hidden items-center gap-1 min-[840px]:flex">
+      {STUDIO_NAV_ITEMS.map(({ target, label }) => (
+        <a
+          key={target}
+          href={`#${target}`}
+          aria-current={active === target ? 'location' : undefined}
+          onClick={event => onClick(event, target)}
+          className={`cursor-pointer rounded-full px-3 py-3 font-body text-[14px] font-normal tracking-[-0.02em] no-underline transition-[background,color] duration-200 hover:bg-white/6 hover:text-white motion-reduce:transition-none min-[1000px]:px-4 ${active === target ? 'text-white' : 'text-white/70'}`}
+        >
+          {label}
+        </a>
+      ))}
+      <motion.span
+        aria-hidden="true"
+        data-studio-indicator
+        initial={false}
+        animate={{ opacity: active ? 1 : 0 }}
+        transition={{ duration: reducedMotion ? 0 : 0.14 }}
+        style={{ x: indicatorX, background: 'var(--studio-deliberate-gradient)' }}
+        className="pointer-events-none absolute bottom-[3px] left-0 size-[6px] rounded-full"
+      />
+    </div>
+  );
+}
 
 const GlobalNavigation: React.FC<GlobalNavigationProps> = ({
   variant = 'home',
   onScrollTo,
   onOpenInquiry,
+  activeStudioSection,
+  headerRef,
   activePortfolioChapter,
   portfolioProjects,
 }) => {
@@ -51,6 +116,7 @@ const GlobalNavigation: React.FC<GlobalNavigationProps> = ({
   const compactNavRef = useRef<HTMLElement>(null);
   const titleButtonRef = useRef<HTMLButtonElement>(null);
   const compactMenuButtonRef = useRef<HTMLButtonElement>(null);
+  const studioMobileToggleRef = useRef<HTMLButtonElement>(null);
   const reducedMotion = usePrefersReducedMotion();
   const isHome = variant === 'home';
   const isPortfolio = variant === 'portfolio';
@@ -107,9 +173,12 @@ const GlobalNavigation: React.FC<GlobalNavigationProps> = ({
     }
   };
 
-  const handleNavClick = (target: string) => {
+  const handleNavClick: StudioSectionClick = (event, target) => {
+    if (!onScrollTo || event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+    event.preventDefault();
+    if (menuOpen) studioMobileToggleRef.current?.focus({ preventScroll: true });
     setMenuOpen(false);
-    onScrollTo?.(target);
+    onScrollTo(target);
   };
 
   const handleInquiryClick = () => {
@@ -120,7 +189,7 @@ const GlobalNavigation: React.FC<GlobalNavigationProps> = ({
 
   return (
     <>
-      <header className={`pointer-events-none fixed inset-x-0 z-80 flex justify-center px-4 ${isPortfolio ? 'portfolio-navigation-header' : 'top-7'}`}>
+      <header ref={headerRef} className={`pointer-events-none fixed inset-x-0 z-80 flex justify-center px-4 ${isPortfolio ? 'portfolio-navigation-header' : 'top-7'}`}>
         <div className="relative flex w-full max-w-300 items-center justify-center">
           <motion.nav
             layout={isPortfolio && !reducedMotion ? 'size' : false}
@@ -151,20 +220,10 @@ const GlobalNavigation: React.FC<GlobalNavigationProps> = ({
 
             {isHome && (
               <>
-                <div className="hidden items-center gap-1 min-[840px]:flex">
-                  {NAV_ITEMS.map(item => (
-                    <button
-                      key={item.target}
-                      type="button"
-                      onClick={() => handleNavClick(item.target)}
-                      className="cursor-pointer rounded-full border-none bg-transparent px-3 py-3 font-body text-[14px] font-normal tracking-[-0.02em] text-white/70 transition-[background,color] duration-200 hover:bg-white/6 hover:text-white min-[1000px]:px-4"
-                    >
-                      {item.label}
-                    </button>
-                  ))}
-                </div>
+                <StudioDesktopLinks active={activeStudioSection} reducedMotion={reducedMotion} onClick={handleNavClick} />
 
                 <button
+                  ref={studioMobileToggleRef}
                   type="button"
                   aria-label={menuOpen ? 'Close menu' : 'Open menu'}
                   aria-expanded={menuOpen}
@@ -345,18 +404,19 @@ const GlobalNavigation: React.FC<GlobalNavigationProps> = ({
                 className="fixed inset-x-4 top-[84px] z-[79] rounded-[18px] border border-white/10 bg-black/88 p-2 shadow-[0_24px_64px_rgba(0,0,0,0.55)] [backdrop-filter:blur(20px)] [-webkit-backdrop-filter:blur(20px)] min-[840px]:hidden"
               >
                 <nav className="flex flex-col" aria-label="Mobile">
-                  {isHome ? NAV_ITEMS.map((item, index) => (
-                    <motion.button
+                  {isHome ? STUDIO_NAV_ITEMS.map((item, index) => (
+                    <motion.a
                       key={item.target}
-                      type="button"
-                      initial={{ opacity: 0, x: -8 }}
+                      href={`#${item.target}`}
+                      aria-current={activeStudioSection === item.target ? 'location' : undefined}
+                      initial={reducedMotion ? false : { opacity: 0, x: -8 }}
                       animate={{ opacity: 1, x: 0 }}
-                      transition={{ duration: 0.18, delay: index * 0.04, ease }}
-                      onClick={() => handleNavClick(item.target)}
-                      className="w-full cursor-pointer rounded-[12px] border-none bg-transparent px-5 py-[14px] text-left font-body text-[16px] font-normal tracking-[-0.01em] text-white/76 transition-[background,color] duration-150 hover:bg-white/8 hover:text-white/95 active:bg-white/10"
+                      transition={{ duration: reducedMotion ? 0 : 0.18, delay: reducedMotion ? 0 : index * 0.04, ease }}
+                      onClick={event => handleNavClick(event, item.target)}
+                      className={`w-full cursor-pointer rounded-[12px] bg-transparent px-5 py-[14px] text-left font-body text-[16px] font-normal tracking-[-0.01em] no-underline transition-[background,color] duration-150 hover:bg-white/8 hover:text-white/95 active:bg-white/10 motion-reduce:transition-none ${activeStudioSection === item.target ? 'text-white' : 'text-white/76'}`}
                     >
                       {item.label}
-                    </motion.button>
+                    </motion.a>
                   )) : (
                     <>
                       <a href="#meet-the-founder" aria-current={activePortfolioSection === 'founder' ? 'location' : undefined} onClick={() => setMenuOpen(false)} className={`portfolio-mobile-link${activePortfolioSection === 'founder' ? ' portfolio-mobile-link--active' : ''}`}>Meet the Founder</a>
@@ -368,7 +428,7 @@ const GlobalNavigation: React.FC<GlobalNavigationProps> = ({
                   {isHome ? <motion.div
                     initial={{ opacity: 0, x: -8 }}
                     animate={{ opacity: 1, x: 0 }}
-                    transition={{ duration: 0.18, delay: NAV_ITEMS.length * 0.04, ease }}
+                    transition={{ duration: 0.18, delay: STUDIO_NAV_ITEMS.length * 0.04, ease }}
                   >
                     <Link
                       to="/portfolio"
@@ -385,7 +445,7 @@ const GlobalNavigation: React.FC<GlobalNavigationProps> = ({
                       type="button"
                       initial={{ opacity: 0, x: -8 }}
                       animate={{ opacity: 1, x: 0 }}
-                      transition={{ duration: 0.18, delay: (NAV_ITEMS.length + 1) * 0.04, ease }}
+                      transition={{ duration: 0.18, delay: (STUDIO_NAV_ITEMS.length + 1) * 0.04, ease }}
                       onClick={handleInquiryClick}
                       className="mx-1 mb-1 cursor-pointer rounded-[12px] border-none bg-[#BE97ED]/14 px-5 py-[14px] text-left font-body text-[16px] font-normal tracking-[-0.01em] text-[#D4AEFF]/90 transition-[background,color] duration-150 hover:bg-[#BE97ED]/24 hover:text-white active:bg-[#BE97ED]/30"
                     >
@@ -396,7 +456,7 @@ const GlobalNavigation: React.FC<GlobalNavigationProps> = ({
                       href={CONTACT_EMAIL_URL}
                       initial={{ opacity: 0, x: -8 }}
                       animate={{ opacity: 1, x: 0 }}
-                      transition={{ duration: 0.18, delay: (NAV_ITEMS.length + 1) * 0.04, ease }}
+                      transition={{ duration: 0.18, delay: (STUDIO_NAV_ITEMS.length + 1) * 0.04, ease }}
                       onClick={() => setMenuOpen(false)}
                       className="mx-1 mb-1 cursor-pointer rounded-[12px] border-none bg-[#BE97ED]/14 px-5 py-[14px] text-left font-body text-[16px] font-normal tracking-[-0.01em] text-[#D4AEFF]/90 no-underline transition-[background,color] duration-150 hover:bg-[#BE97ED]/24 hover:text-white active:bg-[#BE97ED]/30"
                     >

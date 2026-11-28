@@ -1,49 +1,51 @@
 import React, { useRef } from 'react';
-import { Icon } from '@iconify/react';
 import { useGSAPContext } from '@/hooks/useGSAPContext';
+import { usePrefersReducedMotion } from '@/hooks/useMediaQuery';
 import {
   runServicesIntroReveal,
   runServicesStagger,
 } from '@/animations/workWithMeAnimations';
+import ServiceIllustration, { type ServiceIllustrationId } from './ServiceIllustration';
+import './StudioServices.css';
 
-const SERVICES = [
+const SERVICES: ReadonlyArray<{ art: ServiceIllustrationId; name: string; description: string }> = [
   {
-    icon: 'solar:rocket-2-bold',
+    art: 'landing-page',
     name: 'Landing Pages',
     description: 'Focused pages that connect a clear offer to a clear next step.',
   },
   {
-    icon: 'solar:buildings-bold',
+    art: 'business-website',
     name: 'Business Websites',
     description: 'Credible, high-performing sites shaped around your audience and goals.',
   },
   {
-    icon: 'solar:refresh-circle-bold',
+    art: 'website-redesign',
     name: 'Website Redesigns',
     description: 'Sharper experiences that remove friction and strengthen your digital presence.',
   },
   {
-    icon: 'solar:cart-large-bold',
+    art: 'ecommerce',
     name: 'E-Commerce',
     description: 'Mobile-first shopping and checkout journeys designed to support conversion.',
   },
   {
-    icon: 'solar:code-bold',
+    art: 'web-app',
     name: 'Web Apps',
     description: 'Custom web applications and interactive tools built for real user workflows.',
   },
   {
-    icon: 'solar:settings-bold',
+    art: 'ongoing-support',
     name: 'Ongoing Support',
     description: 'Maintenance, improvements, and new features as your business evolves.',
   },
   {
-    icon: 'solar:videocamera-record-bold',
+    art: 'video-motion',
     name: 'Video & Motion Design',
     description: 'Brand reels, animated graphics, and motion assets that give your story momentum.',
   },
   {
-    icon: 'solar:palette-bold',
+    art: 'graphic-product-design',
     name: 'Graphic & Product Design',
     description: 'Brand identity, UI/UX, and design systems from first sketch to pixel-perfect delivery.',
   },
@@ -55,10 +57,11 @@ type ServicesProps = {
 
 const Services: React.FC<ServicesProps> = ({ revealIntroOnScroll = true }) => {
   const sectionRef = useRef<HTMLElement>(null);
+  const reducedMotion = usePrefersReducedMotion();
 
   useGSAPContext(
     () => {
-      if (!sectionRef.current) return;
+      if (!sectionRef.current || reducedMotion) return;
       const intro = sectionRef.current.querySelector<HTMLElement>('.services-intro');
       const cards = Array.from(
         sectionRef.current.querySelectorAll<HTMLElement>('.services-card')
@@ -67,7 +70,7 @@ const Services: React.FC<ServicesProps> = ({ revealIntroOnScroll = true }) => {
       if (intro && revealIntroOnScroll) runServicesIntroReveal(intro);
       runServicesStagger(cards);
     },
-    { scope: sectionRef, dependencies: [revealIntroOnScroll] }
+    { scope: sectionRef, dependencies: [revealIntroOnScroll, reducedMotion], revertOnUpdate: true }
   );
 
   return (
@@ -82,13 +85,13 @@ const Services: React.FC<ServicesProps> = ({ revealIntroOnScroll = true }) => {
 
       {/* Section intro */}
       <div
-        className="services-intro relative z-1 mx-auto mb-[clamp(64px,8vw,104px)] max-w-[980px] text-center will-change-[transform,opacity]"
+        className="services-intro relative z-1 mx-auto mb-[clamp(38px,5.5vw,72px)] max-w-[980px] text-center will-change-[transform,opacity]"
       >
         <h2 id="services-title" className="home-display services-title text-[clamp(38px,6.2vw,76px)] text-white leading-[1.04] tracking-[-0.04em] m-0 will-change-[transform,opacity]">
           Services with{' '}
           <span
             style={{
-              background: 'linear-gradient(135deg, #C9B8E8 0%, #AC5D64 55%, #E1DEE3 100%)',
+              background: 'var(--studio-deliberate-gradient)',
               backgroundClip: 'text',
               WebkitBackgroundClip: 'text',
               color: 'transparent',
@@ -106,27 +109,17 @@ const Services: React.FC<ServicesProps> = ({ revealIntroOnScroll = true }) => {
         </p>
       </div>
 
-      {/* Grid — gap:1px + bg creates hairline dividers between cells */}
-      <div className="services-grid grid [grid-template-columns:repeat(auto-fill,minmax(min(100%,280px),1fr))] gap-px bg-white/5 rounded-[20px] overflow-hidden border border-white/5 relative z-1">
-        {SERVICES.map((s) => (
-          <div
-            key={s.name}
-            className="service-card services-card bg-white/3 p-[32px_26px] flex flex-col gap-3.5"
-          >
-            <div className="w-[38px] h-[38px] rounded-[10px] bg-white/6 flex items-center justify-center shrink-0">
-              <Icon icon={s.icon} style={{ width: 19, height: 19, color: 'rgba(255,255,255,0.75)' }} />
+      <ul className="studio-service-grid relative z-1">
+        {SERVICES.map(service => (
+          <li key={service.art} className="services-card studio-service-card">
+            <div className="studio-service-surface">
+              <ServiceIllustration id={service.art} />
+              <h3>{service.name}</h3>
+              <p>{service.description}</p>
             </div>
-            <div>
-              <h3 className="font-disp font-bold text-base text-white/88 mb-1.5">
-                {s.name}
-              </h3>
-              <p className="m-0 font-body text-[13px] text-white/52 leading-[1.65] font-light">
-                {s.description}
-              </p>
-            </div>
-          </div>
+          </li>
         ))}
-      </div>
+      </ul>
     </section>
   );
 };

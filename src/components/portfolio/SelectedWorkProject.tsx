@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useLayoutEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { gsap } from 'gsap';
 import { Icon } from '@iconify/react';
@@ -14,6 +14,7 @@ export type SelectedWorkProjectData = {
   summary: string;
   image: string;
   imageAlt: string;
+  previewLayers?: { desktopSmall: string; phone: string };
   highlights: { title: string; description: string }[];
   technologies: string[];
   caseStudyUrl?: string;
@@ -25,6 +26,16 @@ const SelectedWorkProject: React.FC<Props> = ({ project, isActive = false }) => 
   const chapterRef = useRef<HTMLElement>(null);
   const reducedMotion = usePrefersReducedMotion();
   const [presentationReady, setPresentationReady] = useState(false);
+  const active = useRef(isActive);
+  const syncEntrance = useRef<(() => void) | null>(null);
+  const playedPreview = useRef(false);
+  const { previewLayers } = project;
+  const hasPreviewLayers = Boolean(previewLayers);
+
+  useLayoutEffect(() => {
+    active.current = isActive;
+    syncEntrance.current?.();
+  }, [isActive]);
 
   const preserveReturnChapter = (event: React.MouseEvent<HTMLAnchorElement>) => {
     if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
@@ -34,14 +45,35 @@ const SelectedWorkProject: React.FC<Props> = ({ project, isActive = false }) => 
 
   useGSAPContext(() => {
     const chapter = chapterRef.current;
-    if (!chapter || reducedMotion || typeof IntersectionObserver === 'undefined') return;
+    if (!chapter || typeof IntersectionObserver === 'undefined') return;
+    if (reducedMotion) {
+      if (hasPreviewLayers) playedPreview.current = true;
+      return;
+    }
+    if (hasPreviewLayers && playedPreview.current) return;
 
     const find = (selector: string) => Array.from(chapter.querySelectorAll<HTMLElement>(selector));
-    const timeline = gsap.timeline({ paused: true, defaults: { ease: 'power2.out' }, onComplete: () => setPresentationReady(true) });
+    const timeline = gsap.timeline({
+      paused: true,
+      defaults: { ease: 'power2.out' },
+      onComplete: () => {
+        if (hasPreviewLayers) observer.disconnect();
+        else setPresentationReady(true);
+      },
+    });
 
+    timeline.from(find('.selected-work-decorative-heading'), { autoAlpha: 0, y: 12, duration: 0.5 });
+    if (hasPreviewLayers) {
+      // Prepare delayed layers and copy before paint, just as for a single preview.
+      timeline
+        .addLabel('preview', 0.2)
+        .from(find('.selected-work-preview'), { autoAlpha: 0, y: 16, duration: 0.48 }, 'preview')
+        .from(find('.selected-work-preview__desktop'), { opacity: 0, y: 12, scale: 0.985, duration: 0.55, clearProps: 'opacity,transform' }, 'preview')
+        .from(find('.selected-work-preview__phone'), { opacity: 0, y: 16, scale: 0.98, duration: 0.54, clearProps: 'opacity,transform' }, 'preview+=0.11');
+    } else {
+      timeline.from(find('.selected-work-preview'), { autoAlpha: 0, y: 24, duration: 0.65 }, '-=0.3');
+    }
     timeline
-      .from(find('.selected-work-decorative-heading'), { autoAlpha: 0, y: 12, duration: 0.5 })
-      .from(find('.selected-work-preview'), { autoAlpha: 0, y: 24, duration: 0.65 }, '-=0.3')
       .from(find('.selected-work-category, .selected-work-details h2'), { autoAlpha: 0, y: 16, duration: 0.48 }, '-=0.42')
       .from(find('.selected-work-summary'), { autoAlpha: 0, y: 12, duration: 0.46 }, '-=0.3')
       .from(find('.selected-work-highlights-label'), { autoAlpha: 0, y: 9, duration: 0.38 }, '-=0.25')
@@ -52,16 +84,39 @@ const SelectedWorkProject: React.FC<Props> = ({ project, isActive = false }) => 
       timeline.from(find('.selected-work-case-study'), { autoAlpha: 0, y: 8, duration: 0.4 }, '-=0.08');
     }
 
-    const observer = new IntersectionObserver((entries) => {
-      if (entries.some(entry => entry.isIntersecting)) {
-        timeline.play();
-        observer.disconnect();
+    let visible = false;
+    let started = false;
+    const enter = () => {
+      const canPlay = visible && (!hasPreviewLayers || (active.current && !document.hidden));
+      if (started) {
+        if (!hasPreviewLayers || timeline.progress() === 1) return;
+        if (!active.current || (!visible && !document.hidden)) timeline.progress(1);
+        else if (!canPlay) timeline.pause();
+        else if (timeline.paused()) timeline.resume();
+        return;
       }
+      if (!canPlay) return;
+      started = true;
+      if (hasPreviewLayers) playedPreview.current = true;
+      else observer.disconnect();
+      timeline.play();
+    };
+    const observer = new IntersectionObserver(([entry]) => {
+      visible = entry.isIntersecting && (!hasPreviewLayers || entry.intersectionRatio >= 0.12);
+      enter();
     }, { threshold: 0.12 });
+    if (hasPreviewLayers) {
+      syncEntrance.current = enter;
+      document.addEventListener('visibilitychange', enter);
+    }
     observer.observe(chapter);
 
-    return () => observer.disconnect();
-  }, { scope: chapterRef, dependencies: [reducedMotion], revertOnUpdate: true });
+    return () => {
+      observer.disconnect();
+      if (hasPreviewLayers) document.removeEventListener('visibilitychange', enter);
+      syncEntrance.current = null;
+    };
+  }, { scope: chapterRef, dependencies: [reducedMotion, hasPreviewLayers], revertOnUpdate: true });
 
   return (
     <section id={project.sectionId} ref={chapterRef} className="selected-work-chapter" aria-labelledby={`${project.id}-title`} tabIndex={-1}>
@@ -70,6 +125,23 @@ const SelectedWorkProject: React.FC<Props> = ({ project, isActive = false }) => 
         <div className={`selected-work-preview${project.id === 'templates-manager' ? ' selected-work-preview--templates' : ''}`}>
           {project.id === 'templates-manager' ? (
             <TemplatesManagerDemo variant="portfolio" isActive={isActive} isTransitionComplete={reducedMotion || presentationReady} />
+          ) : previewLayers ? (
+            <div className="selected-work-preview__layer-frame" role="img" aria-label={project.imageAlt}>
+              <div className="selected-work-preview__art">
+                <img
+                  className="selected-work-preview__desktop"
+                  src={project.image}
+                  srcSet={`${previewLayers.desktopSmall} 760w, ${project.image} 1440w`}
+                  sizes="(max-width: 839px) 80vw, 60vw"
+                  width={1440}
+                  height={900}
+                  alt=""
+                  loading="lazy"
+                  decoding="async"
+                />
+                <img className="selected-work-preview__phone" src={previewLayers.phone} width={390} height={844} alt="" loading="lazy" decoding="async" />
+              </div>
+            </div>
           ) : (
             <img src={project.image} alt={project.imageAlt} loading="lazy" />
           )}

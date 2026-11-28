@@ -15,6 +15,7 @@ import InquiryModal from '@/components/work-with-me/InquiryModal';
 import FAQ from '@/components/work-with-me/FAQ';
 import Footer from '@/components/Footer';
 import { usePrefersReducedMotion } from '@/hooks/useMediaQuery';
+import { useStudioScrollSpy } from '@/hooks/useStudioScrollSpy';
 import { trackEvent } from '@/utils/analytics';
 
 const CAPABILITIES = [
@@ -24,6 +25,25 @@ const CAPABILITIES = [
   { label: 'Motion.', size: 'xlarge', direction: 'from-left', tracking: 'tight' },
   { label: 'Branding.', size: 'large', direction: 'diagonal-up-left', tracking: 'normal' },
 ] as const;
+
+const STUDIO_ANCHOR_OFFSET = 96;
+
+function getAnchorTop(target: HTMLElement) {
+  // The intro translates the Services surface while the document's anchor stays fixed.
+  let top = target.offsetTop;
+  for (let parent = target.offsetParent; parent instanceof HTMLElement; parent = parent.offsetParent) {
+    top += parent.offsetTop + parent.clientTop;
+  }
+  return top;
+}
+
+function scrollInstantly(top: number) {
+  const { style } = document.documentElement;
+  const previousBehavior = style.scrollBehavior;
+  style.scrollBehavior = 'auto';
+  window.scrollTo(0, top);
+  style.scrollBehavior = previousBehavior;
+}
 
 const GatewayPage: React.FC = () => {
   const isTouch = isTouchDevice();
@@ -37,8 +57,23 @@ const GatewayPage: React.FC = () => {
   const introRef   = useRef<HTMLElement>(null);
   const typographyRef = useRef<HTMLDivElement>(null);
   const servicesSurfaceRef = useRef<HTMLDivElement>(null);
+  const navigationRef = useRef<HTMLElement>(null);
+  const stopHashAlignment = useRef<() => void>(() => {});
+  const introLayoutReady = useRef(false);
+  const queuedNavigation = useRef<(() => void) | null>(null);
+  const { activeSection, noteNavigation } = useStudioScrollSpy(navigationRef);
   const lenisRef   = useLenis(!isTouch && !reducedMotion);
   const [inquiryOpen, setInquiryOpen] = useState(false);
+
+  const alignProjectCategories = useCallback((position: number) => {
+    const lenis = lenisRef.current;
+    if (lenis) {
+      lenis.resize();
+      lenis.scrollTo(position, { immediate: true });
+    } else {
+      scrollInstantly(position);
+    }
+  }, [lenisRef]);
 
   const openInquiry = useCallback(() => {
     trackEvent('contact_cta_click', { location: 'homepage' });
@@ -55,6 +90,12 @@ const GatewayPage: React.FC = () => {
   // One scroll clock coordinates the hero exit, persistent atmosphere,
   // capability words, conclusion, and the handoff into Services.
   useGSAPContext(() => {
+    const onLayoutReady = () => {
+      introLayoutReady.current = true;
+      const navigate = queuedNavigation.current;
+      queuedNavigation.current = null;
+      navigate?.();
+    };
     if (
       reducedMotion ||
       !introRef.current ||
@@ -63,15 +104,20 @@ const GatewayPage: React.FC = () => {
       !contentRef.current ||
       !typographyRef.current ||
       !servicesSurfaceRef.current
-    ) return;
+    ) {
+      onLayoutReady();
+      return;
+    }
 
+    introLayoutReady.current = false;
     return initGatewayIntroExperience(
       introRef.current,
       mediaRef.current,
       contentRef.current,
       typographyRef.current,
       servicesSurfaceRef.current,
-      isTouch ? undefined : videoRef.current ?? undefined
+      isTouch ? undefined : videoRef.current ?? undefined,
+      onLayoutReady,
     );
   }, [reducedMotion]);
 
@@ -90,27 +136,31 @@ const GatewayPage: React.FC = () => {
     let hashFrame: number | undefined;
 
     const stopAligning = () => {
+      queuedNavigation.current = null;
       window.clearInterval(settleInterval);
       window.clearTimeout(settleTimer);
     };
+    stopHashAlignment.current = stopAligning;
 
     const alignHash = () => {
       stopAligning();
       const hash = decodeURIComponent(window.location.hash.slice(1));
       const target = hash ? document.getElementById(hash) : null;
       if (!target) return;
+      if (!introLayoutReady.current) {
+        queuedNavigation.current = alignHash;
+        return;
+      }
 
       const align = () => {
-        const distance = target.getBoundingClientRect().top - 96;
-        if (Math.abs(distance) < 3) return;
-        const top = Math.max(0, window.scrollY + distance);
-        if (lenisRef.current) {
-          lenisRef.current.scrollTo(top, { immediate: true });
+        const top = Math.max(0, getAnchorTop(target) - STUDIO_ANCHOR_OFFSET);
+        if (Math.abs(top - window.scrollY) < 3) return;
+        const lenis = lenisRef.current;
+        if (lenis) {
+          if (top > lenis.limit) lenis.resize();
+          lenis.scrollTo(top, { immediate: true });
         } else {
-          const previousBehavior = document.documentElement.style.scrollBehavior;
-          document.documentElement.style.scrollBehavior = 'auto';
-          window.scrollTo(0, top);
-          document.documentElement.style.scrollBehavior = previousBehavior;
+          scrollInstantly(top);
         }
       };
 
@@ -126,6 +176,7 @@ const GatewayPage: React.FC = () => {
 
     alignHash();
     window.addEventListener('hashchange', onHashChange);
+    window.addEventListener('popstate', onHashChange);
     window.addEventListener('wheel', stopAligning, { passive: true });
     window.addEventListener('touchstart', stopAligning, { passive: true });
     window.addEventListener('keydown', stopAligning);
@@ -133,6 +184,7 @@ const GatewayPage: React.FC = () => {
       stopAligning();
       window.cancelAnimationFrame(hashFrame ?? 0);
       window.removeEventListener('hashchange', onHashChange);
+      window.removeEventListener('popstate', onHashChange);
       window.removeEventListener('wheel', stopAligning);
       window.removeEventListener('touchstart', stopAligning);
       window.removeEventListener('keydown', stopAligning);
@@ -140,7 +192,9 @@ const GatewayPage: React.FC = () => {
   }, [lenisRef]);
 
   const scrollToSection = (id: string) => {
+    stopHashAlignment.current();
     if (id === 'top') {
+      noteNavigation(id);
       if (lenisRef.current) {
         lenisRef.current.scrollTo(0);
       } else {
@@ -155,20 +209,34 @@ const GatewayPage: React.FC = () => {
     const navClearance =
       id === 'inquiry'
         ? Math.min(window.innerHeight * 0.78, 720)
-        : 96;
-    const targetY =
-      target.getBoundingClientRect().top + window.scrollY - navClearance;
-
-    if (lenisRef.current) {
-      lenisRef.current.scrollTo(targetY);
+        : STUDIO_ANCHOR_OFFSET;
+    const navigate = () => {
+      noteNavigation(id);
+      const targetY = getAnchorTop(target) - navClearance;
+      const lenis = lenisRef.current;
+      if (lenis) {
+        if (targetY > lenis.limit) lenis.resize();
+        lenis.scrollTo(targetY);
+      } else {
+        window.scrollTo({ top: targetY, behavior: reducedMotion ? 'auto' : 'smooth' });
+      }
+    };
+    if (introLayoutReady.current) {
+      navigate();
     } else {
-      window.scrollTo({ top: targetY, behavior: reducedMotion ? 'auto' : 'smooth' });
+      noteNavigation(id);
+      queuedNavigation.current = navigate;
     }
   };
 
   return (
     <div id="top" className="home-page">
-      <GlobalNavigation onScrollTo={scrollToSection} onOpenInquiry={openInquiry} />
+      <GlobalNavigation
+        headerRef={navigationRef}
+        activeStudioSection={activeSection}
+        onScrollTo={scrollToSection}
+        onOpenInquiry={openInquiry}
+      />
 
       <main id="main-content" tabIndex={-1}>
         {/* ── Hero → capabilities: one pinned cinematic introduction ── */}
@@ -299,7 +367,7 @@ const GatewayPage: React.FC = () => {
             <Services revealIntroOnScroll={false} />
           </div>
           <Process />
-          <ProjectsShowcase />
+          <ProjectsShowcase navigationRef={navigationRef} onAlignCategories={alignProjectCategories} />
           <BusinessOutcomes />
           <FAQ />
           <InquiryForm onOpenInquiry={openInquiry} />

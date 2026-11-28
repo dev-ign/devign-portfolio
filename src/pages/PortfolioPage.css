@@ -400,6 +400,45 @@ body[data-page='portfolio']::after { opacity: 0.12; }
   object-fit: contain;
 }
 
+.selected-work-preview__layer-frame {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: 100%;
+  container-type: size;
+  background: linear-gradient(#f6f0f8, #d9c6e6);
+}
+
+.selected-work-preview__art {
+  position: relative;
+  width: min(100cqw, calc(100cqh * 1240 / 880));
+  aspect-ratio: 1240 / 880;
+  isolation: isolate;
+}
+
+.selected-work-preview__desktop,
+.selected-work-preview__phone {
+  position: absolute;
+  display: block;
+  height: auto;
+}
+
+.selected-work-preview__desktop {
+  top: 10%;
+  left: 3.47%;
+  width: 88.23%;
+  border: 1px solid #a997bc;
+  box-shadow: 0 12px 30px #55387320;
+}
+
+.selected-work-preview__phone {
+  top: 47.5%;
+  left: 81.21%;
+  width: 13.71%;
+  border: clamp(2px, .35cqw, 5px) solid #3b2a50;
+  box-shadow: 0 8px 18px #3b2a5035;
+}
+
 @media (max-width: 640px) {
   .selected-work-preview--templates {
     height: 640px;

@@ -161,26 +161,39 @@ export function runServicesIntroReveal(intro: HTMLElement) {
 }
 
 export function runServicesStagger(cards: HTMLElement[]) {
-  if (!cards.length) return;
-  initScrollEnterExit(cards, {
-    trigger: cards[0].parentElement!,
-    stagger: 0.07,
+  if (!cards.length || prefersReducedMotion()) return;
+  gsap.fromTo(cards, { opacity: 0.72, y: 10 }, {
+    opacity: 1,
+    y: 0,
+    duration: 0.55,
+    ease: 'power3.out',
+    stagger: 0.035,
+    clearProps: 'opacity,transform',
+    scrollTrigger: { trigger: cards[0].parentElement, start: 'top 90%', once: true },
   });
 }
 
-// Projects: premium grid cards reveal in a stagger as the section enters.
-export function runProjectsGridReveal(header: HTMLElement, cards: HTMLElement[]) {
-  const headerChildren = Array.from(header.children);
-
-  initScrollEnterExit(headerChildren as HTMLElement[], {
-    trigger: header,
-    stagger: 0.1,
-  });
-
-  initScrollEnterExit(cards, {
-    trigger: cards[0]?.parentElement ?? header,
-    stagger: 0.08,
-  });
+// The heading and each card reveal independently. The sticky bar stays in the layout.
+export function runProjectsGridReveal(header: HTMLElement | null, cards: HTMLElement[]) {
+  if (!prefersReducedMotion()) {
+    const elements = header ? [header, ...cards] : cards;
+    elements.forEach((element, index) => {
+      gsap.fromTo(element, { opacity: 0.76, y: 16 }, {
+        opacity: 1,
+        y: 0,
+        duration: 0.52,
+        delay: !header && index % 2 === 1 ? 0.07 : 0,
+        ease: 'power3.out',
+        clearProps: 'opacity,transform',
+        scrollTrigger: {
+          trigger: element,
+          start: 'top 92%',
+          once: true,
+        },
+      });
+    });
+  }
+  if (!header) ScrollTrigger.refresh();
 }
 
 // Why Work With Us: each ruled row scrubs from near-invisible to full opacity

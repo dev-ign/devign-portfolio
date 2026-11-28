@@ -1,0 +1,80 @@
+.project-carousel-feature {
+  display: grid;
+  grid-template-rows: minmax(0, 1fr) auto;
+}
+
+.project-carousel-feature-preview {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, .23fr);
+  grid-template-rows: minmax(0, 1fr);
+  place-items: center;
+  gap: clamp(10px, 2vw, 24px);
+  padding: clamp(12px, 2.1vw, 30px);
+  background: linear-gradient(150deg, #f6f0f8, #d9c6e6);
+}
+
+.project-carousel-feature-desktop {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  min-height: 0;
+  min-width: 0;
+}
+
+.project-carousel-feature-preview img {
+  display: block;
+  max-width: 100%;
+  max-height: 100%;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  border: 1px solid #a997bc;
+  border-radius: 6px;
+  box-shadow: 0 5px 16px #3b2a502e;
+}
+
+.project-carousel-feature-preview .project-carousel-feature-phone {
+  border: 2px solid #3b2a50;
+  border-radius: clamp(6px, 1vw, 12px);
+}
+
+.project-carousel-feature-caption {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 8px 16px;
+  padding: 15px 20px;
+  background: #14121a;
+}
+
+.project-carousel-live-link {
+  display: inline-flex;
+  align-items: center;
+  justify-self: start;
+  gap: 6px;
+  min-height: 44px;
+  color: #e1c2f3;
+  text-decoration: none;
+  font: 600 .8125rem/1.3 var(--font-body);
+}
+
+.project-carousel-live-link span:first-child { text-decoration: underline; text-underline-offset: 4px; }
+.project-carousel-live-link:hover { color: #fff; }
+.project-carousel-live-link:focus-visible { outline: 2px solid #e1c2f3; outline-offset: 3px; }
+
+@media (max-width: 639px) {
+  .project-carousel-feature {
+    grid-template-columns: minmax(0, 35%) minmax(0, 1fr);
+    grid-template-rows: minmax(0, 1fr);
+  }
+
+  .project-carousel-feature-preview { grid-template-columns: minmax(0, 1fr); padding: 8px; }
+  .project-carousel-feature-desktop { display: none; }
+  .project-carousel-feature-caption {
+    grid-template-columns: minmax(0, 1fr);
+    align-content: center;
+    gap: 0;
+    padding: 8px clamp(10px, 3vw, 18px);
+  }
+}

@@ -5,6 +5,8 @@ import givzeyProjectImage from '../assets/givzey-project.png';
 import gradumProjectImage from '../assets/gradum-project.png';
 import templateManagerImage from '../assets/template-manager-project.svg';
 import donorDirectoryImage from '../assets/donor-directory-project.svg';
+import { MIREMBE_CASE_PATH, MIREMBE_SLUG } from './mirembeCleaningCaseStudy';
+import { mirembeVisuals, type MirembeVisual } from './mirembeVisualAssets';
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -75,6 +77,22 @@ export interface Project {
     narrative?: TemplateManagerCaseStudyNarrative;
   };
 }
+
+type ProjectPreviewImage = Pick<MirembeVisual, 'src' | 'width' | 'height' | 'alt'>;
+
+export type ProjectCarouselItem = Pick<Project, 'id' | 'title' | 'category' | 'projectType' | 'description' | 'image'> & {
+  showcase?: {
+    desktop: ProjectPreviewImage & { mobile?: string };
+    mobile: ProjectPreviewImage;
+    caseStudyPath?: string;
+    liveUrl?: string;
+  };
+};
+
+export type StudioProject = ProjectCarouselItem & {
+  layout?: 'wide' | 'compact';
+  destination: { kind: 'website' | 'case-study' | 'project'; href: string };
+};
 
 // ── Data ──────────────────────────────────────────────────────────────────────
 
@@ -624,4 +642,43 @@ export const projects: Project[] = [
       ],
     },
   },
+];
+
+const studioPresentation: Record<string, Pick<StudioProject, 'layout'> & {
+  caseStudyPath?: string;
+}> = {
+  'gravyty-template-manager': { layout: 'compact', caseStudyPath: '/case-studies/gravyty-template-manager' },
+  'gravyty-donor-directory': { layout: 'compact', caseStudyPath: '/case-studies/donor-directory' },
+  'urge-talent': { layout: 'wide' },
+};
+
+const mirembeLiveUrl = 'https://mirembecleaning.com';
+
+export const studioProjects: StudioProject[] = [
+  {
+    id: MIREMBE_SLUG,
+    title: 'Mirembe Cleaning',
+    category: 'Website Design & Development',
+    projectType: 'code',
+    description: 'A multilingual website that helps a cleaning business turn interest into bookings.',
+    image: mirembeVisuals.homepage.src,
+    layout: 'wide',
+    destination: { kind: 'website', href: mirembeLiveUrl },
+    showcase: {
+      desktop: mirembeVisuals.homepage,
+      mobile: mirembeVisuals.mobile,
+      caseStudyPath: MIREMBE_CASE_PATH,
+      liveUrl: mirembeLiveUrl,
+    },
+  },
+  ...projects.map((project): StudioProject => {
+    const presentation = studioPresentation[project.id];
+    return {
+      ...project,
+      layout: presentation?.layout,
+      destination: presentation?.caseStudyPath
+        ? { kind: 'case-study', href: presentation.caseStudyPath }
+        : { kind: 'project', href: `/projects/${project.id}` },
+    };
+  }),
 ];
