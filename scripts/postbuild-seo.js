@@ -1,6 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const donorDirectorySeo = require('../src/data/donorDirectorySeo.json');
+const mirembeCleaningSeo = require('../src/data/mirembeCleaningSeo.json');
 
 const vercelEnvironment = process.env.VERCEL_ENV;
 const isPreviewDeployment = Boolean(
@@ -10,6 +11,7 @@ const buildDirectory = path.resolve(__dirname, '..', 'build');
 const indexPath = path.join(buildDirectory, 'index.html');
 
 const routeMetadata = [
+  { pathname: 'case-studies/mirembe-cleaning', ...mirembeCleaningSeo },
   {
     pathname: 'studio',
     title: 'DevignUX | Website Design, UX/UI & Development Studio',

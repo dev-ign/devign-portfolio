@@ -38,7 +38,7 @@ describe('ServiceChapterSequence', () => {
 
   test('renders real semantic chapter targets and exposes only the active CTA', () => {
     const onSelect = jest.fn();
-    const { container } = render(<ServiceChapterSequence onSelect={onSelect} />);
+    render(<ServiceChapterSequence onSelect={onSelect} />);
 
     const markers = screen.getAllByTestId('service-chapter-marker');
     expect(markers).toHaveLength(4);
@@ -55,6 +55,7 @@ describe('ServiceChapterSequence', () => {
     expect(screen.getByRole('heading', { name: 'Web Applications' })).toBeInTheDocument();
     expect(screen.getByText('Build Your Product')).toBeInTheDocument();
     expect(screen.queryByText('Digital products and platforms designed around real workflows, users, and business goals.')).not.toBeInTheDocument();
-    expect(container.querySelector('[data-service-reveal="eyebrow"]')).not.toBeInTheDocument();
+    expect(screen.getByRole('region', { name: 'Service chapters' }))
+      .not.toContainHTML('data-service-reveal="eyebrow"');
   });
 });

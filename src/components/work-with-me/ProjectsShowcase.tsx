@@ -1,65 +1,119 @@
-import React, { useRef } from 'react';
+import React, { useLayoutEffect, useRef, useState, type RefObject } from 'react';
 import { useGSAPContext } from '@/hooks/useGSAPContext';
+import { usePrefersReducedMotion } from '@/hooks/useMediaQuery';
 import { runProjectsGridReveal } from '@/animations/workWithMeAnimations';
-import { projects } from '@/data/projects';
-import ProjectCarousel from '@/components/showcase/ProjectCarousel';
+import { studioProjects, type ProjectType } from '@/data/projects';
+import { filterProjectsByType, projectTypeTabs } from '@/data/projectFilters';
+import StudioProjectMosaic from './StudioProjectMosaic';
+import './StudioProjects.css';
 
-const ProjectsShowcase: React.FC = () => {
+const CATEGORY_GAP = 14;
+
+type ProjectsShowcaseProps = {
+  navigationRef: RefObject<HTMLElement | null>;
+  onAlignCategories: (position: number) => void;
+};
+
+export default function ProjectsShowcase({ navigationRef, onAlignCategories }: ProjectsShowcaseProps) {
   const sectionRef = useRef<HTMLElement>(null);
+  const headingRef = useRef<HTMLHeadingElement>(null);
+  const galleryRef = useRef<HTMLDivElement>(null);
+  const categoriesRef = useRef<HTMLElement>(null);
+  const categoryOffset = useRef(104);
+  const realignAfterFilter = useRef(false);
+  const [category, setCategory] = useState<ProjectType>('code');
+  const reducedMotion = usePrefersReducedMotion();
+  const projects = filterProjectsByType(studioProjects, category);
 
-  useGSAPContext(
-    () => {
-      if (!sectionRef.current) return;
-      const intro = sectionRef.current.querySelector<HTMLElement>('.projects-intro');
-      const chrome = sectionRef.current.querySelector<HTMLElement>('.projects-carousel-chrome');
-      const cards = Array.from(
-        sectionRef.current.querySelectorAll<HTMLElement>('[data-project-card]')
-      );
+  useLayoutEffect(() => {
+    const section = sectionRef.current;
+    const navigation = navigationRef.current;
+    if (!section || !navigation) return;
+    const measure = () => {
+      categoryOffset.current = Math.ceil(navigation.getBoundingClientRect().bottom + CATEGORY_GAP);
+      section.style.setProperty('--studio-projects-sticky-top', `${categoryOffset.current}px`);
+    };
+    measure();
+    const observer = typeof ResizeObserver === 'undefined' ? null : new ResizeObserver(measure);
+    observer?.observe(navigation);
+    window.addEventListener('resize', measure);
+    return () => {
+      observer?.disconnect();
+      window.removeEventListener('resize', measure);
+    };
+  }, [navigationRef]);
 
-      if (intro) runProjectsGridReveal(intro, [chrome, ...cards].filter(Boolean) as HTMLElement[]);
-    },
-    { scope: sectionRef, dependencies: [] }
-  );
+  useGSAPContext(() => {
+    if (!headingRef.current || !galleryRef.current) return;
+    runProjectsGridReveal(headingRef.current, []);
+  }, { scope: sectionRef, dependencies: [reducedMotion], revertOnUpdate: true });
+
+  useGSAPContext(() => {
+    if (!galleryRef.current) return;
+    const cards = Array.from(galleryRef.current.querySelectorAll<HTMLElement>('.studio-projects-card-frame'));
+    runProjectsGridReveal(null, cards);
+  }, { scope: galleryRef, dependencies: [category, reducedMotion], revertOnUpdate: true });
+
+  useLayoutEffect(() => {
+    if (!realignAfterFilter.current || !galleryRef.current) return;
+    realignAfterFilter.current = false;
+    const adjust = galleryRef.current.getBoundingClientRect().top - categoryOffset.current;
+    if (adjust < 0) onAlignCategories(window.scrollY + adjust);
+  }, [category, onAlignCategories]);
+
+  const selectCategory = (next: ProjectType) => {
+    if (next === category || !galleryRef.current) return;
+    realignAfterFilter.current = galleryRef.current.getBoundingClientRect().top < categoryOffset.current;
+    setCategory(next);
+  };
+
+  const keepLinkVisible = (event: React.FocusEvent<HTMLDivElement>) => {
+    const link = event.target;
+    const selector = categoriesRef.current;
+    if (!link.matches('.studio-projects-arrow') || !selector) return;
+    const anchor = link.getBoundingClientRect();
+    const bounds = selector.getBoundingClientRect();
+    if (anchor.top < bounds.bottom && anchor.bottom > bounds.top
+      && anchor.left < bounds.right && anchor.right > bounds.left) {
+      onAlignCategories(window.scrollY + anchor.top - bounds.bottom - 8);
+    }
+  };
 
   return (
-    <section
-      ref={sectionRef}
-      id="projects"
-      aria-labelledby="projects-title"
-      className="py-[clamp(84px,11vw,140px)] px-[clamp(16px,6vw,88px)] bg-gateway relative overflow-hidden"
-    >
-      <div className="absolute inset-x-0 top-0 h-px bg-white/6" />
-      <div className="absolute top-0 left-0 right-0 h-[520px] pointer-events-none z-0 [background:radial-gradient(ellipse_70%_42%_at_50%_0%,rgba(201,184,232,0.055)_0%,transparent_66%)]" />
+    <section ref={sectionRef} id="projects" aria-labelledby="projects-title" className="studio-projects bg-gateway">
+      <h2 ref={headingRef} id="projects-title"
+        className="home-display projects-title text-[clamp(38px,6.2vw,76px)] text-white leading-[1.04] tracking-[-0.04em] m-0">
+        Built With{' '}
+        <span>Intention</span>
+      </h2>
 
-      <div className="projects-intro relative z-1 mx-auto mb-[clamp(56px,7vw,88px)] max-w-[980px] text-center">
-        <div className="projects-eyebrow font-mono text-[10px] tracking-[0.14em] uppercase text-white/30 mb-4 will-change-[transform,opacity]">
-          PROJECTS
-        </div>
-        <h2 id="projects-title" className="home-display projects-title text-[clamp(38px,6.2vw,76px)] text-white leading-[1.04] tracking-[-0.04em] m-0 will-change-[transform,opacity]">
-          Built With{' '}
-          <span
-            style={{
-              background: 'linear-gradient(135deg, #C9B8E8 0%, #AC5D64 55%, #E1DEE3 100%)',
-              backgroundClip: 'text',
-              WebkitBackgroundClip: 'text',
-              color: 'transparent',
-              WebkitTextFillColor: 'transparent',
-              textShadow: '0 0 24px rgba(201, 184, 232, 0.22), 0 0 48px rgba(172, 93, 100, 0.14)',
-            }}
-          >
-            Intention
+      <div ref={galleryRef} className="studio-projects-gallery">
+        <nav ref={categoriesRef} className="studio-projects-categories" aria-label="Project type">
+          {projectTypeTabs.map(tab => (
+            <button
+              type="button"
+              key={tab.type}
+              aria-pressed={category === tab.type}
+              aria-controls="studio-project-results"
+              onClick={event => {
+                event.currentTarget.focus({ preventScroll: true });
+                selectCategory(tab.type);
+              }}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </nav>
+
+        <div id="studio-project-results" onFocus={keepLinkVisible}>
+          <span className="sr-only" role="status">
+            {projectTypeTabs.find(tab => tab.type === category)?.label}: {projects.length ? `${projects.length} projects` : 'Coming Soon'}
           </span>
-        </h2>
-        <p className="projects-copy mx-auto mt-6 max-w-[680px] font-body text-[clamp(14px,1.45vw,18px)] leading-[1.72] text-white/52 font-light will-change-[transform,opacity]">
-          Selected work shaped by real constraints, customer needs, and outcomes that mattered.
-        </p>
-      </div>
-
-      <div className="project-showcase-card relative z-1">
-        <ProjectCarousel projects={projects} theme="dark" />
+          {projects.length > 0
+            ? <StudioProjectMosaic projects={projects} />
+            : <p className="studio-projects-empty">Coming Soon</p>}
+        </div>
       </div>
     </section>
   );
-};
-
-export default ProjectsShowcase;
+}

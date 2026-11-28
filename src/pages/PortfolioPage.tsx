@@ -9,6 +9,8 @@ import founderPortrait from '@/assets/portfolio/founder-figma.png';
 import downloadIcon from '@/assets/portfolio/download-icon.svg';
 import donorDirectoryImage from '@/assets/case-studies/donor-directory/donor-directory-hero.webp';
 import urgeTalentImage from '@/assets/urge-project.png';
+import { MIREMBE_CASE_PATH, MIREMBE_SLUG } from '@/data/mirembeCleaningCaseStudy';
+import { mirembeSelectedWorkAlt, mirembeVisuals } from '@/data/mirembeVisualAssets';
 import './PortfolioPage.css';
 
 const biography = [
@@ -71,6 +73,24 @@ const donorDirectory: SelectedWorkProjectData = {
   caseStudyUrl: '/case-studies/donor-directory',
 };
 
+const mirembeCleaning: SelectedWorkProjectData = {
+  id: MIREMBE_SLUG,
+  sectionId: MIREMBE_SLUG,
+  title: 'Mirembe Cleaning',
+  category: 'Digital Experience & Business Launch',
+  summary: 'A residential cleaning business grew from a pre-launch waitlist into a multilingual website with booking, lead capture, and operational integrations.',
+  image: mirembeVisuals.homepage.src,
+  imageAlt: mirembeSelectedWorkAlt,
+  previewLayers: { desktopSmall: mirembeVisuals.homepage.mobile, phone: mirembeVisuals.mobile.src },
+  highlights: [
+    { title: 'A Phased Launch', description: 'Designed a path from early demand capture to live cleaning requests.' },
+    { title: 'Full-Stack Customer Experience', description: 'Built multilingual journeys, secure lead handling, and business integrations.' },
+    { title: 'Creative & Acquisition', description: 'Produced campaign creative and built consent-aware conversion measurement.' },
+  ],
+  technologies: ['Figma', 'React', 'TypeScript', 'Supabase', 'Vercel', 'Growth Strategy'],
+  caseStudyUrl: MIREMBE_CASE_PATH,
+};
+
 const urgeTalent: SelectedWorkProjectData = {
   id: 'urge-talent',
   sectionId: 'urge-talent',
@@ -96,7 +116,7 @@ const urgeTalent: SelectedWorkProjectData = {
   technologies: ['Figma', 'UX/UI Design', 'Interaction Design', 'React', 'TypeScript'],
 };
 
-const selectedWorkProjects = [templatesManager, donorDirectory, urgeTalent];
+const selectedWorkProjects = [templatesManager, donorDirectory, mirembeCleaning, urgeTalent];
 type PortfolioChapter = 'meet-the-founder' | typeof selectedWorkProjects[number]['sectionId'];
 const projectNavigation = selectedWorkProjects.map(({ sectionId, title }) => ({ sectionId, title }));
 const chapterIds = ['meet-the-founder', ...selectedWorkProjects.map(project => project.sectionId)];

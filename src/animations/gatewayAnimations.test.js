@@ -156,13 +156,16 @@ test('gateway intro uses one pinned timeline for hero, capability words, and the
     vars: {
       autoAlpha: 1,
       y: 0,
-      duration: 0.88,
       ease: 'power2.out',
     },
   });
-  expect(servicesIntroReveal.position).toBeGreaterThan(
-    timeline.labels['everything-digital']
-  );
+  expect(servicesIntroReveal.position).toBe(servicesPreview.position);
+  expect(servicesIntroReveal.vars.duration).toBeLessThan(servicesPreview.vars.duration);
+  expect(mockSet).toHaveBeenCalledWith(servicesIntro, expect.objectContaining({
+    autoAlpha: expect.any(Number),
+  }));
+  const initialIntro = mockSet.mock.calls.find(([target]) => target === servicesIntro);
+  expect(initialIntro[1].autoAlpha).toBeGreaterThan(0.75);
 
   cleanup();
   expect(timeline.kill).toHaveBeenCalled();

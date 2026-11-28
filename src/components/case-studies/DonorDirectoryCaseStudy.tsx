@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import CaseStudySectionNavigation, {
   type CaseStudySectionLink,
 } from './CaseStudySectionNavigation';
+import CaseStudyProjectDetails from './CaseStudyProjectDetails';
 import { donorDirectoryCaseStudyContent as content } from '../../data/donorDirectoryCaseStudy';
 import donorDirectoryHero from '../../assets/case-studies/donor-directory/donor-directory-hero.webp';
 import donorDirectoryDesignToProduction from '../../assets/case-studies/donor-directory/donor-directory-design-to-production.webp';
@@ -211,17 +212,10 @@ const DonorDirectoryHero: React.FC = () => (
         </p>
       </div>
 
-      <section aria-labelledby="project-details-title" className="mx-auto mt-8 max-w-[1180px]">
+      <section aria-labelledby="project-details-title" className="mx-auto mt-8 max-w-[1030px]">
         <h2 id="project-details-title" className="sr-only">Project details</h2>
-        <dl className="donor-directory-project-facts m-0 grid grid-cols-2 overflow-hidden rounded-[18px] border border-white/10 bg-black/10 text-left md:grid-cols-3 lg:grid-cols-6">
-          {content.hero.quickFacts.map((fact) => (
-            <div key={fact.label} className="border-white/8 px-4 py-4 sm:px-5 sm:py-5">
-              <dt className="font-body text-[10px] font-semibold text-white/38">{fact.label}</dt>
-              <dd className="mb-0 ml-0 mt-2 font-body text-[11px] font-medium leading-[1.55] text-white/68 sm:text-[12px]">{fact.value}</dd>
-            </div>
-          ))}
-        </dl>
-        <p className="mx-auto mb-0 mt-5 max-w-[980px] text-center font-body text-[11px] leading-[1.65] text-white/46 sm:text-[12px]">
+        <CaseStudyProjectDetails items={content.hero.quickFacts} />
+        <p className="mx-auto mb-0 mt-5 max-w-[80ch] text-center font-body text-[12px] leading-[1.65] text-white/64">
           {content.hero.nda}
         </p>
       </section>

@@ -13,6 +13,7 @@
 
 # misc
 *.md
+!/PRODUCT.md
 !docs/templates-manager-audit.md
 !docs/donor-directory-interview-guide.md
 .DS_Store

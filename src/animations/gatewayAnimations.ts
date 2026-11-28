@@ -323,7 +323,8 @@ export function initGatewayIntroExperience(
   contentEl: HTMLElement,
   capabilityStageEl: HTMLElement,
   servicesSurfaceEl: HTMLElement,
-  videoEl?: HTMLVideoElement
+  videoEl?: HTMLVideoElement,
+  onLayoutReady?: () => void,
 ): () => void {
   const shade = introEl.querySelector<HTMLElement>('.gateway-intro-shade');
   const atmosphere = introEl.querySelector<HTMLElement>('.gateway-intro-atmosphere');
@@ -434,8 +435,8 @@ export function initGatewayIntroExperience(
     });
     if (servicesIntro) {
       gsap.set(servicesIntro, {
-        autoAlpha: 0,
-        y: mobile ? 14 : 18,
+        autoAlpha: 0.82,
+        y: mobile ? 8 : 10,
         force3D: true,
         willChange: 'transform, opacity',
       });
@@ -627,16 +628,20 @@ export function initGatewayIntroExperience(
       timeline.to(servicesIntro, {
         autoAlpha: 1,
         y: 0,
-        duration: mobile ? 0.76 : 0.88,
+        duration: mobile ? 0.46 : 0.55,
         ease: 'power2.out',
         clearProps: 'willChange',
-      }, summaryExitStart + (mobile ? 0.12 : 0.08));
+      }, 'services-preview');
     }
 
     const refresh = () => {
       if (!disposed) ScrollTrigger.refresh();
     };
-    window.requestAnimationFrame(refresh);
+    window.requestAnimationFrame(() => {
+      if (disposed) return;
+      refresh();
+      onLayoutReady?.();
+    });
     if (document.fonts?.ready) document.fonts.ready.then(refresh);
   };
 

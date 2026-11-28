@@ -1,28 +1,33 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Project, ProjectType } from '@/data/projects';
+import type { ProjectCarouselItem, ProjectType } from '@/data/projects';
 import { filterProjectsByType, projectTypeTabs } from '@/data/projectFilters';
 import DonorDirectoryAnimation from '@/components/showcase/DonorDirectoryAnimation';
 import TemplatesManagerDemo from '@/components/showcase/TemplatesManagerDemo';
 import TalentSearchWorkflowAnimation from '@/components/showcase/TalentSearchWorkflowAnimation';
 import { usePrefersReducedMotion } from '@/hooks/useMediaQuery';
 import { trackEvent } from '@/utils/analytics';
+import './ProjectCarousel.css';
 
-interface ProjectCarouselProps {
-  projects: Project[];
+interface ProjectCarouselProps<T extends ProjectCarouselItem> {
+  projects: T[];
   theme?: 'dark' | 'light';
-  onActiveProjectChange?: (project: Project) => void;
+  onActiveProjectChange?: (project: T) => void;
 }
 
-const ProjectCarousel: React.FC<ProjectCarouselProps> = ({
+function ProjectCarousel<T extends ProjectCarouselItem>({
   projects,
   theme = 'dark',
   onActiveProjectChange,
-}) => {
+}: ProjectCarouselProps<T>) {
+  const viewportRef = useRef<HTMLDivElement>(null);
   const scrollerRef = useRef<HTMLDivElement>(null);
+  const settleTimer = useRef(0);
   const [activeType, setActiveType] = useState<ProjectType>('code');
   const [activeIndex, setActiveIndex] = useState(0);
-  const [isPaused, setIsPaused] = useState(false);
+  const [isInView, setIsInView] = useState(false);
+  const [isHovered, setIsHovered] = useState(false);
+  const [hasFocus, setHasFocus] = useState(false);
   const [isSettled, setIsSettled] = useState(true);
   const reducedMotion = usePrefersReducedMotion();
   const filteredProjects = useMemo(
@@ -41,54 +46,48 @@ const ProjectCarousel: React.FC<ProjectCarouselProps> = ({
     scroller.scrollTo({ left: card.offsetLeft, behavior: reducedMotion ? 'auto' : 'smooth' });
   }, [reducedMotion]);
 
-  const scrollToProject = useCallback((direction: 1 | -1) => {
-    const scroller = scrollerRef.current;
-    if (!scroller || filteredProjects.length === 0) return;
-    setIsSettled(false);
-
-    const card = scroller.querySelector<HTMLElement>('[data-project-card]');
-    const cardStep = card ? card.offsetWidth : scroller.clientWidth;
-    const maxScroll = scroller.scrollWidth - scroller.clientWidth - 8;
-    const nextLeft = scroller.scrollLeft + cardStep * direction;
-
-    if (direction === 1 && nextLeft >= maxScroll) {
-      scroller.scrollTo({ left: 0, behavior: reducedMotion ? 'auto' : 'smooth' });
-      return;
-    }
-
-    if (direction === -1 && nextLeft <= 0) {
-      scroller.scrollTo({ left: scroller.scrollWidth, behavior: reducedMotion ? 'auto' : 'smooth' });
-      return;
-    }
-
-    scroller.scrollBy({ left: cardStep * direction, behavior: reducedMotion ? 'auto' : 'smooth' });
-  }, [filteredProjects.length, reducedMotion]);
-
   useEffect(() => {
     scrollerRef.current?.scrollTo({ left: 0, behavior: 'auto' });
     setActiveIndex(0);
     setIsSettled(true);
-    onActiveProjectChange?.(filteredProjects[0] || projects[0]);
+    const firstProject = filteredProjects[0] ?? projects[0];
+    if (firstProject) onActiveProjectChange?.(firstProject);
+    return () => window.clearTimeout(settleTimer.current);
   }, [activeType, filteredProjects, onActiveProjectChange, projects, reducedMotion]);
 
   useEffect(() => {
-    if (reducedMotion || isPaused || filteredProjects.length <= 1 || filteredProjects[activeIndex]?.id === 'gravyty-template-manager') return;
-    const timer = window.setInterval(() => scrollToProject(1), 5000);
-    return () => window.clearInterval(timer);
-  }, [activeIndex, filteredProjects, isPaused, reducedMotion, scrollToProject]);
+    const viewport = viewportRef.current;
+    if (!viewport) return;
+    if (typeof IntersectionObserver === 'undefined') {
+      setIsInView(true);
+      return;
+    }
+    const observer = new IntersectionObserver(([entry]) => {
+      setIsInView(entry.isIntersecting && entry.intersectionRatio >= .25);
+    }, { threshold: .25 });
+    observer.observe(viewport);
+    return () => observer.disconnect();
+  }, []);
 
   useEffect(() => {
-    const scroller = scrollerRef.current;
-    if (!scroller) return;
-    const onScrollEnd = () => setIsSettled(true);
-    scroller.addEventListener('scrollend', onScrollEnd);
-    return () => scroller.removeEventListener('scrollend', onScrollEnd);
-  }, []);
+    const count = filteredProjects.length;
+    if (!isInView || reducedMotion || isHovered || hasFocus || count <= 1 || filteredProjects[activeIndex]?.id === 'gravyty-template-manager') return;
+    const timer = window.setTimeout(() => scrollToIndex((activeIndex + 1) % count), 5000);
+    return () => window.clearTimeout(timer);
+  }, [activeIndex, filteredProjects, hasFocus, isHovered, isInView, reducedMotion, scrollToIndex]);
+
+  const finishScroll = () => {
+    window.clearTimeout(settleTimer.current);
+    setIsSettled(true);
+  };
 
   const handleScroll = () => {
     const scroller = scrollerRef.current;
     if (!scroller || filteredProjects.length === 0) return;
     setIsSettled(false);
+    // Some snap transitions finish without dispatching scrollend.
+    window.clearTimeout(settleTimer.current);
+    settleTimer.current = window.setTimeout(finishScroll, 140);
     const cards = Array.from(scroller.querySelectorAll<HTMLElement>('[data-project-card]'));
     const activeCard = cards.reduce((closest, card) => {
       const currentDistance = Math.abs(card.offsetLeft - scroller.scrollLeft);
@@ -135,86 +134,136 @@ const ProjectCarousel: React.FC<ProjectCarouselProps> = ({
         })}
       </nav>
 
-      <div className="relative mx-auto max-w-[900px]">
+      <div
+        ref={viewportRef}
+        className="relative mx-auto max-w-[900px]"
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
+        onFocus={() => setHasFocus(true)}
+        onBlur={(event) => {
+          if (!event.currentTarget.contains(event.relatedTarget)) setHasFocus(false);
+        }}
+      >
         {filteredProjects.length > 0 ? (
           <div
             ref={scrollerRef}
             onScroll={handleScroll}
-            onMouseEnter={() => setIsPaused(true)}
-            onMouseLeave={() => setIsPaused(false)}
-            onFocus={() => setIsPaused(true)}
-            onBlur={() => setIsPaused(false)}
-            className="flex snap-x snap-mandatory gap-0 overflow-x-auto scroll-smooth pb-4 scrollbar-none"
+            onScrollEnd={finishScroll}
+            className="flex snap-x snap-mandatory gap-0 overflow-x-auto scroll-smooth pb-4 scrollbar-none motion-reduce:scroll-auto"
             aria-label={`${activeType} projects carousel`}
           >
-            {filteredProjects.map((project, index) => (
-              <article
-                key={project.id}
-                data-project-card
-                data-project-index={index}
-                className={`relative aspect-16/10 min-w-full snap-start overflow-hidden rounded-lg border ${project.id === 'gravyty-template-manager' ? 'template-manager-carousel-card' : ''} ${
-                  isDark
-                    ? 'border-white/7 bg-white/2.5'
-                    : 'border-black/8 bg-black/3.5'
-                }`}
-                aria-label={project.title}
-              >
-                {project.id === 'gravyty-template-manager' ? (
-                  <TemplatesManagerDemo variant="studio" isActive={activeIndex === index && isSettled} isTransitionComplete={isSettled} />
-                ) : project.id === 'gravyty-donor-directory' ? (
-                  <DonorDirectoryAnimation className="h-full w-full" />
-                ) : project.id === 'urge-talent' ? (
-                  <TalentSearchWorkflowAnimation className="h-full w-full" />
-                ) : (
-                  <img
-                    src={project.image}
-                    alt={`${project.title} project screen`}
-                    loading="lazy"
-                    draggable={false}
-                    className="h-full w-full object-cover"
-                  />
-                )}
+            {filteredProjects.map((project, index) => {
+              const { showcase } = project;
+              const isTemplateManager = project.id === 'gravyty-template-manager';
+              const isDonorDirectory = project.id === 'gravyty-donor-directory';
+              const caseStudyPath = showcase?.caseStudyPath ?? (
+                isTemplateManager ? '/case-studies/gravyty-template-manager'
+                  : isDonorDirectory ? '/case-studies/donor-directory' : undefined
+              );
+              const captionClass = showcase
+                ? 'project-carousel-feature-caption'
+                : `absolute bottom-0 left-0 right-0 h-[42%] pointer-events-none [background:linear-gradient(to_bottom,transparent_0%,rgba(12,12,14,0.96)_100%)] flex flex-col justify-end px-5 pb-5 gap-1.5 ${isTemplateManager ? 'template-manager-card-caption' : ''}`;
 
-                {/* Bottom feather overlay — always visible */}
-                <div className={`absolute bottom-0 left-0 right-0 h-[42%] pointer-events-none [background:linear-gradient(to_bottom,transparent_0%,rgba(12,12,14,0.96)_100%)] flex flex-col justify-end px-5 pb-5 gap-1.5 ${project.id === 'gravyty-template-manager' ? 'template-manager-card-caption' : ''}`}>
-                  <p className="m-0 font-mono text-[9px] uppercase tracking-[0.13em] text-white/50">
-                    {project.category}
-                  </p>
-                  <h3 className="m-0 text-[clamp(15px,1.8vw,20px)] leading-[1.1] tracking-[-0.02em] text-white">
-                    <Link
-                      to={
-                        project.id === 'gravyty-template-manager'
-                          ? `/case-studies/${project.id}`
-                          : project.id === 'gravyty-donor-directory'
-                            ? '/case-studies/donor-directory'
-                            : `/projects/${project.id}`
-                      }
-                      aria-label={`View ${project.title} ${['gravyty-template-manager', 'gravyty-donor-directory'].includes(project.id) ? 'case study' : 'project'}`}
-                      onClick={() => trackEvent(
-                        ['gravyty-template-manager', 'gravyty-donor-directory'].includes(project.id) ? 'case_study_view' : 'project_view',
-                        { project_id: project.id }
-                      )}
-                      className="pointer-events-auto text-white no-underline transition-colors duration-200 hover:text-[#D7B9FA]"
-                    >
-                      {project.title}
-                    </Link>
-                  </h3>
-                  <p className="m-0 text-[clamp(11px,1.1vw,13px)] leading-[1.5] text-white/55 line-clamp-2">
-                    {project.description}
-                  </p>
-                </div>
-              </article>
-            ))}
+              return (
+                <article
+                  key={project.id}
+                  data-project-card
+                  data-project-index={index}
+                  className={`relative aspect-16/10 min-w-full snap-start overflow-hidden rounded-lg border ${showcase ? 'project-carousel-feature' : ''} ${isTemplateManager ? 'template-manager-carousel-card' : ''} ${
+                    isDark ? 'border-white/7 bg-white/2.5' : 'border-black/8 bg-black/3.5'
+                  }`}
+                  aria-label={project.title}
+                >
+                  {showcase ? (
+                    <div className="project-carousel-feature-preview">
+                      <picture className="project-carousel-feature-desktop">
+                        <source
+                          media="(min-width: 640px)"
+                          srcSet={showcase.desktop.mobile
+                            ? `${showcase.desktop.mobile} 760w, ${showcase.desktop.src} ${showcase.desktop.width}w`
+                            : showcase.desktop.src}
+                          sizes="(min-width: 1024px) 680px, 62vw"
+                        />
+                        <img
+                          alt={showcase.desktop.alt}
+                          width={showcase.desktop.width}
+                          height={showcase.desktop.height}
+                          loading={index === 0 ? 'eager' : 'lazy'}
+                          decoding="async"
+                          draggable={false}
+                        />
+                      </picture>
+                      <img
+                        className="project-carousel-feature-phone"
+                        src={showcase.mobile.src}
+                        alt={showcase.mobile.alt}
+                        width={showcase.mobile.width}
+                        height={showcase.mobile.height}
+                        loading={index === 0 ? 'eager' : 'lazy'}
+                        decoding="async"
+                        draggable={false}
+                      />
+                    </div>
+                  ) : isTemplateManager ? (
+                    <TemplatesManagerDemo variant="studio" isActive={activeIndex === index && isSettled} isTransitionComplete={isSettled} />
+                  ) : isDonorDirectory ? (
+                    <DonorDirectoryAnimation className="h-full w-full" />
+                  ) : project.id === 'urge-talent' ? (
+                    <TalentSearchWorkflowAnimation className="h-full w-full" />
+                  ) : (
+                    <img
+                      src={project.image}
+                      alt={`${project.title} project screen`}
+                      loading="lazy"
+                      draggable={false}
+                      className="h-full w-full object-cover"
+                    />
+                  )}
+
+                  <div className={captionClass}>
+                    <div className="flex min-w-0 flex-col gap-1.5">
+                      <p className={`m-0 font-mono text-[9px] uppercase tracking-[0.13em] ${showcase ? 'text-white/70' : 'text-white/50'}`}>
+                        {project.category}
+                      </p>
+                      <h3 className="m-0 text-[clamp(15px,1.8vw,20px)] leading-[1.1] tracking-[-0.02em] text-white">
+                        <Link
+                          to={caseStudyPath ?? `/projects/${project.id}`}
+                          aria-label={`View ${project.title} ${caseStudyPath ? 'case study' : 'project'}`}
+                          onClick={() => trackEvent(caseStudyPath ? 'case_study_view' : 'project_view', { project_id: project.id })}
+                          className="pointer-events-auto text-white no-underline transition-colors duration-200 hover:text-[#D7B9FA]"
+                        >
+                          {project.title}
+                        </Link>
+                      </h3>
+                      <p className={`m-0 text-[clamp(11px,1.1vw,13px)] leading-[1.5] ${showcase ? 'text-white/70' : 'text-white/55 line-clamp-2'}`}>
+                        {project.description}
+                      </p>
+                    </div>
+                    {showcase?.liveUrl && (
+                      <a
+                        className="project-carousel-live-link"
+                        href={showcase.liveUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        aria-label={`Visit live website for ${project.title} (opens in a new tab)`}
+                      >
+                        <span>Visit Live Website</span> <span aria-hidden="true">↗</span>
+                      </a>
+                    )}
+                  </div>
+                </article>
+              );
+            })}
           </div>
         ) : (
           <div
-            className={`mx-auto flex min-h-45 max-w-130 items-center justify-center rounded-lg border text-center font-mono text-[11px] uppercase tracking-[0.12em] ${
+            className={`mx-auto flex min-h-45 max-w-130 items-center justify-center rounded-lg border text-center font-mono text-[11px] tracking-[0.12em] ${
               isDark
-                ? 'border-white/7 text-white/34'
-                : 'border-black/8 text-black/36'
+                ? 'border-white/7 text-white/60'
+                : 'border-black/8 text-black/62'
             }`}
           >
-            No {projectTypeTabs.find((tab) => tab.type === activeType)?.label} projects yet
+            Coming Soon
           </div>
         )}
 
@@ -225,7 +274,8 @@ const ProjectCarousel: React.FC<ProjectCarouselProps> = ({
               type="button"
               onClick={() => scrollToIndex(index)}
               aria-label={`Go to project ${index + 1}`}
-              className={`cursor-pointer flex items-center py-2 focus:outline-none transition-[width] duration-300 ease-out group ${
+              aria-current={index === activeIndex ? 'true' : undefined}
+              className={`cursor-pointer flex min-h-6 items-center rounded-sm py-2 transition-[width] duration-300 ease-out motion-reduce:transition-none group ${
                 index === activeIndex ? 'w-8' : 'w-4'
               }`}
             >
@@ -242,6 +292,6 @@ const ProjectCarousel: React.FC<ProjectCarouselProps> = ({
       </div>
     </div>
   );
-};
+}
 
 export default ProjectCarousel;

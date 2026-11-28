@@ -7,7 +7,7 @@ export interface CaseStudySectionLink {
   menuLabel: string;
 }
 
-type NavigationTone = 'template-manager' | 'donor-directory';
+type NavigationTone = 'template-manager' | 'donor-directory' | 'mirembe';
 
 interface CaseStudySectionNavigationProps {
   sections: CaseStudySectionLink[];
@@ -45,6 +45,14 @@ const toneClasses: Record<
     activeItem: 'border-[#C996EE]/30 bg-[#C996EE]/11 text-white/92',
     activeDot: 'bg-[#D9B2F5]/80',
   },
+  mirembe: {
+    pinnedMenu: 'border-[#7952A3]/50 bg-[#3B2A50]/95',
+    idleMenu: 'border-[#7952A3]/45 bg-[#3B2A50]',
+    menuLine: 'bg-[#EFE8F6]',
+    popover: 'bg-[#3B2A50]',
+    activeItem: 'border-[#A997BC]/70 bg-white/[0.12] text-white',
+    activeDot: 'bg-[#EFE8F6]',
+  },
 };
 
 const getStickyOffset = () => {
@@ -69,7 +77,7 @@ const CaseStudySectionNavigation: React.FC<CaseStudySectionNavigationProps> = ({
   const menuRef = useRef<HTMLDivElement>(null);
   const toggleRef = useRef<HTMLButtonElement>(null);
   const colors = toneClasses[tone];
-  const isDonorTone = tone === 'donor-directory';
+  const usesCompactMenu = tone !== 'template-manager';
 
   useEffect(() => {
     let frameId = 0;
@@ -108,6 +116,10 @@ const CaseStudySectionNavigation: React.FC<CaseStudySectionNavigationProps> = ({
 
   useEffect(() => {
     if (!isOpen) return undefined;
+    if (tone === 'mirembe') {
+      menuRef.current?.querySelector<HTMLButtonElement>('[role="menuitem"][aria-current="location"]')
+        ?.focus({ preventScroll: true });
+    }
 
     const closeOnOutsidePress = (event: MouseEvent) => {
       if (!menuRef.current?.contains(event.target as Node)) setIsOpen(false);
@@ -118,7 +130,7 @@ const CaseStudySectionNavigation: React.FC<CaseStudySectionNavigationProps> = ({
         ?.querySelector('#case-study-section-popover')
         ?.contains(document.activeElement);
       setIsOpen(false);
-      if (isDonorTone && focusedInPopover) toggleRef.current?.focus({ preventScroll: true });
+      if (usesCompactMenu && focusedInPopover) toggleRef.current?.focus({ preventScroll: true });
     };
 
     document.addEventListener('mousedown', closeOnOutsidePress);
@@ -127,15 +139,15 @@ const CaseStudySectionNavigation: React.FC<CaseStudySectionNavigationProps> = ({
       document.removeEventListener('mousedown', closeOnOutsidePress);
       document.removeEventListener('keydown', closeOnEscape);
     };
-  }, [isOpen, isDonorTone]);
+  }, [isOpen, tone, usesCompactMenu]);
 
   const navigateToSection = (sectionId: string) => {
     const section = document.getElementById(sectionId);
     if (!section) return;
 
-    setActiveSection(sectionId);
-    setIsOpen(false);
     const reducedMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+    if (tone !== 'mirembe' || reducedMotion) setActiveSection(sectionId);
+    setIsOpen(false);
     const offset = getStickyOffset();
     const top = window.scrollY + section.getBoundingClientRect().top - offset;
     window.scrollTo({
@@ -144,13 +156,25 @@ const CaseStudySectionNavigation: React.FC<CaseStudySectionNavigationProps> = ({
       behavior: reducedMotion ? 'auto' : 'smooth',
     });
     window.history.replaceState(null, '', `#${sectionId}`);
+    if (tone === 'mirembe') section.querySelector<HTMLElement>('h1, h2')?.focus({ preventScroll: true });
+  };
+
+  const moveMenuFocus = (event: React.KeyboardEvent<HTMLDivElement>) => {
+    if (tone !== 'mirembe' || !['ArrowDown', 'ArrowUp', 'Home', 'End'].includes(event.key)) return;
+    const buttons = Array.from(event.currentTarget.querySelectorAll<HTMLButtonElement>('[role="menuitem"]'));
+    const current = buttons.findIndex((button) => button === document.activeElement);
+    let next = event.key === 'ArrowDown' ? current + 1 : current - 1;
+    if (event.key === 'Home') next = 0;
+    if (event.key === 'End') next = buttons.length - 1;
+    event.preventDefault();
+    buttons[(next + buttons.length) % buttons.length]?.focus({ preventScroll: true });
   };
 
   const activeLabel =
     sections.find(({ id }) => id === activeSection)?.menuLabel ?? sections[0]?.menuLabel ?? 'Hero';
 
   return (
-    <div ref={slotRef} className="relative z-[90] mt-12 h-[58px] w-full sm:mt-14">
+    <div ref={slotRef} data-case-study-tone={tone} className="relative z-[90] mt-12 h-[58px] w-full sm:mt-14">
       <div
         ref={menuRef}
         data-testid="case-study-section-navigation"
@@ -163,7 +187,7 @@ const CaseStudySectionNavigation: React.FC<CaseStudySectionNavigationProps> = ({
           aria-label="Case study sections"
           data-pinned={isPinned ? 'true' : 'false'}
           className={`case-study-section-menu flex items-center gap-1.5 rounded-[100px] border backdrop-blur-[8px] transition-[background-color,border-color,box-shadow,backdrop-filter] duration-500 ${
-            isDonorTone ? 'px-2.5 py-1 sm:gap-3 sm:px-5 sm:py-1.5' : 'px-3 py-2 sm:gap-4 sm:px-8 sm:py-3'
+            usesCompactMenu ? 'px-2.5 py-1 sm:gap-3 sm:px-5 sm:py-1.5' : 'px-3 py-2 sm:gap-4 sm:px-8 sm:py-3'
           } ${
             isPinned ? colors.pinnedMenu : colors.idleMenu
           }`}
@@ -172,10 +196,10 @@ const CaseStudySectionNavigation: React.FC<CaseStudySectionNavigationProps> = ({
             aria-live="polite"
             data-testid="active-section-label"
             className={`whitespace-nowrap font-body font-bold leading-8 text-white ${
-              isDonorTone ? 'text-[12px] text-white/82 sm:text-[13px]' : 'text-[13px] sm:text-[14px]'
+              usesCompactMenu ? 'text-[12px] text-white/82 sm:text-[13px]' : 'text-[13px] sm:text-[14px]'
             }`}
           >
-            {activeLabel}
+            {tone === 'mirembe' ? <span key={activeLabel} className="mirembe-section-label">{activeLabel}</span> : activeLabel}
           </span>
           <NavigationMenuToggle
             buttonRef={toggleRef}
@@ -192,6 +216,7 @@ const CaseStudySectionNavigation: React.FC<CaseStudySectionNavigationProps> = ({
           <div
             id="case-study-section-popover"
             role="menu"
+            onKeyDown={moveMenuFocus}
             className={`case-study-section-popover absolute left-1/2 top-[calc(100%+12px)] max-h-[min(70vh,520px)] w-[min(370px,calc(100vw-32px))] -translate-x-1/2 overflow-y-auto overscroll-contain rounded-[22px] border border-white/14 p-3 shadow-[0_24px_70px_rgba(4,6,20,0.48)] backdrop-blur-[20px] ${colors.popover} ${
               isPinned ? 'max-sm:left-auto max-sm:right-0 max-sm:translate-x-0' : ''
             } ${!isPinned ? 'max-sm:bottom-[calc(100%+12px)] max-sm:top-auto' : ''}`}

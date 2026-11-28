@@ -35,6 +35,27 @@ beforeEach(() => {
   window.scrollTo = jest.fn();
 });
 
+test('presents the Mirembe milestones and restores the route theme on exit', () => {
+  const { unmount } = renderCaseStudy('mirembe-cleaning');
+  expect(screen.getByRole('heading', { level: 1, name: 'Mirembe Cleaning' })).toBeInTheDocument();
+  expect(document.body).toHaveAttribute('data-page', 'mirembe-cleaning-case-study');
+  expect(within(screen.getByLabelText('Project details')).getAllByRole('term').map((term) => term.textContent))
+    .toEqual(['Role', 'Scope', 'Industry', 'Collaboration', 'Timeline', 'Status']);
+  expect(screen.getByText(/completed its first customer cleaning and has additional appointments booked/i)).toBeVisible();
+  expect(screen.getAllByRole('link', { name: 'Back to Portfolio' }).map((link) => link.getAttribute('href')))
+    .toEqual(['/portfolio#mirembe-cleaning', '/portfolio#mirembe-cleaning']);
+  expect(screen.getByRole('button', { name: 'Play Holiday booking reel' })).toBeInTheDocument();
+  expect(screen.queryByTitle('Holiday booking reel')).not.toBeInTheDocument();
+  expect(screen.queryByRole('form')).not.toBeInTheDocument();
+
+  fireEvent.click(screen.getByRole('button', { name: 'Open section navigation' }));
+  fireEvent.click(screen.getByRole('menuitem', { name: 'Operational foundation' }));
+  expect(window.location.hash).toBe('#engineering');
+  expect(screen.getByRole('heading', { name: 'Give each customer action a clear destination.' })).toHaveFocus();
+  unmount();
+  expect(document.body).not.toHaveAttribute('data-page');
+});
+
 test('presents the Templates Manager story around ownership and the role transition', () => {
   renderCaseStudy();
 

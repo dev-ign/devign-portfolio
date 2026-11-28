@@ -2,6 +2,8 @@ import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { projects } from '@/data/projects';
 import donorDirectorySeo from '@/data/donorDirectorySeo.json';
+import mirembeCleaningSeo from '@/data/mirembeCleaningSeo.json';
+import { MIREMBE_CASE_PATH } from '@/data/mirembeCleaningCaseStudy';
 import { siteConfig, SITE_URL, welcomeMetadata } from '@/config/site';
 
 type Metadata = {
@@ -25,6 +27,7 @@ const setMeta = (selector: string, attribute: 'content' | 'href', value: string)
 
 export const getMetadata = (pathname: string): Metadata => {
   const routePath = pathname === '/' ? pathname : pathname.replace(/\/+$/, '');
+  if (routePath === MIREMBE_CASE_PATH) return mirembeCleaningSeo;
   if (
     routePath === '/case-studies/donor-directory/visual-demo' ||
     routePath === '/case-studies/donor-directory/evidence'

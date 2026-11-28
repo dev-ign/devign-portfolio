@@ -6,6 +6,9 @@ import CaseStudySectionNavigation, {
 } from '../components/case-studies/CaseStudySectionNavigation';
 import TemplateManagerStory from '../components/case-studies/TemplateManagerStory';
 import DonorDirectoryCaseStudy from '../components/case-studies/DonorDirectoryCaseStudy';
+import CaseStudyProjectDetails from '../components/case-studies/CaseStudyProjectDetails';
+import MirembeCleaningCaseStudy from '@/components/case-studies/mirembe/MirembeCleaningCaseStudy';
+import { MIREMBE_PORTFOLIO_PATH, MIREMBE_SLUG } from '@/data/mirembeCleaningCaseStudy';
 import { projects } from '../data/projects';
 
 const TEMPLATE_MANAGER_SLUG = 'gravyty-template-manager';
@@ -45,7 +48,10 @@ const CaseStudyDetailPage: React.FC = () => {
   const narrative = templateManagerProject?.caseStudy.narrative;
   const isTemplateManager = slug === TEMPLATE_MANAGER_SLUG && Boolean(narrative);
   const isDonorDirectory = slug === DONOR_DIRECTORY_SLUG;
-  const portfolioReturnUrl = isDonorDirectory ? '/portfolio#donor-directory' : '/portfolio#selected-work';
+  const isMirembe = slug === MIREMBE_SLUG;
+  const portfolioReturnUrl = isMirembe
+    ? MIREMBE_PORTFOLIO_PATH
+    : isDonorDirectory ? '/portfolio#donor-directory' : '/portfolio#selected-work';
 
   useLayoutEffect(() => {
     const alignCurrentHash = () => {
@@ -56,6 +62,39 @@ const CaseStudyDetailPage: React.FC = () => {
       window.scrollTo({ top: Math.max(0, top), left: 0, behavior: 'auto' });
       return true;
     };
+
+    if (isMirembe) {
+      const initialHash = window.location.hash;
+      const aligned = alignCurrentHash();
+      if (!aligned) window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+
+      const pendingAlignment = new AbortController();
+      let frameId = 0;
+      if (aligned && document.fonts) {
+        // Realign after font layout only while the reader stays on the initial deep link.
+        const cancelAlignment = () => pendingAlignment.abort();
+        const options = { passive: true, signal: pendingAlignment.signal };
+        window.addEventListener('wheel', cancelAlignment, options);
+        window.addEventListener('touchstart', cancelAlignment, options);
+        window.addEventListener('pointerdown', cancelAlignment, options);
+        window.addEventListener('keydown', cancelAlignment, options);
+        void document.fonts.ready.then(() => {
+          if (pendingAlignment.signal.aborted) return;
+          frameId = window.requestAnimationFrame(() => {
+            if (!pendingAlignment.signal.aborted && window.location.hash === initialHash) alignCurrentHash();
+            pendingAlignment.abort();
+          });
+        });
+      }
+      window.addEventListener('hashchange', alignCurrentHash);
+      window.addEventListener('popstate', alignCurrentHash);
+      return () => {
+        pendingAlignment.abort();
+        window.cancelAnimationFrame(frameId);
+        window.removeEventListener('hashchange', alignCurrentHash);
+        window.removeEventListener('popstate', alignCurrentHash);
+      };
+    }
 
     if (alignCurrentHash()) {
       let isCancelled = false;
@@ -92,18 +131,20 @@ const CaseStudyDetailPage: React.FC = () => {
 
     window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
     return undefined;
-  }, [slug]);
+  }, [slug, isMirembe]);
 
   useEffect(() => {
     if (isTemplateManager) {
       document.body.setAttribute('data-page', 'template-manager-case-study');
     } else if (isDonorDirectory) {
       document.body.setAttribute('data-page', 'donor-directory-case-study');
+    } else if (isMirembe) {
+      document.body.setAttribute('data-page', 'mirembe-cleaning-case-study');
     }
     return () => document.body.removeAttribute('data-page');
-  }, [isDonorDirectory, isTemplateManager]);
+  }, [isDonorDirectory, isMirembe, isTemplateManager]);
 
-  if (!isTemplateManager && !isDonorDirectory) {
+  if (!isTemplateManager && !isDonorDirectory && !isMirembe) {
     return (
       <main id="main-content" tabIndex={-1} className="flex min-h-dvh flex-col items-center justify-center gap-5 bg-gateway px-6 text-center text-white">
         <p className="m-0 font-body text-[15px] text-white/60">Case study not found.</p>
@@ -117,9 +158,9 @@ const CaseStudyDetailPage: React.FC = () => {
     );
   }
 
-  const backgroundClassName = isDonorDirectory
-    ? 'donor-directory-case-study-bg'
-    : 'template-manager-case-study-bg';
+  const backgroundClassName = isMirembe
+    ? 'mirembe-case-study-bg'
+    : isDonorDirectory ? 'donor-directory-case-study-bg' : 'template-manager-case-study-bg';
 
   return (
     <main id="main-content" tabIndex={-1} className={`${backgroundClassName} relative min-h-screen min-h-dvh overflow-x-clip text-white`}>
@@ -127,7 +168,9 @@ const CaseStudyDetailPage: React.FC = () => {
         <span aria-hidden="true" className="mr-1">←</span>Back to Portfolio
       </Link>
 
-      {isDonorDirectory ? (
+      {isMirembe ? (
+        <MirembeCleaningCaseStudy />
+      ) : isDonorDirectory ? (
         <DonorDirectoryCaseStudy />
       ) : (
         <>
@@ -151,14 +194,9 @@ const CaseStudyDetailPage: React.FC = () => {
                   {narrative?.hero.subtitle}
                 </p>
 
-                <dl data-testid="template-manager-project-summary" className="mx-auto mb-0 mt-8 grid max-w-[980px] gap-px overflow-hidden rounded-[18px] border border-white/10 bg-white/10 text-left shadow-[0_18px_55px_rgba(7,10,34,0.18)] backdrop-blur-[18px] sm:grid-cols-2 lg:grid-cols-3">
-                  {narrative?.hero.summary.map((item) => (
-                    <div key={item.label} className="bg-[#171B3A]/78 px-4 py-4 sm:px-5">
-                      <dt className="font-body text-[11px] font-semibold text-white/65">{item.label}</dt>
-                      <dd className="m-0 mt-2 font-body text-[12px] font-medium leading-[1.5] text-white/84 sm:text-[13px]">{item.value}</dd>
-                    </div>
-                  ))}
-                </dl>
+                <div className="mx-auto mt-8 max-w-[980px]">
+                  <CaseStudyProjectDetails items={narrative?.hero.summary} data-testid="template-manager-project-summary" />
+                </div>
 
                 <p className="mx-auto mb-0 mt-4 max-w-[900px] font-body text-[11px] leading-[1.55] text-white/58 sm:text-[12px]">
                   <span className="font-medium text-white/58">Confidentiality note:</span>{' '}
